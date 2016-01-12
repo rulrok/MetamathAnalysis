@@ -1,0 +1,46 @@
+package parser;
+import java_cup.runtime.*;
+
+parser code 
+{:
+  Lexer lexer;
+
+  public parser (Lexer lexer) { this.lexer = lexer; } 
+
+
+:}; /* End of 'parser code' section */
+
+/* Preliminaries to set up and use the scanner.  */
+scan with {: return lexer.next_token(); :};
+
+/* Terminals (tokens returned by the scanner). */
+
+/* Block types */
+terminal            SCOPE_START, SCOPE_END, COMMENT_START, COMMENT_END;
+terminal            INCLUDE_START, INCLUDE_END;
+
+/* Statement types */
+terminal            CONSTANT_STMT, VARIABLE_STMT;
+terminal            DISJUNCT_VARIABLE_STMT, VARIABLE_TYPE_HYPOTHESIS_STMT;
+terminal            LOGICAL_HYPOTHESIS_STMT, AXIOMATIC_ASSERTION_STMT;
+terminal            PROVABLE_ASSERTION_STMT, PROOF_STMT, STMT_END;
+
+/* Typed types */
+terminal String     LABEL, MATH_SYMB;
+
+/* Non terminals */
+
+    non terminal            const_declaration, var_declaration;
+    
+/* Precedences */
+
+    //Empty
+
+/* The grammar */
+const_declaration ::=   CONSTANT_STMT 
+                        MATH_SYMB:m {: System.out.println("Constant found: " + m); :}
+                        STMT_END;
+
+var_declaration   ::=   VARIABLE_STMT
+                        MATH_SYMB:m {: System.out.println("Variable found: " + m); :}
+                        STMT_END;
