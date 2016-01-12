@@ -7,6 +7,8 @@ parser code
 
   public parser (Lexer lexer) { this.lexer = lexer; } 
 
+  public void println(Object o) { System.out.println(o); }
+
 
 :}; /* End of 'parser code' section */
 
@@ -25,13 +27,28 @@ terminal String     LABEL, MATH_SYMB;
 
 /* Non terminals */
 
+non terminal            initial_symbol;
+non terminal            math_symb_list;
 non terminal            const_declaration, var_declaration;
 
-/* The grammar */
-const_declaration ::=   CONSTANT_STMT 
-                        MATH_SYMB:m {: System.out.println("Constant found: " + m); :}
-                        STMT_END;
+start with initial_symbol;
 
-var_declaration   ::=   VARIABLE_STMT
-                        MATH_SYMB:m {: System.out.println("Variable found: " + m); :}
-                        STMT_END;
+/* The grammar */
+
+initial_symbol    ::=  const_declaration
+                    |  var_declaration
+                    ;
+
+math_symb_list    ::= math_symb_list MATH_SYMB:m {: println("Math symbol found: " + m); :}
+                    | MATH_SYMB:m {: println("Math symbol found: " + m); :}
+                    ;
+ 
+const_declaration ::= CONSTANT_STMT {: println("Constant declaration found"); :}
+                       math_symb_list
+                      STMT_END     {: println("Constant declaration finished"); :}
+                      ;
+
+var_declaration   ::= VARIABLE_STMT  {: println("Variable declaration found"); :}
+                       math_symb_list
+                      STMT_END      {: println("Variable declaration finished"); :}
+                      ;
