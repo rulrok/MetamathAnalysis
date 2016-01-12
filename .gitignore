@@ -4,3 +4,6 @@
 /build
 /dist/
 /nbproject/private/
+/nbdist/
+/nbactions.xml
+/.nb-gradle/
