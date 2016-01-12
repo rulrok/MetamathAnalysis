@@ -60,7 +60,7 @@ Label               = [a-zA-Z0-9_.-]+
 /*
   A math symbol token may consist of any combination of the 93 printable 
   standard ascii characters other than $ . */
-MathSymbol          = [a-zA-Z0-9._-]|\`|\~|\!|\@|\#|\%|\^|\&|\*|\(|\)|\-|\_|\=|\+|\[|\]|\{|\}|\;|\:|\'|\"|\,|\.|\<|\>|\/|\?|\\|\|
+MathSymbol          = ([a-zA-Z0-9._-]|\`|\~|\!|\@|\#|\%|\^|\&|\*|\(|\)|\-|\_|\=|\+|\[|\]|\{|\}|\;|\:|\'|\"|\,|\.|\<|\>|\/|\?|\\|\|)+
 
 %%
 /* ------------------------Lexical Rules Section---------------------- */
@@ -76,27 +76,25 @@ MathSymbol          = [a-zA-Z0-9._-]|\`|\~|\!|\@|\#|\%|\^|\&|\*|\(|\)|\-|\_|\=|\
    
 <YYINITIAL> {
    
-    /* Print the token found that was declared in the class sym and then
-       return it. */
-    "${"         { System.out.print(" ${ "); return symbol(sym.SCOPE_START); }
-    "$}"         { System.out.print(" $} "); return symbol(sym.SCOPE_END); }
-    "$("         { System.out.print(" $( "); return symbol(sym.COMMENT_START); }
-    "$)"         { System.out.print(" $) "); return symbol(sym.COMMENT_END); }
-    "$["         { System.out.print(" $[ "); return symbol(sym.INCLUDE_START); }
-    "$]"         { System.out.print(" $] "); return symbol(sym.INCLUDE_END); }
-    "$c"         { System.out.print(" $c "); return symbol(sym.CONSTANT_STMT); }
-    "$v"         { System.out.print(" $v "); return symbol(sym.VARIABLE_STMT); }
-    "$d"         { System.out.print(" $d "); return symbol(sym.DISJUNCT_VARIABLE_STMT); }
-    "$f"         { System.out.print(" $f "); return symbol(sym.VARIABLE_TYPE_HYPOTHESIS_STMT); }
-    "$e"         { System.out.print(" $e "); return symbol(sym.LOGICAL_HYPOTHESIS_STMT); }
-    "$a"         { System.out.print(" $a "); return symbol(sym.AXIOMATIC_ASSERTION_STMT); }
-    "$p"         { System.out.print(" $p "); return symbol(sym.PROVABLE_ASSERTION_STMT); }
-    "$="         { System.out.print(" $= "); return symbol(sym.PROOF_STMT); }
-    "$."         { System.out.print(" $. "); return symbol(sym.STMT_END); }
+    "${"         { return symbol(sym.SCOPE_START); }
+    "$}"         { return symbol(sym.SCOPE_END); }
+    "$("         { return symbol(sym.COMMENT_START); }
+    "$)"         { return symbol(sym.COMMENT_END); }
+    "$["         { return symbol(sym.INCLUDE_START); }
+    "$]"         { return symbol(sym.INCLUDE_END); }
+    "$c"         { return symbol(sym.CONSTANT_STMT); }
+    "$v"         { return symbol(sym.VARIABLE_STMT); }
+    "$d"         { return symbol(sym.DISJUNCT_VARIABLE_STMT); }
+    "$f"         { return symbol(sym.VARIABLE_TYPE_HYPOTHESIS_STMT); }
+    "$e"         { return symbol(sym.LOGICAL_HYPOTHESIS_STMT); }
+    "$a"         { return symbol(sym.AXIOMATIC_ASSERTION_STMT); }
+    "$p"         { return symbol(sym.PROVABLE_ASSERTION_STMT); }
+    "$="         { return symbol(sym.PROOF_STMT); }
+    "$."         { return symbol(sym.STMT_END); }
    
-    {Label}      { System.out.print(yytext()); return symbol(sym.LABEL, yytext()); }
+    {Label}      { return symbol(sym.LABEL, yytext()); }
 
-    {MathSymbol} { System.out.print(yytext()); return symbol(sym.MATH_SYMB, yytext()); }
+    {MathSymbol} { return symbol(sym.MATH_SYMB, yytext()); }
  
    
     /* Don't do anything if whitespace is found */
