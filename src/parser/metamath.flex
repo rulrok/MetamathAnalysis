@@ -52,15 +52,22 @@ import parser.sym;
 LineTerminator      = \r|\n|\r\n
 InputCharacter      = [^\r\n]
 WhiteSpace          = {LineTerminator} | [ \t\f]
-          
-SpecialChar         = \`|\~|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\-|\_|\=|\+|\[|\]|\{|\}|\;|\:|\'|\"|\,|\.|\<|\>|\/|\?|\\|\|
-          
-Label               = [a-zA-Z0-9_.-]+
+
+/* In order to avoid REGEX problems, all special characters are escaped */
+/* We have only removed the '$' character from here to avoid issues with 
+   metamath reserved tokens */
+SpecialChars        = \`|\~|\!|\@|\#|\%|\^|\&|\*|\(|\)|\-|\_|\=|\+|\[|\]|\{|\}|\;|\:|\'|\"|\,|\.|\<|\>|\/|\?|\\|\|
+
+PrintableChars      = ([a-zA-Z0-9]|{SpecialChars})
  
-/*
-  A math symbol token may consist of any combination of the 93 printable 
-  standard ascii characters other than $ . */
-MathSymbol          = ([a-zA-Z0-9._-]|\`|\~|\!|\@|\#|\%|\^|\&|\*|\(|\)|\-|\_|\=|\+|\[|\]|\{|\}|\;|\:|\'|\"|\,|\.|\<|\>|\/|\?|\\|\|)+
+/* A label token consists of any combination of letters, digits, 
+   and the characters hyphen, underscore, and period */          
+Label               = [a-zA-Z0-9\-\_\.]+
+
+/* A math symbol token may consist of any combination of the 93 printable 
+   standard ascii characters other than '$'. */
+/* See metamath book p. 93 for more details. */
+MathSymbol          = {PrintableChars}+
 
 %%
 /* ------------------------Lexical Rules Section---------------------- */
