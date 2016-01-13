@@ -63,5 +63,8 @@ var_declaration     ::=
                     ;
 
 disjoint_var_declaration ::=
-                      DISJUNCT_VARIABLE_STMT math_symb_list STMT_END
+                      DISJUNCT_VARIABLE_STMT MATH_SYMB:m 
+                        {: println("Math symbol found: " + m); :}
+                      math_symb_list STMT_END
+                        {: println("Disjunct declaration finished"); :}
                     ;
