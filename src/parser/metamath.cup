@@ -29,26 +29,38 @@ terminal String     LABEL, MATH_SYMB;
 
 non terminal            initial_symbol;
 non terminal            math_symb_list;
-non terminal            const_declaration, var_declaration;
+non terminal            const_declaration, var_declaration, disjoint_var_declaration;
 
 start with initial_symbol;
 
 /* The grammar */
 
-initial_symbol    ::=  const_declaration
-                    |  var_declaration
+initial_symbol      ::= 
+                      const_declaration
+                    | var_declaration
+                    | disjoint_var_declaration
                     ;
 
-math_symb_list    ::= math_symb_list MATH_SYMB:m {: println("Math symbol found: " + m); :}
-                    | MATH_SYMB:m {: println("Math symbol found: " + m); :}
+math_symb_list      ::=
+                      math_symb_list 
+                      MATH_SYMB:m      {: println("Math symbol found: " + m); :}
+                    | MATH_SYMB:m      {: println("Math symbol found: " + m); :}
                     ;
  
-const_declaration ::= CONSTANT_STMT {: println("Constant declaration found"); :}
-                       math_symb_list
-                      STMT_END     {: println("Constant declaration finished"); :}
-                      ;
+const_declaration   ::= 
+                      CONSTANT_STMT {: println("Constant declaration found"); :}
+                      math_symb_list
+                      STMT_END      {: println("Constant declaration finished"); :}
+                    ;
 
-var_declaration   ::= VARIABLE_STMT  {: println("Variable declaration found"); :}
-                       math_symb_list
-                      STMT_END      {: println("Variable declaration finished"); :}
-                      ;
+var_declaration     ::= 
+                     VARIABLE_STMT  {: println("Variable declaration found"); :}
+                     math_symb_list
+                     STMT_END       {: println("Variable declaration finished"); :}
+                    ;
+
+disjoint_var_declaration ::=
+                    DISJUNCT_VARIABLE_STMT {: println("Disjoint variable restriction found"); :}
+                    math_symb_list
+                    STMT_END
+                    ;
