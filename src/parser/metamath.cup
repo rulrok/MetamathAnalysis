@@ -35,11 +35,14 @@ start with initial_symbol;
 
 /* The grammar */
 
-initial_symbol      ::= 
-                      const_declaration
-                    | var_declaration
-                    | disjoint_var_declaration
+initial_symbol      ::=
+                      const_declaration        initial_symbol
+                    | var_declaration          initial_symbol
+                    | disjoint_var_declaration initial_symbol
                     | empty
+                    ;
+
+empty               ::=
                     ;
 
 math_symb_list      ::=
