@@ -18,10 +18,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             Lexer lexer;
-            lexer = new Lexer(new StringReader("ovolgelb.1 $e |- S = seq 1 ( + , ( ( abs o. - ) o. g ) ) $.\n" +
-"      $( The outer volume is the greatest lower bound on the sum of all\n" +
-"         interval coverings of ` A ` .  (Contributed by Mario Carneiro,\n" +
-"         15-Jun-2014.) $)"));
+            lexer = new Lexer(new StringReader("$[ ...filename $]"));
 
             /* Below there is a simple test for analysing the lexer returned 
                tokens. Just uncomment it out. */
