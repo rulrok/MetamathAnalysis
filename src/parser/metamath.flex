@@ -26,6 +26,7 @@ import parser.sym;
   scanner actions.  
 */
 %{   
+    private String string_found = "";
     /* To create a new java_cup.runtime.Symbol with information about
        the current token, the token will have no value in this
        case. */
@@ -69,6 +70,8 @@ Label               = [a-zA-Z0-9\-\_\.]+
 /* See metamath book p. 93 for more details. */
 MathSymbol          = {PrintableChars}+
 
+%state STRING
+
 %%
 /* ------------------------Lexical Rules Section---------------------- */
    
@@ -98,16 +101,25 @@ MathSymbol          = {PrintableChars}+
     "$p"         { return symbol(sym.PROVABLE_ASSERTION_STMT); }
     "$="         { return symbol(sym.PROOF_STMT); }
     "$."         { return symbol(sym.STMT_END); }
-   
-    {Label}      { return symbol(sym.LABEL, yytext()); }
 
-    {MathSymbol} { return symbol(sym.MATH_SYMB, yytext()); }
- 
+    /* Since labels are a subset of math symbols (in terms of regex), we need
+        to change to a state where we will lookahead and see if there are any
+        $p, $a, $e, or $f symbol. That will tell us when we have found a LABEL
+        or MATH_SYMB */
+    {MathSymbol} { string_found = yytext(); yybegin(STRING); }
    
     /* Don't do anything if whitespace is found */
     {WhiteSpace}       { /* just skip what was found, do nothing */ }   
 }
 
+<STRING> {
+
+    {WhiteSpace}  { /* just skip what was found, do nothing */ } 
+
+    \$(e|f|a|p)   { yypushback(2); yybegin(YYINITIAL); return symbol(sym.LABEL, string_found); }  
+
+    .             { yypushback(1); yybegin(YYINITIAL); return symbol(sym.MATH_SYMB, string_found); }
+}
 
 /* No token was found for the input so through an error.  Print out an
    Illegal character message with the illegal character that was found. */
