@@ -27,6 +27,9 @@ import parser.sym;
 */
 %{   
     private String string_found = "";
+
+    private StringBuilder string_builder = new StringBuilder();
+
     /* To create a new java_cup.runtime.Symbol with information about
        the current token, the token will have no value in this
        case. */
@@ -70,7 +73,7 @@ Label               = [a-zA-Z0-9\-\_\.]+
 /* See metamath book p. 93 for more details. */
 MathSymbol          = {PrintableChars}+
 
-%state STRING
+%state STRING, PROOF, COMPACT_PROOF
 
 %%
 /* ------------------------Lexical Rules Section---------------------- */
@@ -99,7 +102,7 @@ MathSymbol          = {PrintableChars}+
     "$e"         { return symbol(sym.LOGICAL_HYPOTHESIS_STMT); }
     "$a"         { return symbol(sym.AXIOMATIC_ASSERTION_STMT); }
     "$p"         { return symbol(sym.PROVABLE_ASSERTION_STMT); }
-    "$="         { return symbol(sym.PROOF_STMT); }
+    "$="         { yybegin(PROOF); return symbol(sym.PROOF_STMT); }
     "$."         { return symbol(sym.STMT_END); }
 
     /* Since labels are a subset of math symbols (in terms of regex), we need
@@ -119,6 +122,26 @@ MathSymbol          = {PrintableChars}+
     \$(e|f|a|p)   { yypushback(2); yybegin(YYINITIAL); return symbol(sym.LABEL, string_found); }  
 
     .             { yypushback(1); yybegin(YYINITIAL); return symbol(sym.MATH_SYMB, string_found); }
+}
+
+<PROOF> {
+
+    {WhiteSpace}  { /* just skip what was found, do nothing */ } 
+
+    "("           { return symbol(sym.LPARENT); }
+
+    ")"           { yybegin(COMPACT_PROOF); string_builder.setLength(0); return symbol(sym.RPARENT); }
+
+    {Label}       { return symbol(sym.LABEL,yytext()); }
+
+    "$."          { yybegin(YYINITIAL); return symbol(sym.STMT_END); }
+
+    <COMPACT_PROOF> {
+        {WhiteSpace}  { /* just skip what was found, do nothing */ }
+        {Label}       { string_builder.append(yytext()); }
+        "$."          { yybegin(PROOF); yypushback(2); return symbol(sym.COMPACT_PROOF, string_builder.toString()); }
+    }
+
 }
 
 /* No token was found for the input so through an error.  Print out an
