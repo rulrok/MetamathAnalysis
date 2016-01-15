@@ -32,7 +32,7 @@ non terminal    initial_symbol, empty;
 non terminal    math_symb_list, label_list;
 non terminal    const_declaration, var_declaration, disjoint_var_declaration;
 non terminal    var_type_hypothesis_declaration, logical_hypothesis_declaration;
-non terminal    axiomatic_declaration, theorem_declaration, proof_declaration;
+non terminal    axiomatic_declaration, theorem_declaration, proof_declaration, proof_labels;
 non terminal    comment_section, include_section, scope_section;
 
 start with initial_symbol;
@@ -149,8 +149,13 @@ proof_declaration   ::=
                       label_list
                     | PROOF_STMT
                         {: println("Compact proof format"); :}
-                      LPARENT label_list RPARENT COMPACT_PROOF:p
+                      LPARENT proof_labels RPARENT COMPACT_PROOF:p
                         {: println("Compact proof found: " + p); :}
+                    ;
+
+proof_labels        ::=
+                      label_list
+                    | empty
                     ;
 
 comment_section     ::=
