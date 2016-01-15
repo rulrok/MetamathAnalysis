@@ -31,6 +31,7 @@ non terminal    initial_symbol, empty;
 non terminal    math_symb_list;
 non terminal    const_declaration, var_declaration, disjoint_var_declaration;
 non terminal    var_type_hypothesis_declaration, logical_hypothesis_declaration;
+non terminal    axiomatic_declaration;
 
 start with initial_symbol;
 
@@ -42,6 +43,7 @@ initial_symbol      ::=
                     | disjoint_var_declaration        initial_symbol
                     | var_type_hypothesis_declaration initial_symbol
                     | logical_hypothesis_declaration  initial_symbol
+                    | axiomatic_declaration           initial_symbol
                     | empty
                     ;
 
@@ -91,4 +93,21 @@ logical_hypothesis_declaration ::=
                       math_symb_list
                       STMT_END
                         {: println("Variable hypothesis declaration finished"); :}
+                    ;
+
+axiomatic_declaration ::=
+                      LABEL:l
+                        {: println("label '" + l + "' found."); :}
+                      AXIOMATIC_ASSERTION_STMT
+                        {: println("Axiomatic declaration started"); :}
+                      MATH_SYMB:m math_symb_list
+                        {: 
+                           if (m.equals("|-")){
+                               println("Axiom (ax-) or definition (df-) found");
+                           } else {
+                               println("Syntax construction found");
+                           }
+                        :}
+                      STMT_END
+                        {: println("Axiomatic declaration finished"); :}
                     ;
