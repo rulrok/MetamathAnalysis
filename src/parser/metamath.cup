@@ -18,7 +18,7 @@ scan with {: return lexer.next_token(); :};
 /* Terminals (tokens returned by the scanner). */
 
 terminal            LPARENT, RPARENT;
-terminal            SCOPE_START, SCOPE_END, COMMENT_START, COMMENT_END;
+terminal            SCOPE_START, SCOPE_END;
 terminal            INCLUDE_START, INCLUDE_END;
 terminal            CONSTANT_STMT, VARIABLE_STMT;
 terminal            DISJUNCT_VARIABLE_STMT, VARIABLE_TYPE_HYPOTHESIS_STMT;
@@ -33,7 +33,7 @@ non terminal    math_symb_list, label_list;
 non terminal    const_declaration, var_declaration, disjoint_var_declaration;
 non terminal    var_type_hypothesis_declaration, logical_hypothesis_declaration;
 non terminal    axiomatic_declaration, theorem_declaration, proof_declaration, proof_labels;
-non terminal    comment_section, include_section, scope_section;
+non terminal    include_section, scope_section;
 
 start with initial_symbol;
 
@@ -47,7 +47,6 @@ initial_symbol      ::=
                     | logical_hypothesis_declaration    initial_symbol
                     | axiomatic_declaration             initial_symbol
                     | theorem_declaration               initial_symbol
-                    | comment_section                   initial_symbol
                     | include_section                   initial_symbol
                     | scope_section                     initial_symbol
                     | empty
@@ -156,12 +155,6 @@ proof_declaration   ::=
 proof_labels        ::=
                       label_list
                     | empty
-                    ;
-
-comment_section     ::=
-                      COMMENT_START 
-                        {: println("Comment found. Ignoring it. "); :}
-                      COMMENT_END
                     ;
 
 include_section     ::=

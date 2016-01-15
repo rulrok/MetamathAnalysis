@@ -92,8 +92,8 @@ MathSymbol          = {PrintableChars}+
     /* Blocks syntax */
     "${"         { return symbol(sym.SCOPE_START); }
     "$}"         { return symbol(sym.SCOPE_END); }
-    "$("         { yybegin(COMMENT); return symbol(sym.COMMENT_START); }
-    "$["         { yybegin(INCLUDE); return symbol(sym.INCLUDE_START); }
+    "$("         { yybegin(COMMENT); }
+    "$["         { yybegin(INCLUDE); }
 
     /* non-labeled declarations */
     "$c"         { return symbol(sym.CONSTANT_STMT); }
@@ -152,7 +152,7 @@ MathSymbol          = {PrintableChars}+
 
 <COMMENT> {
     {WhiteSpace}  { /* just skip what was found, do nothing */ }
-    "$)"          { yybegin(YYINITIAL); return symbol(sym.COMMENT_END); }
+    "$)"          { yybegin(YYINITIAL); }
     .             { /* Do nothing */ }
 }
 
