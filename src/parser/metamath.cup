@@ -33,7 +33,7 @@ non terminal    math_symb_list, label_list;
 non terminal    const_declaration, var_declaration, disjoint_var_declaration;
 non terminal    var_type_hypothesis_declaration, logical_hypothesis_declaration;
 non terminal    axiomatic_declaration, theorem_declaration, proof_declaration;
-non terminal    comment_section, include_section;
+non terminal    comment_section, include_section, scope_section;
 
 start with initial_symbol;
 
@@ -49,6 +49,7 @@ initial_symbol      ::=
                     | theorem_declaration               initial_symbol
                     | comment_section                   initial_symbol
                     | include_section                   initial_symbol
+                    | scope_section                     initial_symbol
                     | empty
                     ;
 
@@ -155,4 +156,10 @@ include_section     ::=
                       INCLUDE_START
                         {: println("Include file section found. Doing nothing"); :}
                       INCLUDE_END
+                    ;
+
+scope_section       ::=
+                      SCOPE_START
+                        {: println("New scope found. Doing nothing for now"); :}
+                      SCOPE_END
                     ;
