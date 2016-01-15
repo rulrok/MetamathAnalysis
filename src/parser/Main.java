@@ -18,42 +18,42 @@ public class Main {
     public static void main(String[] args) {
         try {
             Lexer lexer;
-            lexer = new Lexer(new StringReader("ovolgelb $p |- ( ( A C_ RR /\\ ( vol* ` A ) e. RR /\\ B e. RR+ ) ->\n" +
-"              E. g e. ( ( <_ i^i ( RR X. RR ) ) ^m NN )\n" +
-"                ( A C_ U. ran ( (,) o. g ) /\\\n" +
-"                sup ( ran S , RR* , < ) <_ ( ( vol* ` A ) + B ) ) ) $=\n" +
-"        ( vy vx cr wss wcel cxr clt cle wbr wa cn wi wral syl wceq cfv crp cioo\n" +
-"        covol w3a cv ccom crn cuni caddc co csup wn cxp cmap wrex simp2 ltaddrp\n" +
-"        simp3 syl2anc wb rpre readdcl ltnle mpbid cabs cmin cseq crab ccnv eqid\n" +
-"        c1 ovolval 3ad2ant1 breq2d ssrab2 rexr infmxrgelb sylancr eqeq1 supeq1i\n" +
-"        rneqi eqeq2i syl6bbr anbi2d rexbidv ralrab ralcom r19.23v ralbii imbi1i\n" +
-"        cin ancom impexp bitri cc0 cpnf cico reex xpex inex2 elmap ovolsf sylbi\n" +
-"        wf nnex frn icossxr syl6ss supxrcl breq2 imbi2d ceqsralv syl5bb ralbiia\n" +
-"        3bitr3i syl6rbb bitr4d rexanali sylibr xrltnle sylbird syl2anr reximdva\n" +
-"        mtbid xrltle anim2d mpd ) AHIZAUDUAZHJZBUBJZUEZAUCDUFZUGUHUIIZYJBUJUKZC\n" +
-"        UHZKLULZMNZUMZOZDMHHUNZWLZPUOUKZUPZYOYRYPMNZOZDUUDUPYMYOYSQZDUUDRZUMUUE\n" +
-"        YMYPYJMNZUUIYMYJYPLNZUUJUMZYMYKYLUUKYIYKYLUQZYIYKYLUSZYJBURUTYMYKYPHJZU\n" +
-"        UKUULVAUUMYMYKBHJZUUOUUMYMYLUUPUUNBVBSYJBVCUTZYJYPVDUTVEYMUUJYPYOFUFZUJ\n" +
-"        VFVGUGYNUGZVLVHZUHZKLULZTZOZDUUDUPZFKVIZKLVJULZMNZUUIYMYJUVGYPMYIYKYJUV\n" +
-"        GTYLFADUVFUVFVKVMVNVOYMUVHYPGUFZMNZGUVFRZUUIYMUVFKIYPKJZUVHUVKVAUVEFKVP\n" +
-"        YMUUOUVLUUQYPVQSZGUVFYPVRVSUVKYOUVIYRTZOZDUUDUPZUVJQZGKRZUUIUVEUVPUVJGF\n" +
-"        KUURUVITZUVDUVODUUDUVSUVCUVNYOUVSUVCUVIUVBTUVNUURUVIUVBVTYRUVBUVIKYQUVA\n" +
-"        LCUUTEWBWAWCWDWEWFWGUVOUVJQZDUUDRZGKRUVTGKRZDUUDRUVRUUIUVTGDKUUDWHUWAUV\n" +
-"        QGKUVOUVJDUUDWIWJUWBUUHDUUDUWBUVNYOUVJQZQZGKRZYNUUDJZUUHUVTUWDGKUVTUVNY\n" +
-"        OOZUVJQUWDUVOUWGUVJYOUVNWMWKUVNYOUVJWNWOWJUWFYRKJZUWEUUHVAUWFYQKIUWHUWF\n" +
-"        YQWPWQWRUKZKUWFPUWICXEZYQUWIIUWFPUUCYNXEUWJUUCPYNUUBMHHWSWSWTXAXFXBCYNU\n" +
-"        USUUSVKEXCXDPUWICXGSWPWQXHXIYQXJSZUWCUUHGYRKUVNUVJYSYOUVIYRYPMXKXLXMSXN\n" +
-"        XOXPWOXQXRYEYOYSDUUDXSXTYMUUAUUGDUUDYMUWFOYTUUFYOUWFUWHUVLYTUUFQYMUWKUV\n" +
-"        MUWHUVLOYTYRYPLNUUFYRYPYAYRYPYFYBYCYGYDYH $."));
+            lexer = new Lexer(new StringReader("opnrebl $p |- ( A e. ( topGen ` ran (,) ) <-> ( A C_ RR /\\ A. x e. A E. y\n" +
+"    e. RR+ ( ( x - y ) (,) ( x + y ) ) C_ A ) ) $=\n" +
+"      cA cioo crn ctg cfv wcel cA cr wss vx cv vy cv cabs cmin ccom cr cr cxp\n" +
+"      cres cbl cfv co cA wss vy crp wrex vx cA wral wa cA cr wss vx cv vy cv\n" +
+"      cmin co vx cv vy cv caddc co cioo co cA wss vy crp wrex vx cA wral wa\n" +
+"      cabs cmin ccom cr cr cxp cres cr cxmt cfv wcel cA cioo crn ctg cfv wcel\n" +
+"      cA cr wss vx cv vy cv cabs cmin ccom cr cr cxp cres cbl cfv co cA wss vy\n" +
+"      crp wrex vx cA wral wa wb cabs cmin ccom cr cr cxp cres cabs cmin ccom cr\n" +
+"      cr cxp cres eqid rexmet vx vy cA cabs cmin ccom cr cr cxp cres cioo crn\n" +
+"      ctg cfv cr cabs cmin ccom cr cr cxp cres cabs cmin ccom cr cr cxp cres\n" +
+"      cmopn cfv cabs cmin ccom cr cr cxp cres eqid cabs cmin ccom cr cr cxp\n" +
+"      cres cmopn cfv eqid tgioo elmopn2 ax-mp cA cr wss vx cv vy cv cabs cmin\n" +
+"      ccom cr cr cxp cres cbl cfv co cA wss vy crp wrex vx cA wral vx cv vy cv\n" +
+"      cmin co vx cv vy cv caddc co cioo co cA wss vy crp wrex vx cA wral cA cr\n" +
+"      wss vx cv vy cv cabs cmin ccom cr cr cxp cres cbl cfv co cA wss vy crp\n" +
+"      wrex vx cv vy cv cmin co vx cv vy cv caddc co cioo co cA wss vy crp wrex\n" +
+"      vx cA cA cr wss vx cv cA wcel wa vx cv cr wcel vx cv vy cv cabs cmin ccom\n" +
+"      cr cr cxp cres cbl cfv co cA wss vy crp wrex vx cv vy cv cmin co vx cv vy\n" +
+"      cv caddc co cioo co cA wss vy crp wrex wb cA cr vx cv ssel2 vx cv cr wcel\n" +
+"      vx cv vy cv cabs cmin ccom cr cr cxp cres cbl cfv co cA wss vx cv vy cv\n" +
+"      cmin co vx cv vy cv caddc co cioo co cA wss vy crp vx cv cr wcel vy cv\n" +
+"      crp wcel wa vx cv vy cv cabs cmin ccom cr cr cxp cres cbl cfv co vx cv vy\n" +
+"      cv cmin co vx cv vy cv caddc co cioo co cA vy cv crp wcel vx cv cr wcel\n" +
+"      vy cv cr wcel vx cv vy cv cabs cmin ccom cr cr cxp cres cbl cfv co vx cv\n" +
+"      vy cv cmin co vx cv vy cv caddc co cioo co wceq vy cv rpre vx cv vy cv\n" +
+"      cabs cmin ccom cr cr cxp cres cabs cmin ccom cr cr cxp cres eqid bl2ioo\n" +
+"      sylan2 sseq1d rexbidva syl ralbidva pm5.32i bitri $."));
 
             /* Below there is a simple test for analysing the lexer returned 
                tokens. Just uncomment it out. */
-            Symbol next_token;
-            while ((next_token = lexer.next_token()).sym != 0) {
-                System.out.println(sym.terminalNames[next_token.sym] + " ("+ next_token.value + ")");
-                
-            }
-            exit(0);
+//            Symbol next_token;
+//            while ((next_token = lexer.next_token()).sym != 0) {
+//                System.out.println(sym.terminalNames[next_token.sym] + " ("+ next_token.value + ")");
+//                
+//            }
+//            exit(0);
 
             parser p = new parser(lexer);
 
