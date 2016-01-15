@@ -18,7 +18,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             Lexer lexer;
-            lexer = new Lexer(new StringReader("label-reuel $f wff P $."));
+            lexer = new Lexer(new StringReader(" syl3c.1 $e |- ( ph -> ps ) $."));
 
             /* Below there is a simple test for analysing the lexer returned 
                tokens. Just uncomment it out. */

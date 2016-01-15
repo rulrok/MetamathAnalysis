@@ -27,10 +27,10 @@ terminal String     LABEL, MATH_SYMB;
 
 /* Non terminals */
 
-non terminal       initial_symbol, empty;
-non terminal       math_symb_list;
-non terminal       const_declaration, var_declaration, disjoint_var_declaration;
-non terminal       var_type_hypothesis_declaration;
+non terminal    initial_symbol, empty;
+non terminal    math_symb_list;
+non terminal    const_declaration, var_declaration, disjoint_var_declaration;
+non terminal    var_type_hypothesis_declaration, logical_hypothesis_declaration;
 
 start with initial_symbol;
 
@@ -41,6 +41,7 @@ initial_symbol      ::=
                     | var_declaration                 initial_symbol
                     | disjoint_var_declaration        initial_symbol
                     | var_type_hypothesis_declaration initial_symbol
+                    | logical_hypothesis_declaration  initial_symbol
                     | empty
                     ;
 
@@ -78,6 +79,16 @@ var_type_hypothesis_declaration ::=
                       VARIABLE_TYPE_HYPOTHESIS_STMT
                       MATH_SYMB:constant MATH_SYMB:variable
                         {: println("Variable " + variable + " of type " + constant + " found."); :}
+                      STMT_END
+                        {: println("Variable hypothesis declaration finished"); :}
+                    ;
+
+logical_hypothesis_declaration ::=
+                      LABEL:l
+                        {: println("label '" + l + "' found."); :}
+                      LOGICAL_HYPOTHESIS_STMT
+                        {: println("Logical hypothesis declaration started"); :}
+                      math_symb_list
                       STMT_END
                         {: println("Variable hypothesis declaration finished"); :}
                     ;
