@@ -73,7 +73,7 @@ Label               = [a-zA-Z0-9\-\_\.]+
 /* See metamath book p. 93 for more details. */
 MathSymbol          = {PrintableChars}+
 
-%state STRING, PROOF, COMPACT_PROOF, COMMENT, INCLUDE, SCOPE
+%state STRING, PROOF, COMPACT_PROOF, COMMENT, INCLUDE
 
 %%
 /* ------------------------Lexical Rules Section---------------------- */
@@ -90,7 +90,8 @@ MathSymbol          = {PrintableChars}+
 <YYINITIAL> {
    
     /* Blocks syntax */
-    "${"         { yybegin(SCOPE); return symbol(sym.SCOPE_START); }
+    "${"         { return symbol(sym.SCOPE_START); }
+    "$}"         { return symbol(sym.SCOPE_END); }
     "$("         { yybegin(COMMENT); return symbol(sym.COMMENT_START); }
     "$["         { yybegin(INCLUDE); return symbol(sym.INCLUDE_START); }
 
@@ -158,12 +159,6 @@ MathSymbol          = {PrintableChars}+
 <INCLUDE> {
     {WhiteSpace}  { /* just skip what was found, do nothing */ }
     "$]"          { yybegin(YYINITIAL); return symbol(sym.INCLUDE_END); }
-    .             { /* Do nothing */ }
-}
-
-<SCOPE> {
-    {WhiteSpace}  { /* just skip what was found, do nothing */ }
-    "$}"          { yybegin(YYINITIAL); return symbol(sym.SCOPE_END); }
     .             { /* Do nothing */ }
 }
 

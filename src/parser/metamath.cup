@@ -167,6 +167,8 @@ include_section     ::=
 
 scope_section       ::=
                       SCOPE_START
-                        {: println("New scope found. Doing nothing for now"); :}
+                        {: println("-> New scope found. Doing nothing for now"); :}
+                        initial_symbol
+                        {: println("<- End of scope found. Doing nothing for now"); :}
                       SCOPE_END
                     ;
