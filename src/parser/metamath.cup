@@ -71,17 +71,23 @@ label_list          ::=
                     ;
  
 const_declaration   ::= 
-                      CONSTANT_STMT math_symb_list STMT_END
+                      CONSTANT_STMT
+                        {: println("Constant declaration started"); :}
+                      math_symb_list STMT_END
                         {: println("Constant declaration finished"); :}
                     ;
 
 var_declaration     ::= 
-                      VARIABLE_STMT math_symb_list STMT_END
+                      VARIABLE_STMT
+                        {: println("Constant declaration started"); :}
+                      math_symb_list STMT_END
                         {: println("Variable declaration finished"); :}
                     ;
 
 disjoint_var_declaration ::=
-                      DISJUNCT_VARIABLE_STMT MATH_SYMB:m 
+                      DISJUNCT_VARIABLE_STMT
+                        {: println("Disjunct declaration started"); :}
+                      MATH_SYMB:m 
                         {: println("Math symbol found: " + m); :}
                       math_symb_list STMT_END
                         {: println("Disjunct declaration finished"); :}
@@ -92,6 +98,7 @@ var_type_hypothesis_declaration ::=
                       LABEL:l
                         {: println("label '" + l + "' found."); :}
                       VARIABLE_TYPE_HYPOTHESIS_STMT
+                        {: println("Variable hypothesis declaration started"); :}
                       MATH_SYMB:constant MATH_SYMB:variable
                         {: println("Variable " + variable + " of type " + constant + " found."); :}
                       STMT_END
