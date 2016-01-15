@@ -27,18 +27,20 @@ terminal String     LABEL, MATH_SYMB;
 
 /* Non terminals */
 
-non terminal            initial_symbol, empty;
-non terminal            math_symb_list;
-non terminal            const_declaration, var_declaration, disjoint_var_declaration;
+non terminal       initial_symbol, empty;
+non terminal       math_symb_list;
+non terminal       const_declaration, var_declaration, disjoint_var_declaration;
+non terminal       var_type_hypothesis_declaration;
 
 start with initial_symbol;
 
 /* The grammar */
 
 initial_symbol      ::=
-                      const_declaration        initial_symbol
-                    | var_declaration          initial_symbol
-                    | disjoint_var_declaration initial_symbol
+                      const_declaration               initial_symbol
+                    | var_declaration                 initial_symbol
+                    | disjoint_var_declaration        initial_symbol
+                    | var_type_hypothesis_declaration initial_symbol
                     | empty
                     ;
 
@@ -67,4 +69,15 @@ disjoint_var_declaration ::=
                         {: println("Math symbol found: " + m); :}
                       math_symb_list STMT_END
                         {: println("Disjunct declaration finished"); :}
+                    ;
+
+/* See Metamath book p. 105 for references */
+var_type_hypothesis_declaration ::=
+                      LABEL:l
+                        {: println("label '" + l + "' found."); :}
+                      VARIABLE_TYPE_HYPOTHESIS_STMT
+                      MATH_SYMB:constant MATH_SYMB:variable
+                        {: println("Variable " + variable + " of type " + constant + " found."); :}
+                      STMT_END
+                        {: println("Variable hypothesis declaration finished"); :}
                     ;
