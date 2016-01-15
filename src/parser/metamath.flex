@@ -73,7 +73,7 @@ Label               = [a-zA-Z0-9\-\_\.]+
 /* See metamath book p. 93 for more details. */
 MathSymbol          = {PrintableChars}+
 
-%state STRING, PROOF, COMPACT_PROOF
+%state STRING, PROOF, COMPACT_PROOF, COMMENT
 
 %%
 /* ------------------------Lexical Rules Section---------------------- */
@@ -91,7 +91,7 @@ MathSymbol          = {PrintableChars}+
    
     "${"         { return symbol(sym.SCOPE_START); }
     "$}"         { return symbol(sym.SCOPE_END); }
-    "$("         { return symbol(sym.COMMENT_START); }
+    "$("         { yybegin(COMMENT); return symbol(sym.COMMENT_START); }
     "$)"         { return symbol(sym.COMMENT_END); }
     "$["         { return symbol(sym.INCLUDE_START); }
     "$]"         { return symbol(sym.INCLUDE_END); }
@@ -142,6 +142,12 @@ MathSymbol          = {PrintableChars}+
         "$."          { yybegin(PROOF); yypushback(2); return symbol(sym.COMPACT_PROOF, string_builder.toString()); }
     }
 
+}
+
+<COMMENT> {
+    {WhiteSpace}  { /* just skip what was found, do nothing */ }
+    "$)"          { yybegin(YYINITIAL); return symbol(sym.COMMENT_END); }
+    .             { /* Do nothing */ }
 }
 
 /* No token was found for the input so through an error.  Print out an
