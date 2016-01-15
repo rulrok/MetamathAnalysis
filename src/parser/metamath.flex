@@ -89,15 +89,17 @@ MathSymbol          = {PrintableChars}+
    
 <YYINITIAL> {
    
+    /* Blocks syntax */
     "${"         { yybegin(SCOPE); return symbol(sym.SCOPE_START); }
-    "$}"         { return symbol(sym.SCOPE_END); }
     "$("         { yybegin(COMMENT); return symbol(sym.COMMENT_START); }
-    "$)"         { return symbol(sym.COMMENT_END); }
     "$["         { yybegin(INCLUDE); return symbol(sym.INCLUDE_START); }
-    "$]"         { return symbol(sym.INCLUDE_END); }
+
+    /* non-labeled declarations */
     "$c"         { return symbol(sym.CONSTANT_STMT); }
     "$v"         { return symbol(sym.VARIABLE_STMT); }
     "$d"         { return symbol(sym.DISJUNCT_VARIABLE_STMT); }
+
+    /* labeled declarations */
     "$f"         { return symbol(sym.VARIABLE_TYPE_HYPOTHESIS_STMT); }
     "$e"         { return symbol(sym.LOGICAL_HYPOTHESIS_STMT); }
     "$a"         { return symbol(sym.AXIOMATIC_ASSERTION_STMT); }
@@ -108,13 +110,14 @@ MathSymbol          = {PrintableChars}+
     /* Since labels are a subset of math symbols (in terms of regex), we need
         to change to a state where we will lookahead and see if there are any
         $p, $a, $e, or $f symbol. That will tell us when we have found a LABEL
-        or MATH_SYMB */
+        or a MATH_SYMB */
     {MathSymbol} { string_found = yytext(); yybegin(STRING); }
    
     /* Don't do anything if whitespace is found */
     {WhiteSpace}       { /* just skip what was found, do nothing */ }   
 }
 
+/* The STRING state here means that either a label or math symbol were found */
 <STRING> {
 
     {WhiteSpace}  { /* just skip what was found, do nothing */ } 
@@ -124,18 +127,20 @@ MathSymbol          = {PrintableChars}+
     .             { yypushback(1); yybegin(YYINITIAL); return symbol(sym.MATH_SYMB, string_found); }
 }
 
+/* The PROOF section refers to all code after a $= token */
 <PROOF> {
 
     {WhiteSpace}  { /* just skip what was found, do nothing */ } 
 
+    /* Round brackets aren't present when the proof ins't in compact form */
     "("           { return symbol(sym.LPARENT); }
-
     ")"           { yybegin(COMPACT_PROOF); string_builder.setLength(0); return symbol(sym.RPARENT); }
 
     {Label}       { return symbol(sym.LABEL,yytext()); }
 
     "$."          { yybegin(YYINITIAL); return symbol(sym.STMT_END); }
 
+    /* Sub-state */
     <COMPACT_PROOF> {
         {WhiteSpace}  { /* just skip what was found, do nothing */ }
         {Label}       { string_builder.append(yytext()); }
