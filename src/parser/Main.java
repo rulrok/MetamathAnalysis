@@ -5,6 +5,7 @@
  */
 package parser;
 
+import java.io.FileReader;
 import java.io.StringReader;
 import static java.lang.System.exit;
 import java_cup.runtime.Symbol;
@@ -18,20 +19,8 @@ public class Main {
     public static void main(String[] args) {
         try {
             Lexer lexer;
-            lexer = new Lexer(new StringReader("  ${\n" +
-"    imp.1 $e |- ( ph -> ( ps -> ch ) ) $.\n" +
-"    $( Importation inference.  (Contributed by NM, 5-Aug-1993.)  (Proof\n" +
-"       shortened by Eric Schmidt, 22-Dec-2006.) $)\n" +
-"    imp $p |- ( ( ph /\\ ps ) -> ch ) $=\n" +
-"      ( wa wn wi df-an impi sylbi ) ABEABFGFCABHABCDIJ $.\n" +
-"      $( [22-Dec-2006] $) $( [5-Aug-1993] $)\n" +
-"\n" +
-"    $( Importation inference with commuted antecedents.  (Contributed by NM,\n" +
-"       25-May-2005.) $)\n" +
-"    impcom $p |- ( ( ps /\\ ph ) -> ch ) $=\n" +
-"      ( com12 imp ) BACABCDEF $.\n" +
-"      $( [25-May-2005] $)\n" +
-"  $}"));
+            lexer = new Lexer(new FileReader("set.mm"));
+//            lexer = new Lexer(new StringReader(""));
 
             /* Below there is a simple test for analysing the lexer returned 
                tokens. Just uncomment it out. */
