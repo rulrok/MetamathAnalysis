@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="metamath parser" default="all" basedir=".">
-    <property name="src.dir" value="."/>
-    <property name="build.dir" value="../build"/>
+<project name="metamath parser" default="none" basedir="..">
+    <property name="src.dir" value="src"/>
+    <property name="lib.dir" value="lib" />
+
+    <property name="build.dir" value="build"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
     <property name="jar.dir" value="${build.dir}/jar"/>
-    <property name="lib.dir" value="lib" />
+    
     <property name="parser.dir" value="${src.dir}/parser" />
 
-    <target name="flex">
-        <java jar="${lib.dir}/jflex-1.6.1.jar">
-            <arg value="metamath.flex" />
+    <target name="flex" description="Parses the .flex file">
+        <java jar="${lib.dir}/jflex-1.6.1.jar" fork="true">
+            <arg line="-d ${parser.dir}"/>
+            <arg value="${parser.dir}/metamath.flex" />
         </java>
     </target>
     
-    <target name="cup">
-        <java jar="${lib.dir}/java-cup-11b.jar">
-            <arg value="metamath.cup"/>
+    <target name="cup" description="Parses the .cup file">
+        <java jar="${lib.dir}/java-cup-11b.jar" >
+            <arg line="-destdir ${parser.dir}"/>
+            <arg line="-interface"/>
+            <arg value="${parser.dir}/metamath.cup"/>
         </java>
     </target>
 </project>
