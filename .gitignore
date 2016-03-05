@@ -8,3 +8,4 @@
 /nbactions.xml
 /.nb-gradle/
 *.java~
+*.mm
