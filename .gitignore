@@ -7,5 +7,6 @@
 /nbdist/
 /nbactions.xml
 /.nb-gradle/
+/db/*
 *.java~
 *.mm
