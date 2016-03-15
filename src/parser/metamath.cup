@@ -1,13 +1,27 @@
 package parser;
 import java_cup.runtime.*;
+import Graph.*;
+import java.util.*;
+import parser.sym.*;
 
 parser code 
 {:
   Lexer lexer;
 
+  IGraph graph = new Graph("db/metamath");
+
+  Stack<Integer> symStack = new Stack<>();
+
   public parser (Lexer lexer) { this.lexer = lexer; } 
 
   public void println(Object o) { System.out.println(o); }
+
+  public static void verifyStackConsistency(Integer expected, Integer actual) {
+    if (!Objects.equals(expected, actual)){
+        System.err.println("The parser symbol stack is inconsistent. Exiting the parser...");
+        System.exit(1);
+    }
+ }
 
 
 :}; /* End of 'parser code' section */
@@ -72,24 +86,30 @@ label_list          ::=
 const_declaration   ::= 
                       CONSTANT_STMT
                         {: println("Constant declaration started"); :}
+                        {: symStack.push(sym.CONSTANT_STMT); :}
                       math_symb_list STMT_END
                         {: println("Constant declaration finished"); :}
+                        {: verifyStackConsistency(sym.CONSTANT_STMT, symStack.pop()); :}
                     ;
 
 var_declaration     ::= 
                       VARIABLE_STMT
                         {: println("Constant declaration started"); :}
+                        {: symStack.push(sym.VARIABLE_STMT); :}
                       math_symb_list STMT_END
                         {: println("Variable declaration finished"); :}
+                        {: verifyStackConsistency(sym.VARIABLE_STMT, symStack.pop()); :}
                     ;
 
 disjoint_var_declaration ::=
                       DISJUNCT_VARIABLE_STMT
                         {: println("Disjunct declaration started"); :}
+                        {: symStack.push(sym.DISJUNCT_VARIABLE_STMT); :}
                       MATH_SYMB:m 
                         {: println("Math symbol found: " + m); :}
                       math_symb_list STMT_END
                         {: println("Disjunct declaration finished"); :}
+                        {: verifyStackConsistency(sym.DISJUNCT_VARIABLE_STMT, symStack.pop()); :}
                     ;
 
 /* See Metamath book p. 105 for references */
@@ -109,9 +129,11 @@ logical_hypothesis_declaration ::=
                         {: println("label '" + l + "' found."); :}
                       LOGICAL_HYPOTHESIS_STMT
                         {: println("Logical hypothesis declaration started"); :}
+                        {: symStack.push(sym.LOGICAL_HYPOTHESIS_STMT); :}
                       math_symb_list
                       STMT_END
                         {: println("Variable hypothesis declaration finished"); :}
+                        {: verifyStackConsistency(sym.LOGICAL_HYPOTHESIS_STMT, symStack.pop()); :}
                     ;
 
 axiomatic_declaration ::=
@@ -119,6 +141,7 @@ axiomatic_declaration ::=
                         {: println("label '" + l + "' found."); :}
                       AXIOMATIC_ASSERTION_STMT
                         {: println("Axiomatic declaration started"); :}
+                        {: symStack.push(sym.AXIOMATIC_ASSERTION_STMT); :}
                       MATH_SYMB:m math_symb_list
                         {: 
                            if (m.equals("|-")){
@@ -129,6 +152,7 @@ axiomatic_declaration ::=
                         :}
                       STMT_END
                         {: println("Axiomatic declaration finished"); :}
+                        {: verifyStackConsistency(sym.AXIOMATIC_ASSERTION_STMT, symStack.pop()); :}
                     ;
 
 theorem_declaration ::=
@@ -136,10 +160,12 @@ theorem_declaration ::=
                         {: println("label '" + l + "' found."); :}
                       PROVABLE_ASSERTION_STMT
                         {: println("Theorem declaration started"); :}
+                        {: symStack.push(sym.PROVABLE_ASSERTION_STMT); :}
                       MATH_SYMB:m math_symb_list
                       proof_declaration
                       STMT_END
                         {: println("Theorem declaration finished"); :}
+                        {: verifyStackConsistency(sym.PROVABLE_ASSERTION_STMT, symStack.pop()); :}
                     ;
 
 proof_declaration   ::=
