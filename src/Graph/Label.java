@@ -6,5 +6,23 @@ package Graph;
  * @author Reuel
  */
 public enum Label {
-    AXIOM, CONSTANT, HYPOTHESIS, THEOREM, VARIABLE
+
+    AXIOM("Axiom"),
+    CONSTANT("Constant"),
+    HYPOTHESIS("Hypothesis"),
+    THEOREM("Theorem"),
+    VARIABLE("Variable"),
+    UNKNOWN("Unknown");
+
+    private final String name;
+
+    Label(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
 }
