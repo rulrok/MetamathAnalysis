@@ -8,7 +8,6 @@ package Graph;
 import java.util.Map;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
 
 /**
  *
@@ -17,20 +16,21 @@ import org.neo4j.graphdb.Transaction;
 public interface IGraph {
 
     public void StartTransaction();
-    
+
     public void CommitTransaction();
 //    ========
-    public Node addProperty(Node node, String key, String value);
 
-    public Node addLabel(Node node, Label label);
+    public Node addProperty(String nodeName, String key, String value);
+
+    public Node addLabel(String nodeName, String labelName);
 
 //    ========    
-    public Node addNode(Node node);
+    public Node addNode(String node);
 
-    public Node addNode(Node node, Label label);
+    public Node addNode(String nodeName, String labelName);
 
 //    ========
-    public Relationship createRelationship(Node a, Node b);
+    public Relationship createRelationship(String nodeNameSrc, String nodeNameDest);
 
     public Relationship createRelationship(Node a, Node b, Map<String, String> properties);
 }

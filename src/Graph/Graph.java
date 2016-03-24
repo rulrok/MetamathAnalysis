@@ -37,27 +37,27 @@ public class Graph implements IGraph {
     }
 
     @Override
-    public Node addProperty(Node node, String key, String value) {
+    public Node addProperty(String nodeName, String key, String value) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Node addLabel(Node node, Label label) {
+    public Node addLabel(String nodeName, String labelName) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Node addNode(Node node) {
+    public Node addNode(String node) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Node addNode(Node node, Label label) {
+    public Node addNode(String nodeName, String labelName) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Relationship createRelationship(Node a, Node b) {
+    public Relationship createRelationship(String nodeNameSrc, String nodeNameDest) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
