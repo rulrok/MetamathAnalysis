@@ -16,7 +16,8 @@ parser code
 
   public void println(Object o) { System.out.println(o); }
 
-  public static void verifyStackConsistency(Integer expected, Integer actual) {
+  public void verifyStackConsistency(Integer expected) {
+    Integer actual = symStack.peek();
     if (!Objects.equals(expected, actual)){
         System.err.println("The parser symbol stack is inconsistent. Exiting the parser...");
         System.exit(1);
@@ -89,7 +90,7 @@ const_declaration   ::=
                         {: symStack.push(sym.CONSTANT_STMT); :}
                       math_symb_list STMT_END
                         {: println("Constant declaration finished"); :}
-                        {: verifyStackConsistency(sym.CONSTANT_STMT, symStack.pop()); :}
+                        {: verifyStackConsistency(sym.CONSTANT_STMT); :}
                     ;
 
 var_declaration     ::= 
@@ -98,7 +99,7 @@ var_declaration     ::=
                         {: symStack.push(sym.VARIABLE_STMT); :}
                       math_symb_list STMT_END
                         {: println("Variable declaration finished"); :}
-                        {: verifyStackConsistency(sym.VARIABLE_STMT, symStack.pop()); :}
+                        {: verifyStackConsistency(sym.VARIABLE_STMT); :}
                     ;
 
 disjoint_var_declaration ::=
@@ -109,7 +110,7 @@ disjoint_var_declaration ::=
                         {: println("Math symbol found: " + m); :}
                       math_symb_list STMT_END
                         {: println("Disjunct declaration finished"); :}
-                        {: verifyStackConsistency(sym.DISJUNCT_VARIABLE_STMT, symStack.pop()); :}
+                        {: verifyStackConsistency(sym.DISJUNCT_VARIABLE_STMT); :}
                     ;
 
 /* See Metamath book p. 105 for references */
@@ -133,7 +134,7 @@ logical_hypothesis_declaration ::=
                       math_symb_list
                       STMT_END
                         {: println("Variable hypothesis declaration finished"); :}
-                        {: verifyStackConsistency(sym.LOGICAL_HYPOTHESIS_STMT, symStack.pop()); :}
+                        {: verifyStackConsistency(sym.LOGICAL_HYPOTHESIS_STMT); :}
                     ;
 
 axiomatic_declaration ::=
@@ -152,7 +153,7 @@ axiomatic_declaration ::=
                         :}
                       STMT_END
                         {: println("Axiomatic declaration finished"); :}
-                        {: verifyStackConsistency(sym.AXIOMATIC_ASSERTION_STMT, symStack.pop()); :}
+                        {: verifyStackConsistency(sym.AXIOMATIC_ASSERTION_STMT); :}
                     ;
 
 theorem_declaration ::=
@@ -165,7 +166,7 @@ theorem_declaration ::=
                       proof_declaration
                       STMT_END
                         {: println("Theorem declaration finished"); :}
-                        {: verifyStackConsistency(sym.PROVABLE_ASSERTION_STMT, symStack.pop()); :}
+                        {: verifyStackConsistency(sym.PROVABLE_ASSERTION_STMT); :}
                     ;
 
 proof_declaration   ::=
