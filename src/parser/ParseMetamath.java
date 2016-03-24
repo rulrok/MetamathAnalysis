@@ -14,7 +14,7 @@ import java_cup.runtime.Symbol;
  *
  * @author reuel
  */
-public class Main {
+public class ParseMetamath {
 
     public static void main(String[] args) {
         try {
