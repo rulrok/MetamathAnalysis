@@ -25,12 +25,12 @@ public interface IGraph {
     public Node addLabel(String nodeName, String labelName);
 
 //    ========    
-    public Node addNode(String node);
+    public Node addNode(String nodeName);
 
     public Node addNode(String nodeName, String labelName);
 
 //    ========
     public Relationship createRelationship(String nodeNameSrc, String nodeNameDest);
 
-    public Relationship createRelationship(Node a, Node b, Map<String, String> properties);
+    public Relationship createRelationship(Node nodeNameSrc, Node nodeNameDest, Map<String, String> properties);
 }

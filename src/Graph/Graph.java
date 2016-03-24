@@ -38,32 +38,44 @@ public class Graph implements IGraph {
 
     @Override
     public Node addProperty(String nodeName, String key, String value) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("'Added' a new property called '" + key + "' with value '" + value + "' to the node '" + nodeName + "'.");
+        return new FakeNode();
     }
 
     @Override
     public Node addLabel(String nodeName, String labelName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("'Added' a new label called '" + labelName + "' to the node '" + labelName + "'.");
+        return new FakeNode();
     }
 
     @Override
-    public Node addNode(String node) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Node addNode(String nodeName) {
+        System.out.println("'Added' new node called '" + nodeName + "'.");
+        return new FakeNode();
     }
 
     @Override
     public Node addNode(String nodeName, String labelName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("'Added' new node called '" + nodeName + "' with the label '" + labelName + "'.");
+        return new FakeNode();
     }
 
     @Override
     public Relationship createRelationship(String nodeNameSrc, String nodeNameDest) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("'Added' new relationship from '" + nodeNameSrc + "' to '" + nodeNameDest + "'.");
+        return new FakeRelationship();
     }
 
     @Override
-    public Relationship createRelationship(Node a, Node b, Map<String, String> properties) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Relationship createRelationship(Node nodeNameSrc, Node nodeNameDest, Map<String, String> properties) {
+        System.out.println("'Added' new relationship from '" + nodeNameSrc + "' to '" + nodeNameDest + "' with the following properties:");
+        for (Map.Entry<String, String> entry : properties.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            System.out.println("\t" + key + ": " + value);
+
+        }
+        return new FakeRelationship();
     }
 
     private static void registerShutdownHook(final GraphDatabaseService graphDb) {
