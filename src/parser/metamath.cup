@@ -6,23 +6,29 @@ import parser.sym.*;
 
 parser code 
 {:
-  Lexer lexer;
+Lexer lexer;
 
-  IGraph graph = new Graph("db/metamath");
+IGraph graph = new Graph("db/metamath");
 
-  Stack<Integer> symStack = new Stack<>();
+Stack<Integer> symStack = new Stack<>();
 
-  public parser (Lexer lexer) { this.lexer = lexer; } 
+public parser (Lexer lexer) { this.lexer = lexer; } 
 
-  public void println(Object o) { System.out.println(o); }
+public void println(Object o) {
+    //System.out.println(o);
+}
 
-  public void verifyStackConsistency(Integer expected) {
+private void addAxiomNode(String a){
+    graph.addNode(a, Label.AXIOM.toString());
+}
+
+public void verifyStackConsistency(Integer expected) {
     Integer actual = symStack.peek();
     if (!Objects.equals(expected, actual)){
         System.err.println("The parser symbol stack is inconsistent. Exiting the parser...");
         System.exit(1);
     }
- }
+}
 
 
 :}; /* End of 'parser code' section */
@@ -72,9 +78,13 @@ empty               ::=
 
 math_symb_list      ::=
                       math_symb_list MATH_SYMB:m
-                        {: println("Math symbol found: " + m); :}
+                        {:
+                            println("Math symbol found: " + m);
+                        :}
                     | MATH_SYMB:m
-                        {: println("Math symbol found: " + m); :}
+                        {:
+                            println("Math symbol found: " + m); 
+                        :}
                     ;
 
 label_list          ::=
@@ -139,7 +149,11 @@ logical_hypothesis_declaration ::=
 
 axiomatic_declaration ::=
                       LABEL:l
-                        {: println("label '" + l + "' found."); :}
+                        {: 
+                            println("label '" + l + "' found."); 
+                            if (l.startsWith("ax-"))
+                                addAxiomNode(l);
+                        :}
                       AXIOMATIC_ASSERTION_STMT
                         {: println("Axiomatic declaration started"); :}
                         {: symStack.push(sym.AXIOMATIC_ASSERTION_STMT); :}
