@@ -5,8 +5,11 @@ package Graph;
  *
  * @author Reuel
  */
-public enum Label {
+public enum Label implements org.neo4j.graphdb.Label {
 
+    /*
+    Node labels
+    */
     AXIOM("Axiom"),
     CONSTANT("Constant"),
     DEFINITION("Definition"),
@@ -14,6 +17,11 @@ public enum Label {
     SYNTAX_DEFINITION("Syntax definition"),
     THEOREM("Theorem"),
     VARIABLE("Variable"),
+
+    
+    /*
+    General unknown label
+     */
     UNKNOWN("Unknown");
 
     private final String name;
