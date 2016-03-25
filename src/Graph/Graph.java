@@ -62,13 +62,19 @@ public class Graph implements IGraph {
 
     @Override
     public Relationship createRelationship(String nodeNameSrc, String nodeNameDest) {
-        System.out.println("'Added' new relationship from '" + nodeNameSrc + "' to '" + nodeNameDest + "'.");
+        System.out.println("'Added' new relationship (" + nodeNameSrc + ")-->(" + nodeNameDest + ").");
         return new FakeRelationship();
     }
 
     @Override
-    public Relationship createRelationship(Node nodeNameSrc, Node nodeNameDest, Map<String, String> properties) {
-        System.out.println("'Added' new relationship from '" + nodeNameSrc + "' to '" + nodeNameDest + "' with the following properties:");
+    public Relationship createRelationship(String nodeNameSrc, String nodeNameDest, RelTypes label) {
+        System.out.println("'Added' new relationship (" + nodeNameSrc + ")-[" + label.name() + "]->(" + nodeNameDest + ").");
+        return new FakeRelationship();
+    }
+
+    @Override
+    public Relationship createRelationship(Node nodeNameSrc, Node nodeNameDest, RelTypes label, Map<String, String> properties) {
+        System.out.println("'Added' new relationship (" + nodeNameSrc + ")-->(" + nodeNameDest + ") with the following properties:");
         for (Map.Entry<String, String> entry : properties.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
