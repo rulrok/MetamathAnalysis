@@ -6,18 +6,42 @@ import parser.sym.*;
 
 parser code 
 {:
+
+/*
+ * Variables and structures
+ */
 Lexer lexer;
-
 IGraph graph = new Graph("db/metamath");
-
 Stack<Integer> symStack = new Stack<>();
+TreeSet<String> foundAssertions = new TreeSet<>();
+String actualTheorem = null;
 
 public parser (Lexer lexer) { this.lexer = lexer; } 
+
+/*
+ * Parser helper methods
+ */
 
 public void println(Object o) {
     //System.out.println(o);
 }
 
+public void pushToStack(Integer symbol){
+    symStack.push(symbol);
+}
+
+public void verifyStackConsistency(Integer expected) {
+    Integer actual = symStack.peek();
+    if (!Objects.equals(expected, actual)){
+        System.err.println("The parser symbol stack is inconsistent. Exiting the parser...");
+        System.exit(1);
+    }
+}
+
+
+/*
+ * Graph related methods
+ */
 private void addAxiomNode(String a){
     graph.addNode(a, Label.AXIOM.toString());
 }
@@ -30,14 +54,17 @@ private void addSyntaxDefinitionNode(String a){
     graph.addNode(a, Label.SYNTAX_DEFINITION.toString());
 }
 
-public void verifyStackConsistency(Integer expected) {
-    Integer actual = symStack.peek();
-    if (!Objects.equals(expected, actual)){
-        System.err.println("The parser symbol stack is inconsistent. Exiting the parser...");
-        System.exit(1);
-    }
+private void addTheoremNode(String a){
+    graph.addNode(a, Label.THEOREM.toString());
 }
 
+private void createRelationship(String srcNode, String destNode){
+    graph.createRelationship(srcNode, destNode);
+}
+
+private void createRelationship(String srcNode, String destNode, RelTypes label){
+    graph.createRelationship(srcNode, destNode, label);
+}
 
 :}; /* End of 'parser code' section */
 
@@ -93,13 +120,6 @@ math_symb_list      ::=
                         {:
                             println("Math symbol found: " + m); 
                         :}
-                    ;
-
-label_list          ::=
-                      label_list LABEL:l
-                        {: println("Label found: " + l); :}
-                    | LABEL:l
-                        {: println("Label found: " + l); :}
                     ;
  
 const_declaration   ::= 
@@ -159,12 +179,15 @@ axiomatic_declaration ::=
                       LABEL:l
                         {: 
                             println("label '" + l + "' found."); 
-                            if (l.startsWith("ax-"))
+                            if (l.startsWith("ax-")){
+                                foundAssertions.add(l);
                                 addAxiomNode(l);
-                            else if (l.startsWith("df-"))
+                            } else if (l.startsWith("df-")) {
+                                foundAssertions.add(l);
                                 addDefinitionNode(l);
-                            else
+                            } else {
                                 addSyntaxDefinitionNode(l);
+                            }
                         :}
                       AXIOMATIC_ASSERTION_STMT
                         {: println("Axiomatic declaration started"); :}
@@ -184,31 +207,77 @@ axiomatic_declaration ::=
 
 theorem_declaration ::=
                       LABEL:l
-                        {: println("label '" + l + "' found."); :}
-                      PROVABLE_ASSERTION_STMT
-                        {: println("Theorem declaration started"); :}
-                        {: symStack.push(sym.PROVABLE_ASSERTION_STMT); :}
+                        {: 
+                            println("label '" + l + "' found.");
+                            actualTheorem = l;
+                            foundAssertions.add(l);
+                            addTheoremNode(l);
+                        :}
+                      PROVABLE_ASSERTION_STMT /* $p */
+                        {:
+                            println("Theorem declaration started");
+                            pushToStack(sym.PROVABLE_ASSERTION_STMT); /* $p */
+                        :}
                       MATH_SYMB:m math_symb_list
                       proof_declaration
                       STMT_END
-                        {: println("Theorem declaration finished"); :}
-                        {: verifyStackConsistency(sym.PROVABLE_ASSERTION_STMT); :}
+                        {:
+                            println("Theorem declaration finished");
+                            verifyStackConsistency(sym.PROVABLE_ASSERTION_STMT); /* $p */
+                            actualTheorem = null;
+
+                            
+                        :}
                     ;
 
 proof_declaration   ::=
-                      PROOF_STMT
-                        {: println("Proof RPN list"); :}
+                      PROOF_STMT /* $= */
+                        {:
+                            println("Proof RPN list");
+                        :}
                       label_list
-                    | PROOF_STMT
-                        {: println("Compact proof format"); :}
+                    | PROOF_STMT /* $= */
+                        {:
+                            println("Compact proof format");
+                        :}
                       LPARENT proof_labels RPARENT COMPACT_PROOF:p
-                        {: println("Compact proof found: " + p); :}
+                        {:
+                            println("Compact proof found: " + p);
+                            
+                        :}
                     ;
 
 proof_labels        ::=
                       label_list
                     | empty
                     ;
+
+label_list          ::=
+                      label_list LABEL:l
+                        {:
+                            println("Label found: " + l);
+                            if (foundAssertions.contains(l) && actualTheorem != null){
+                                createRelationship(actualTheorem,l, RelTypes.RELIES);
+                            } else if( actualTheorem == null) {
+                                throw new Exception("No theorem is being refered actually");
+                            } else {
+                                /* We are probably looking to a syntax definition of hypothesis */
+                            }
+                                
+                        :}
+                    | LABEL:l
+                        {:
+                            println("Label found: " + l);
+                            if (foundAssertions.contains(l) && actualTheorem != null){
+                                createRelationship(actualTheorem,l, RelTypes.RELIES);
+                            } else if( actualTheorem == null) {
+                                throw new Exception("No theorem is being refered actually");
+                            } else {
+                                /* We are probably looking to a syntax definition of hypothesis */
+                            }
+                        :}
+                    ;
+
 
 include_section     ::=
                       INCLUDE_START
