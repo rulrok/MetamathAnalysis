@@ -22,6 +22,14 @@ private void addAxiomNode(String a){
     graph.addNode(a, Label.AXIOM.toString());
 }
 
+private void addDefinitionNode(String a){
+    graph.addNode(a, Label.DEFINITION.toString());
+}
+
+private void addSyntaxDefinitionNode(String a){
+    graph.addNode(a, Label.SYNTAX_DEFINITION.toString());
+}
+
 public void verifyStackConsistency(Integer expected) {
     Integer actual = symStack.peek();
     if (!Objects.equals(expected, actual)){
@@ -153,6 +161,10 @@ axiomatic_declaration ::=
                             println("label '" + l + "' found."); 
                             if (l.startsWith("ax-"))
                                 addAxiomNode(l);
+                            else if (l.startsWith("df-"))
+                                addDefinitionNode(l);
+                            else
+                                addSyntaxDefinitionNode(l);
                         :}
                       AXIOMATIC_ASSERTION_STMT
                         {: println("Axiomatic declaration started"); :}

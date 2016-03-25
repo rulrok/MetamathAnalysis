@@ -9,7 +9,9 @@ public enum Label {
 
     AXIOM("Axiom"),
     CONSTANT("Constant"),
+    DEFINITION("Definition"),
     HYPOTHESIS("Hypothesis"),
+    SYNTAX_DEFINITION("Syntax definition"),
     THEOREM("Theorem"),
     VARIABLE("Variable"),
     UNKNOWN("Unknown");
