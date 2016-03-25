@@ -14,7 +14,7 @@ public enum Label implements org.neo4j.graphdb.Label {
     CONSTANT("Constant"),
     DEFINITION("Definition"),
     HYPOTHESIS("Hypothesis"),
-    SYNTAX_DEFINITION("Syntax definition"),
+    SYNTAX_DEFINITION("SyntaxDefinition"),
     THEOREM("Theorem"),
     VARIABLE("Variable"),
 
