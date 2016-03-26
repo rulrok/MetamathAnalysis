@@ -14,6 +14,7 @@ Lexer lexer;
 IGraph graph = new Neo4jGraph("db/metamath");
 Stack<Integer> symStack = new Stack<>();
 TreeSet<String> foundAssertions = new TreeSet<>();
+TreeSet<String> foundConstants = new TreeSet<>();
 String actualTheorem = null;
 
 public parser (Lexer lexer) { this.lexer = lexer; } 
@@ -115,25 +116,48 @@ math_symb_list      ::=
                       math_symb_list MATH_SYMB:m
                         {:
                             println("Math symbol found: " + m);
+                            switch(symStack.peek()) {
+                                case sym.CONSTANT_STMT:
+                                    if (!foundConstants.contains(m))
+                                        foundConstants.add(m);
+                                    else
+                                        throw new Exception("Constant redeclaration");
+                                    break;
+                            }
                         :}
-                    | MATH_SYMB:m
+                    | 
+                    /*  TODO: Maybe this rule can be replaced by an 'empty' 
+                        non-terminal to avoid code repetition */
+                      MATH_SYMB:m 
                         {:
-                            println("Math symbol found: " + m); 
+                            println("First math symbol found: " + m);
+                            switch(symStack.peek()) {
+                                case sym.CONSTANT_STMT:
+                                    if (!foundConstants.contains(m))
+                                        foundConstants.add(m);
+                                    else
+                                        throw new Exception("Constant redeclaration");
+                                    break;
+                            }
                         :}
                     ;
  
 const_declaration   ::= 
                       CONSTANT_STMT
-                        {: println("Constant declaration started"); :}
-                        {: symStack.push(sym.CONSTANT_STMT); :}
+                        {:
+                            println("Constant declaration started");
+                            symStack.push(sym.CONSTANT_STMT);
+                        :}
                       math_symb_list STMT_END
-                        {: println("Constant declaration finished"); :}
-                        {: verifyStackConsistency(sym.CONSTANT_STMT); :}
+                        {: 
+                            println("Constant declaration finished"); 
+                            verifyStackConsistency(sym.CONSTANT_STMT);
+                        :}
                     ;
 
 var_declaration     ::= 
                       VARIABLE_STMT
-                        {: println("Constant declaration started"); :}
+                        {: println("Variable declaration started"); :}
                         {: symStack.push(sym.VARIABLE_STMT); :}
                       math_symb_list STMT_END
                         {: println("Variable declaration finished"); :}
