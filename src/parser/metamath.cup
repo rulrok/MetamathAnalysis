@@ -60,6 +60,10 @@ private void addTheoremNode(String a){
     graph.addNode(a, Label.THEOREM.toString());
 }
 
+private void addHypothesisNode(String h){
+    graph.addNode(h, Label.HYPOTHESIS.toString());
+}
+
 private void createRelationship(String srcNode, String destNode){
     graph.createRelationship(srcNode, destNode);
 }
@@ -205,14 +209,33 @@ var_type_hypothesis_declaration ::= /* $f */
 
 logical_hypothesis_declaration ::= /* $e */
                       LABEL:l
-                        {: println("label '" + l + "' found."); :}
+                        {:
+                            println("logical hypothesis label '" + l + "' found.");
+                            foundHypothesis.add(l);
+                            addHypothesisNode(l);
+                            
+                        :}
                       LOGICAL_HYPOTHESIS_STMT
-                        {: println("Logical hypothesis declaration started"); :}
-                        {: pushToStack(sym.LOGICAL_HYPOTHESIS_STMT); :}
+                        {:
+                            println("Logical hypothesis declaration started");
+                            pushToStack(sym.LOGICAL_HYPOTHESIS_STMT);
+
+                        :}
+                      MATH_SYMB:constant
+                        {:
+                            if (!foundConstants.contains(constant)) {
+                            /* See metamath book p. 105 for details */
+                                throw new Exception("Constant '" + constant + "' has not been previously declared");
+                            }
+                        :}
                       math_symb_list
                       STMT_END
-                        {: println("Variable hypothesis declaration finished"); :}
-                        {: verifyStackConsistency(sym.LOGICAL_HYPOTHESIS_STMT); :}
+                        {:
+                            println("Variable hypothesis declaration finished");
+                            verifyStackConsistency(sym.LOGICAL_HYPOTHESIS_STMT);
+
+                        :}
+
                     ;
 
 axiomatic_declaration ::= /* $a */
