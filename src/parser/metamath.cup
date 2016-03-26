@@ -62,8 +62,8 @@ private void createRelationship(String srcNode, String destNode){
     graph.createRelationship(srcNode, destNode);
 }
 
-private void createRelationship(String srcNode, String destNode, RelTypes label){
-    graph.createRelationship(srcNode, destNode, label);
+private void createRelationship(String srcNode, String destNode, String labelName){
+    graph.createRelationship(srcNode, destNode, labelName);
 }
 
 :}; /* End of 'parser code' section */
@@ -257,7 +257,7 @@ label_list          ::=
                         {:
                             println("Label found: " + l);
                             if (foundAssertions.contains(l) && actualTheorem != null){
-                                createRelationship(actualTheorem,l, RelTypes.RELIES);
+                                createRelationship(actualTheorem,l, "RELIES");
                             } else if( actualTheorem == null) {
                                 throw new Exception("No theorem is being refered actually");
                             } else {
@@ -269,7 +269,7 @@ label_list          ::=
                         {:
                             println("Label found: " + l);
                             if (foundAssertions.contains(l) && actualTheorem != null){
-                                createRelationship(actualTheorem,l, RelTypes.RELIES);
+                                createRelationship(actualTheorem,l, "RELIES");
                             } else if( actualTheorem == null) {
                                 throw new Exception("No theorem is being refered actually");
                             } else {

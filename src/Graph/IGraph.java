@@ -32,7 +32,7 @@ public interface IGraph {
 //    ========
     public Relationship createRelationship(String nodeNameSrc, String nodeNameDest);
 
-    public Relationship createRelationship(String nodeNameSrc, String nodeNameDest, RelTypes label);
+    public Relationship createRelationship(String nodeNameSrc, String nodeNameDest, String labelName);
 
-    public Relationship createRelationship(Node nodeNameSrc, Node nodeNameDest, RelTypes label, Map<String, String> properties);
+    public Relationship createRelationship(Node nodeNameSrc, Node nodeNameDest, String labelName, Map<String, String> properties);
 }

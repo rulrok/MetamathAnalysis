@@ -67,14 +67,16 @@ public class Neo4jGraph implements IGraph {
     }
 
     @Override
-    public Relationship createRelationship(String nodeNameSrc, String nodeNameDest, RelTypes label) {
-        System.out.println("'Added' new relationship (" + nodeNameSrc + ")-[" + label.name() + "]->(" + nodeNameDest + ").");
+    public Relationship createRelationship(String nodeNameSrc, String nodeNameDest, String labelName) {
+        RelTypes label = RelTypes.valueOf(labelName);
+        System.out.println("'Added' new relationship (" + nodeNameSrc + ")-[" + label + "]->(" + nodeNameDest + ").");
         return new FakeRelationship();
     }
 
     @Override
-    public Relationship createRelationship(Node nodeNameSrc, Node nodeNameDest, RelTypes label, Map<String, String> properties) {
-        System.out.println("'Added' new relationship (" + nodeNameSrc + ")-->(" + nodeNameDest + ") with the following properties:");
+    public Relationship createRelationship(Node nodeNameSrc, Node nodeNameDest, String labelName, Map<String, String> properties) {
+        RelTypes label = RelTypes.valueOf(labelName);
+        System.out.println("'Added' new relationship (" + nodeNameSrc + ")-[" + label + "]->(" + nodeNameDest + ") with the following properties:");
         for (Map.Entry<String, String> entry : properties.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
