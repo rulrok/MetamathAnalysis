@@ -15,6 +15,7 @@ IGraph graph = new Neo4jGraph("db/metamath");
 Stack<Integer> symStack = new Stack<>();
 TreeSet<String> foundAssertions = new TreeSet<>();
 TreeSet<String> foundConstants = new TreeSet<>();
+TreeSet<String> foundHypothesis = new TreeSet<>();
 String actualTheorem = null;
 
 public parser (Lexer lexer) { this.lexer = lexer; } 
@@ -179,7 +180,8 @@ disjoint_var_declaration ::=
 var_type_hypothesis_declaration ::= /* $f */
                       LABEL:l
                         {:
-                            println("label '" + l + "' found.");
+                            println("variable-type label '" + l + "' found.");
+                            foundHypothesis.add(l);
                         :}
                       VARIABLE_TYPE_HYPOTHESIS_STMT
                         {:
@@ -188,6 +190,10 @@ var_type_hypothesis_declaration ::= /* $f */
                         :}
                       MATH_SYMB:constant MATH_SYMB:variable
                         {:
+                            if (!foundConstants.contains(constant)) {
+                                /* See metamath book p. 105 for details */
+                                throw new Exception("Constant '" + constant + "' has not been previously declared");
+                            }
                             println("Variable " + variable + " of type " + constant + " found.");
                         :}
                       STMT_END
