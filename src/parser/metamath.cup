@@ -327,10 +327,15 @@ label_list          ::=
                       label_list LABEL:l
                         {:
                             println("Label found: " + l);
-                            if (foundAssertions.contains(l) && actualTheorem != null){
-                                createRelationship(actualTheorem,l, "RELIES");
-                            } else if( actualTheorem == null) {
+                            if( actualTheorem == null) {
                                 throw new Exception("No theorem is being refered actually");
+                            }
+
+                            //TODO Treat duplicated cases
+                            if (foundAssertions.contains(l)){
+                                createRelationship(actualTheorem,l, "RELIES");
+                            } else if(foundHypothesis.contains(l)) {
+                                createRelationship(actualTheorem, l, "USES");
                             } else {
                                 /* We are probably looking to a syntax definition of hypothesis */
                             }
@@ -339,10 +344,15 @@ label_list          ::=
                     | LABEL:l
                         {:
                             println("Label found: " + l);
-                            if (foundAssertions.contains(l) && actualTheorem != null){
-                                createRelationship(actualTheorem,l, "RELIES");
-                            } else if( actualTheorem == null) {
+                            if( actualTheorem == null) {
                                 throw new Exception("No theorem is being refered actually");
+                            }
+
+                            //TODO Treat duplicated cases
+                            if (foundAssertions.contains(l)){
+                                createRelationship(actualTheorem,l, "RELIES");
+                            } else if(foundHypothesis.contains(l)) {
+                                createRelationship(actualTheorem, l, "USES");
                             } else {
                                 /* We are probably looking to a syntax definition of hypothesis */
                             }
