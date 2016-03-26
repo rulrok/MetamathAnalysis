@@ -146,7 +146,7 @@ const_declaration   ::=
                       CONSTANT_STMT
                         {:
                             println("Constant declaration started");
-                            symStack.push(sym.CONSTANT_STMT);
+                            pushToStack(sym.CONSTANT_STMT);
                         :}
                       math_symb_list STMT_END
                         {: 
@@ -158,7 +158,7 @@ const_declaration   ::=
 var_declaration     ::= 
                       VARIABLE_STMT
                         {: println("Variable declaration started"); :}
-                        {: symStack.push(sym.VARIABLE_STMT); :}
+                        {: pushToStack(sym.VARIABLE_STMT); :}
                       math_symb_list STMT_END
                         {: println("Variable declaration finished"); :}
                         {: verifyStackConsistency(sym.VARIABLE_STMT); :}
@@ -167,7 +167,7 @@ var_declaration     ::=
 disjoint_var_declaration ::=
                       DISJUNCT_VARIABLE_STMT
                         {: println("Disjunct declaration started"); :}
-                        {: symStack.push(sym.DISJUNCT_VARIABLE_STMT); :}
+                        {: pushToStack(sym.DISJUNCT_VARIABLE_STMT); :}
                       MATH_SYMB:m 
                         {: println("Math symbol found: " + m); :}
                       math_symb_list STMT_END
@@ -202,7 +202,7 @@ logical_hypothesis_declaration ::= /* $e */
                         {: println("label '" + l + "' found."); :}
                       LOGICAL_HYPOTHESIS_STMT
                         {: println("Logical hypothesis declaration started"); :}
-                        {: symStack.push(sym.LOGICAL_HYPOTHESIS_STMT); :}
+                        {: pushToStack(sym.LOGICAL_HYPOTHESIS_STMT); :}
                       math_symb_list
                       STMT_END
                         {: println("Variable hypothesis declaration finished"); :}
