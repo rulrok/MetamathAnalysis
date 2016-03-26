@@ -176,18 +176,28 @@ disjoint_var_declaration ::=
                     ;
 
 /* See Metamath book p. 105 for references */
-var_type_hypothesis_declaration ::=
+var_type_hypothesis_declaration ::= /* $f */
                       LABEL:l
-                        {: println("label '" + l + "' found."); :}
+                        {:
+                            println("label '" + l + "' found.");
+                        :}
                       VARIABLE_TYPE_HYPOTHESIS_STMT
-                        {: println("Variable hypothesis declaration started"); :}
+                        {:
+                            println("Variable hypothesis declaration started");
+                            pushToStack(sym.VARIABLE_TYPE_HYPOTHESIS_STMT);
+                        :}
                       MATH_SYMB:constant MATH_SYMB:variable
-                        {: println("Variable " + variable + " of type " + constant + " found."); :}
+                        {:
+                            println("Variable " + variable + " of type " + constant + " found.");
+                        :}
                       STMT_END
-                        {: println("Variable hypothesis declaration finished"); :}
+                        {:
+                            println("Variable hypothesis declaration finished");
+                            verifyStackConsistency(sym.VARIABLE_TYPE_HYPOTHESIS_STMT);
+                        :}
                     ;
 
-logical_hypothesis_declaration ::=
+logical_hypothesis_declaration ::= /* $e */
                       LABEL:l
                         {: println("label '" + l + "' found."); :}
                       LOGICAL_HYPOTHESIS_STMT
@@ -199,7 +209,7 @@ logical_hypothesis_declaration ::=
                         {: verifyStackConsistency(sym.LOGICAL_HYPOTHESIS_STMT); :}
                     ;
 
-axiomatic_declaration ::=
+axiomatic_declaration ::= /* $a */
                       LABEL:l
                         {: 
                             println("label '" + l + "' found."); 
@@ -214,19 +224,27 @@ axiomatic_declaration ::=
                             }
                         :}
                       AXIOMATIC_ASSERTION_STMT
-                        {: println("Axiomatic declaration started"); :}
-                        {: symStack.push(sym.AXIOMATIC_ASSERTION_STMT); :}
+                        {:
+                            println("Axiomatic declaration started");
+                            pushToStack(sym.AXIOMATIC_ASSERTION_STMT);
+                        :}
                       MATH_SYMB:m math_symb_list
                         {: 
                            if (m.equals("|-")){
                                println("Axiom (ax-) or definition (df-) found");
-                           } else {
+                           } else if (m.equals("wff")){
                                println("Syntax construction found");
+                           } else if(m.equals("class")) {
+                                println("Syntax construction found for classes");
+                           } else {
+                                throw new Exception("Unexpected symbol found: " + m);
                            }
                         :}
                       STMT_END
-                        {: println("Axiomatic declaration finished"); :}
-                        {: verifyStackConsistency(sym.AXIOMATIC_ASSERTION_STMT); :}
+                        {:
+                            println("Axiomatic declaration finished");
+                            verifyStackConsistency(sym.AXIOMATIC_ASSERTION_STMT);
+                        :}
                     ;
 
 theorem_declaration ::=
