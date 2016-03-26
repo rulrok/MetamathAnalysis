@@ -18,12 +18,12 @@ import org.neo4j.graphdb.factory.GraphDatabaseSettings;
  *
  * @author Reuel
  */
-public class Graph implements IGraph {
+public class Neo4jGraph implements IGraph {
 
     GraphDatabaseService graphDb;
     Transaction tx;
 
-    public Graph(String databasePath) {
+    public Neo4jGraph(String databasePath) {
         File dbPath = new File(databasePath);
 
         graphDb = new GraphDatabaseFactory()

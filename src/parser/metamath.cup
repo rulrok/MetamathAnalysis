@@ -11,7 +11,7 @@ parser code
  * Variables and structures
  */
 Lexer lexer;
-IGraph graph = new Graph("db/metamath");
+IGraph graph = new Neo4jGraph("db/metamath");
 Stack<Integer> symStack = new Stack<>();
 TreeSet<String> foundAssertions = new TreeSet<>();
 String actualTheorem = null;
