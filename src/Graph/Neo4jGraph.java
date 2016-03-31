@@ -40,19 +40,19 @@ public class Neo4jGraph implements IGraph {
 
     @Override
     public Node addProperty(String nodeName, String key, String value) {
-        System.out.println("'Added' a new property called '" + key + "' with value '" + value + "' to the node '" + nodeName + "'.");
+        println("'Added' a new property called '" + key + "' with value '" + value + "' to the node '" + nodeName + "'.");
         return new FakeNode();
     }
 
     @Override
     public Node addLabel(String nodeName, String labelName) {
-        System.out.println("'Added' a new label called '" + labelName + "' to the node '" + labelName + "'.");
+        println("'Added' a new label called '" + labelName + "' to the node '" + labelName + "'.");
         return new FakeNode();
     }
 
     @Override
     public Node addNode(String nodeName) {
-        System.out.println("'Added' new node called '" + nodeName + "'.");
+        println("'Added' new node called '" + nodeName + "'.");
 
         Node node = graphDb.createNode();
         node.setProperty("name", nodeName);
@@ -62,37 +62,36 @@ public class Neo4jGraph implements IGraph {
 
     @Override
     public Node addNode(String nodeName, String labelName) {
-        System.out.println("'Added' new node called '" + nodeName + "' with the label '" + labelName + "'.");
+        println("'Added' new node called '" + nodeName + "' with the label '" + labelName + "'.");
 
-        Node node = graphDb.createNode();
+        Node node = graphDb.createNode(Label.valueOf(labelName.toUpperCase()));
 
         node.setProperty("name", nodeName);
-        node.addLabel(Label.valueOf(labelName.toUpperCase()));
-
+        
         return node;
     }
 
     @Override
     public Relationship createRelationship(String nodeNameSrc, String nodeNameDest) {
-        System.out.println("'Added' new relationship (" + nodeNameSrc + ")-->(" + nodeNameDest + ").");
+        println("'Added' new relationship (" + nodeNameSrc + ")-->(" + nodeNameDest + ").");
         return new FakeRelationship();
     }
 
     @Override
     public Relationship createRelationship(String nodeNameSrc, String nodeNameDest, String labelName) {
         RelTypes label = RelTypes.valueOf(labelName);
-        System.out.println("'Added' new relationship (" + nodeNameSrc + ")-[" + label + "]->(" + nodeNameDest + ").");
+        println("'Added' new relationship (" + nodeNameSrc + ")-[" + label + "]->(" + nodeNameDest + ").");
         return new FakeRelationship();
     }
 
     @Override
     public Relationship createRelationship(Node nodeNameSrc, Node nodeNameDest, String labelName, Map<String, String> properties) {
         RelTypes label = RelTypes.valueOf(labelName);
-        System.out.println("'Added' new relationship (" + nodeNameSrc + ")-[" + label + "]->(" + nodeNameDest + ") with the following properties:");
+        println("'Added' new relationship (" + nodeNameSrc + ")-[" + label + "]->(" + nodeNameDest + ") with the following properties:");
         for (Map.Entry<String, String> entry : properties.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            System.out.println("\t" + key + ": " + value);
+            println("\t" + key + ": " + value);
 
         }
         return new FakeRelationship();
@@ -123,5 +122,9 @@ public class Neo4jGraph implements IGraph {
             tx.success();
             tx = null;
         }
+    }
+    
+    private void println(String line){
+        //System.out.println(line);
     }
 }
