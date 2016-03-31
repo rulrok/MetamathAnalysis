@@ -5,10 +5,15 @@
  */
 package parser;
 
+import Graph.IGraph;
+import Graph.Neo4jGraph;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.StringReader;
-import static java.lang.System.exit;
-import java_cup.runtime.Symbol;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.neo4j.io.fs.FileUtils;
 
 /**
  *
@@ -17,25 +22,45 @@ import java_cup.runtime.Symbol;
 public class ParseMetamath {
 
     public static void main(String[] args) {
+
         try {
             Lexer lexer;
+
             lexer = new Lexer(new FileReader("set.mm"));
-//            lexer = new Lexer(new StringReader(""));
-
-            /* Below there is a simple test for analysing the lexer returned 
-               tokens. Just uncomment it out. */
-//            Symbol next_token;
+            
+            /* Below there is a simple test for analysing the lexer returned
+            tokens. Just uncomment it out. */
+//            java_cup.runtime.Symbol next_token;
 //            while ((next_token = lexer.next_token()).sym != 0) {
-//                System.out.println(sym.terminalNames[next_token.sym] + " ("+ next_token.value + ")");
-//                
+//                System.out.println(sym.terminalNames[next_token.sym] + " (" + next_token.value + ")");
+//
 //            }
-//            exit(0);
+//            System.exit(0);
 
-            parser p = new parser(lexer);
+            File databaseFolder = new File("db/metamath");
 
-            System.out.println(p.parse());
-        } catch (Exception e) {
-            System.out.println(e);
+            //Wipe out the database before parsing the file
+            FileUtils.deleteRecursively(databaseFolder);
+
+            IGraph graph = new Neo4jGraph(databaseFolder);
+
+            graph.StartTransaction();
+            parser p = new parser(lexer, graph);
+
+//            System.out.println(p.parse());
+            p.parse();
+
+            graph.CommitTransaction();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ParseMetamath.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(1);
+        } catch (IOException ex) {
+            Logger.getLogger(ParseMetamath.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(1);
+        } catch (Exception ex) {
+            Logger.getLogger(ParseMetamath.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(1);
         }
+
     }
 }

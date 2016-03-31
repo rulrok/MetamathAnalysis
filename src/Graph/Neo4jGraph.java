@@ -24,10 +24,12 @@ public class Neo4jGraph implements IGraph {
     Transaction tx;
 
     public Neo4jGraph(String databasePath) {
-        File dbPath = new File(databasePath);
+        this(new File(databasePath));
+    }
 
+    public Neo4jGraph(File databaseFolder) {
         graphDb = new GraphDatabaseFactory()
-                .newEmbeddedDatabaseBuilder(dbPath)
+                .newEmbeddedDatabaseBuilder(databaseFolder)
                 .setConfig(GraphDatabaseSettings.pagecache_memory, "512M")
                 .setConfig(GraphDatabaseSettings.string_block_size, "60")
                 .setConfig(GraphDatabaseSettings.array_block_size, "300")
@@ -51,13 +53,23 @@ public class Neo4jGraph implements IGraph {
     @Override
     public Node addNode(String nodeName) {
         System.out.println("'Added' new node called '" + nodeName + "'.");
-        return new FakeNode();
+
+        Node node = graphDb.createNode();
+        node.setProperty("name", nodeName);
+
+        return node;
     }
 
     @Override
     public Node addNode(String nodeName, String labelName) {
         System.out.println("'Added' new node called '" + nodeName + "' with the label '" + labelName + "'.");
-        return new FakeNode();
+
+        Node node = graphDb.createNode();
+
+        node.setProperty("name", nodeName);
+        node.addLabel(Label.valueOf(labelName));
+
+        return node;
     }
 
     @Override
