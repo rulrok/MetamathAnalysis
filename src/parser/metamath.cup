@@ -10,15 +10,15 @@ parser code
 /*
  * Variables and structures
  */
-Lexer lexer;
-IGraph graph = new Neo4jGraph("db/metamath");
-Stack<Integer> symStack = new Stack<>();
-TreeSet<String> foundAssertions = new TreeSet<>();
-TreeSet<String> foundConstants = new TreeSet<>();
-TreeSet<String> foundHypothesis = new TreeSet<>();
-String actualTheorem = null;
+private Lexer lexer;
+private IGraph graph;
+private final Stack<Integer> symStack = new Stack<>();
+private final TreeSet<String> foundAssertions = new TreeSet<>();
+private final TreeSet<String> foundConstants = new TreeSet<>();
+private final TreeSet<String> foundHypothesis = new TreeSet<>();
+private String actualTheorem = null;
 
-public parser (Lexer lexer) { this.lexer = lexer; } 
+public parser (Lexer lexer, IGraph graph) { this.lexer = lexer; this.graph = graph; } 
 
 /*
  * Parser helper methods
