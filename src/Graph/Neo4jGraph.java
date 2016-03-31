@@ -67,7 +67,7 @@ public class Neo4jGraph implements IGraph {
         Node node = graphDb.createNode();
 
         node.setProperty("name", nodeName);
-        node.addLabel(Label.valueOf(labelName));
+        node.addLabel(Label.valueOf(labelName.toUpperCase()));
 
         return node;
     }
