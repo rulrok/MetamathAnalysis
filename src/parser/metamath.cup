@@ -186,6 +186,7 @@ var_type_hypothesis_declaration ::= /* $f */
                         {:
                             println("variable-type label '" + l + "' found.");
                             foundHypothesis.add(l);
+                            addHypothesisNode(l);
                         :}
                       VARIABLE_TYPE_HYPOTHESIS_STMT
                         {:
