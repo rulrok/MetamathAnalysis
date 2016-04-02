@@ -21,7 +21,6 @@ import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 public class Neo4jGraph implements IGraph {
 
     GraphDatabaseService graphDb;
-    Transaction tx;
 
     public Neo4jGraph(String databasePath) {
         this(new File(databasePath));
@@ -54,21 +53,22 @@ public class Neo4jGraph implements IGraph {
     public Node addNode(String nodeName) {
         println("'Added' new node called '" + nodeName + "'.");
 
-        Node node = graphDb.createNode();
-        node.setProperty("name", nodeName);
+        return this.addNode(nodeName, Label.UNKNOWN.toString());
 
-        return node;
     }
 
     @Override
     public Node addNode(String nodeName, String labelName) {
         println("'Added' new node called '" + nodeName + "' with the label '" + labelName + "'.");
 
-        Node node = graphDb.createNode(Label.valueOf(labelName.toUpperCase()));
+        try (Transaction tx = graphDb.beginTx()) {
+            Node node = graphDb.createNode(Label.valueOf(labelName.toUpperCase()));
+            node.setProperty("name", nodeName);
 
-        node.setProperty("name", nodeName);
-        
-        return node;
+            tx.success();
+
+            return node;
+        }
     }
 
     @Override
@@ -85,7 +85,7 @@ public class Neo4jGraph implements IGraph {
     }
 
     @Override
-    public Relationship createRelationship(Node nodeNameSrc, Node nodeNameDest, String labelName, Map<String, String> properties) {
+    public Relationship createRelationship(String nodeNameSrc, String nodeNameDest, String labelName, Map<String, String> properties) {
         RelTypes label = RelTypes.valueOf(labelName);
         println("'Added' new relationship (" + nodeNameSrc + ")-[" + label + "]->(" + nodeNameDest + ") with the following properties:");
         for (Map.Entry<String, String> entry : properties.entrySet()) {
@@ -111,20 +111,15 @@ public class Neo4jGraph implements IGraph {
 
     @Override
     public void StartTransaction() {
-        if (tx == null) {
-            tx = graphDb.beginTx();
-        }
+        throw new Error("Method not supported");
     }
 
     @Override
     public void CommitTransaction() {
-        if (tx != null) {
-            tx.success();
-            tx = null;
-        }
+        throw new Error("Method not supported");
     }
-    
-    private void println(String line){
+
+    private void println(String line) {
         //System.out.println(line);
     }
 }

@@ -6,6 +6,7 @@
 package parser;
 
 import Graph.IGraph;
+import Graph.Neo4jBatchGraph;
 import Graph.Neo4jGraph;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,15 +43,14 @@ public class ParseMetamath {
             //Wipe out the database before parsing the file
             FileUtils.deleteRecursively(databaseFolder);
 
-            IGraph graph = new Neo4jGraph(databaseFolder);
+            IGraph graph = new Neo4jBatchGraph(databaseFolder);
 
-            graph.StartTransaction();
+
             parser p = new parser(lexer, graph);
 
 //            System.out.println(p.parse());
             p.parse();
 
-            graph.CommitTransaction();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ParseMetamath.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(1);
