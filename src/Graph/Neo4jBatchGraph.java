@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.neo4j.graphdb.Node;
@@ -24,6 +25,7 @@ import org.neo4j.unsafe.batchinsert.BatchInserters;
 public class Neo4jBatchGraph implements IGraph {
 
     BatchInserter batchInserter;
+    Map<String, Long> nodesIds;
 
     public Neo4jBatchGraph(String databasePath) {
         this(new File(databasePath));
@@ -37,6 +39,7 @@ public class Neo4jBatchGraph implements IGraph {
             config.put("dbms.array.block.size", "300");
 
             batchInserter = BatchInserters.inserter(databaseFolder, config);
+            nodesIds = new TreeMap<>();
 
             registerShutdownHook(batchInserter);
         } catch (IOException ex) {
@@ -73,20 +76,27 @@ public class Neo4jBatchGraph implements IGraph {
 
         map.put("name", nodeName);
         long createdNodeId = batchInserter.createNode(map, Label.valueOf(labelName.toUpperCase()));
-        
+
+        nodesIds.put(nodeName, createdNodeId);
+
         return new FakeNode();
     }
 
     @Override
     public Relationship createRelationship(String nodeNameSrc, String nodeNameDest) {
-        println("'Added' new relationship (" + nodeNameSrc + ")-->(" + nodeNameDest + ").");
-        return new FakeRelationship();
+        return this.createRelationship(nodeNameSrc, nodeNameDest, RelTypes.UNKNOWN.toString());
     }
 
     @Override
     public Relationship createRelationship(String nodeNameSrc, String nodeNameDest, String labelName) {
-        RelTypes label = RelTypes.valueOf(labelName);
+        RelTypes label = RelTypes.valueOf(labelName.toUpperCase());
         println("'Added' new relationship (" + nodeNameSrc + ")-[" + label + "]->(" + nodeNameDest + ").");
+
+        Long srcNodeId = nodesIds.getOrDefault(nodeNameSrc, 2L);  //) 2 happens to be the dummylink $p assertion
+        Long destNodeId = nodesIds.getOrDefault(nodeNameDest, 2L);
+
+        batchInserter.createRelationship(srcNodeId, destNodeId, label, null);
+
         return new FakeRelationship();
     }
 
