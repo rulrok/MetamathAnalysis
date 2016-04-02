@@ -53,14 +53,7 @@ public class Neo4jGraph implements IGraph {
     public Node addNode(String nodeName) {
         println("'Added' new node called '" + nodeName + "'.");
 
-        try (Transaction tx = graphDb.beginTx()) {
-            Node node = graphDb.createNode();
-            node.setProperty("name", nodeName);
-
-            tx.success();
-
-            return node;
-        }
+        return this.addNode(nodeName, Label.UNKNOWN.toString());
 
     }
 
