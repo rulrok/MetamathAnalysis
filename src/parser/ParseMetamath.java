@@ -44,13 +44,12 @@ public class ParseMetamath {
 
             IGraph graph = new Neo4jGraph(databaseFolder);
 
-            graph.StartTransaction();
+
             parser p = new parser(lexer, graph);
 
 //            System.out.println(p.parse());
             p.parse();
 
-            graph.CommitTransaction();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ParseMetamath.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(1);
