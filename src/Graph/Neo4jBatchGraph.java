@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
 import org.neo4j.unsafe.batchinsert.BatchInserters;
 
@@ -89,27 +90,31 @@ public class Neo4jBatchGraph implements IGraph {
 
     @Override
     public Relationship createRelationship(String nodeNameSrc, String nodeNameDest, String labelName) {
-        RelTypes label = RelTypes.valueOf(labelName.toUpperCase());
-        println("'Added' new relationship (" + nodeNameSrc + ")-[" + label + "]->(" + nodeNameDest + ").");
-
-        Long srcNodeId = nodesIds.getOrDefault(nodeNameSrc, 2L);  //) 2 happens to be the dummylink $p assertion
-        Long destNodeId = nodesIds.getOrDefault(nodeNameDest, 2L);
-
-        batchInserter.createRelationship(srcNodeId, destNodeId, label, null);
-
-        return new FakeRelationship();
+        return this.createRelationship(nodeNameSrc, nodeNameDest, labelName, null);
     }
 
     @Override
-    public Relationship createRelationship(Node nodeNameSrc, Node nodeNameDest, String labelName, Map<String, String> properties) {
+    public Relationship createRelationship(String nodeNameSrc, String nodeNameDest, String labelName, Map<String, String> properties) {
         RelTypes label = RelTypes.valueOf(labelName);
         println("'Added' new relationship (" + nodeNameSrc + ")-[" + label + "]->(" + nodeNameDest + ") with the following properties:");
-        for (Map.Entry<String, String> entry : properties.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            println("\t" + key + ": " + value);
+        
+        Long srcNodeId = nodesIds.getOrDefault(nodeNameSrc, 2L);  //) 2 happens to be the dummylink $p assertion
+        Long destNodeId = nodesIds.getOrDefault(nodeNameDest, 2L);
+        
+        if (properties != null) {
+            for (Map.Entry<String, String> entry : properties.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                println("\t" + key + ": " + value);
 
+            }
+            Map<String, Object> convertedProperties = new TreeMap<>(properties);
+            
+            batchInserter.createRelationship(srcNodeId, destNodeId, label, convertedProperties);
+        } else {
+            batchInserter.createRelationship(srcNodeId, destNodeId, label, null);
         }
+
         return new FakeRelationship();
     }
 
