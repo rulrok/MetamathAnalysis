@@ -49,13 +49,25 @@ public class Neo4jBatchGraph implements IGraph {
 
     @Override
     public Node addProperty(String nodeName, String key, String value) {
-        println("'Added' a new property called '" + key + "' with value '" + value + "' to the node '" + nodeName + "'.");
+
+        Long foundNode = nodesIds.get(nodeName);
+
+        if (foundNode != null) {
+            println("Added a new property called '" + key + "' with value '" + value + "' to the node '" + nodeName + "'.");
+            batchInserter.setNodeProperty(foundNode, key, value);
+        }
         return new FakeNode();
     }
 
     @Override
     public Node addLabel(String nodeName, String labelName) {
-        println("'Added' a new label called '" + labelName + "' to the node '" + labelName + "'.");
+
+        Long foundNode = nodesIds.get(nodeName);
+
+        if (foundNode != null) {
+            println("Added a new label called '" + labelName + "' to the node '" + labelName + "'.");
+            batchInserter.setNodeLabels(foundNode, Label.valueOf(labelName.toUpperCase()));
+        }
         return new FakeNode();
     }
 
@@ -68,7 +80,7 @@ public class Neo4jBatchGraph implements IGraph {
 
     @Override
     public Node addNode(String nodeName, String labelName) {
-        println("'Added' new node called '" + nodeName + "' with the label '" + labelName + "'.");
+        println("Added new node called '" + nodeName + "' with the label '" + labelName + "'.");
 
         Map<String, Object> map = new HashMap<>();
 
@@ -93,11 +105,11 @@ public class Neo4jBatchGraph implements IGraph {
     @Override
     public Relationship createRelationship(String nodeNameSrc, String nodeNameDest, String labelName, Map<String, String> properties) {
         RelTypes label = RelTypes.valueOf(labelName);
-        println("'Added' new relationship (" + nodeNameSrc + ")-[" + label + "]->(" + nodeNameDest + ") with the following properties:");
-        
+        println("Added new relationship (" + nodeNameSrc + ")-[" + label + "]->(" + nodeNameDest + ") with the following properties:");
+
         Long srcNodeId = nodesIds.getOrDefault(nodeNameSrc, 2L);  //) 2 happens to be the dummylink $p assertion
         Long destNodeId = nodesIds.getOrDefault(nodeNameDest, 2L);
-        
+
         if (properties != null) {
             for (Map.Entry<String, String> entry : properties.entrySet()) {
                 String key = entry.getKey();
@@ -106,7 +118,7 @@ public class Neo4jBatchGraph implements IGraph {
 
             }
             Map<String, Object> convertedProperties = new TreeMap<>(properties);
-            
+
             batchInserter.createRelationship(srcNodeId, destNodeId, label, convertedProperties);
         } else {
             batchInserter.createRelationship(srcNodeId, destNodeId, label, null);
