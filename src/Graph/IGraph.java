@@ -34,5 +34,5 @@ public interface IGraph {
 
     public Relationship createRelationship(String nodeNameSrc, String nodeNameDest, String labelName);
 
-    public Relationship createRelationship(Node nodeNameSrc, Node nodeNameDest, String labelName, Map<String, String> properties);
+    public Relationship createRelationship(String nodeNameSrc, String nodeNameDest, String labelName, Map<String, String> properties);
 }
