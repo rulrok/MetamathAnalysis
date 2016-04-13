@@ -1,10 +1,11 @@
 package Graph.Algorithms;
 
 import Graph.*;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
 import org.neo4j.graphdb.Node;
@@ -32,7 +33,7 @@ public class StronglyConnectedComponents {
     private int N;
     private Stack<Node> L;
     private List<List<Node>> components;
-    private List<Long> T;
+    private Set<Long> T;
     private Map<Long, Integer> low;
     private Map<Long, Integer> dfsnum;
 
@@ -80,7 +81,7 @@ public class StronglyConnectedComponents {
             L = new Stack<>();
 
             /* build directed tree T, initially a single vertex {x} */
-            T = new LinkedList<>();
+            T = new HashSet<>();
             T.add(x.getId());
 
             /* visit(x) */
@@ -140,12 +141,14 @@ public class StronglyConnectedComponents {
         until v=p
         } */
         List<Node> currentComponent = new LinkedList<>();
-        if ((int) low.get(p.getId()) == (int) dfsnum.get(p.getId())) {
+        int lowlink = low.get(p.getId());
+        int index = dfsnum.get(p.getId());
+        if (lowlink == index) {
             Node v;
             do {
                 v = L.pop();
                 currentComponent.add(v);
-                v.delete();
+//                v.delete();
             } while (v.getId() != p.getId());
             components.add(currentComponent);
         }
