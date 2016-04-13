@@ -16,6 +16,7 @@ private final Stack<Integer> symStack = new Stack<>();
 private final TreeSet<String> foundAssertions = new TreeSet<>();
 private final TreeSet<String> foundConstants = new TreeSet<>();
 private final TreeSet<String> foundHypothesis = new TreeSet<>();
+private final StringBuilder mathSymbolList = new StringBuilder("");
 private String actualTheorem = null;
 
 public parser (Lexer lexer, IGraph graph) { this.lexer = lexer; this.graph = graph; } 
@@ -72,6 +73,10 @@ private void createRelationship(String srcNode, String destNode, String labelNam
     graph.createRelationship(srcNode, destNode, labelName);
 }
 
+private void addProperty(String nodeName, String key, String value){
+    graph.addProperty(nodeName, key, value);
+}
+
 :}; /* End of 'parser code' section */
 
 /* Preliminaries to set up and use the scanner.  */
@@ -121,6 +126,7 @@ math_symb_list      ::=
                       math_symb_list MATH_SYMB:m
                         {:
                             println("Math symbol found: " + m);
+                            mathSymbolList.append(" ").append(m);
                             switch(symStack.peek()) {
                                 case sym.CONSTANT_STMT:
                                     if (!foundConstants.contains(m))
@@ -136,6 +142,7 @@ math_symb_list      ::=
                       MATH_SYMB:m 
                         {:
                             println("First math symbol found: " + m);
+                            mathSymbolList.append(m);
                             switch(symStack.peek()) {
                                 case sym.CONSTANT_STMT:
                                     if (!foundConstants.contains(m))
@@ -153,6 +160,9 @@ const_declaration   ::=
                             println("Constant declaration started");
                             pushToStack(sym.CONSTANT_STMT);
                         :}
+                        {:
+                            mathSymbolList.setLength(0);
+                        :}
                       math_symb_list STMT_END
                         {: 
                             println("Constant declaration finished"); 
@@ -164,6 +174,9 @@ var_declaration     ::=
                       VARIABLE_STMT
                         {: println("Variable declaration started"); :}
                         {: pushToStack(sym.VARIABLE_STMT); :}
+                        {:
+                            mathSymbolList.setLength(0);
+                        :}
                       math_symb_list STMT_END
                         {: println("Variable declaration finished"); :}
                         {: verifyStackConsistency(sym.VARIABLE_STMT); :}
@@ -175,6 +188,9 @@ disjoint_var_declaration ::=
                         {: pushToStack(sym.DISJUNCT_VARIABLE_STMT); :}
                       MATH_SYMB:m 
                         {: println("Math symbol found: " + m); :}
+                        {:
+                            mathSymbolList.setLength(0);
+                        :}
                       math_symb_list STMT_END
                         {: println("Disjunct declaration finished"); :}
                         {: verifyStackConsistency(sym.DISJUNCT_VARIABLE_STMT); :}
@@ -229,6 +245,9 @@ logical_hypothesis_declaration ::= /* $e */
                                 throw new Exception("Constant '" + constant + "' has not been previously declared");
                             }
                         :}
+                        {:
+                            mathSymbolList.setLength(0);
+                        :}
                       math_symb_list
                       STMT_END
                         {:
@@ -258,7 +277,11 @@ axiomatic_declaration ::= /* $a */
                             println("Axiomatic declaration started");
                             pushToStack(sym.AXIOMATIC_ASSERTION_STMT);
                         :}
-                      MATH_SYMB:m math_symb_list
+                      MATH_SYMB:m 
+                        {:
+                            mathSymbolList.setLength(0);
+                        :}
+                      math_symb_list
                         {: 
                            if (m.equals("|-")){
                                println("Axiom (ax-) or definition (df-) found");
@@ -290,7 +313,22 @@ theorem_declaration ::=
                             println("Theorem declaration started");
                             pushToStack(sym.PROVABLE_ASSERTION_STMT); /* $p */
                         :}
-                      MATH_SYMB:m math_symb_list
+                      MATH_SYMB:m 
+                        {:
+                            if (m.equals("|-")){
+                                addProperty(actualTheorem, "isProvable", "true");
+                            } else {
+                                addProperty(actualTheorem, "isProvable", "false");
+                            }
+                        :}
+                        {:
+                            //Initialize the string builder for the new found theorem assertion
+                            mathSymbolList.setLength(0);
+                        :}
+                      math_symb_list
+                        {:
+                            addProperty(actualTheorem, "assertion", mathSymbolList.toString());
+                        :}
                       proof_declaration
                       STMT_END
                         {:
