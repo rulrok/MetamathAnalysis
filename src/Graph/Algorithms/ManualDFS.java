@@ -1,7 +1,5 @@
 package Graph.Algorithms;
 
-import Graph.Algorithms.Contracts.StrongConnectedComponents;
-import Graph.*;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,70 +9,45 @@ import java.util.Stack;
 import java.util.TreeMap;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.ResourceIterator;
-import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.traversal.*;
 
 /**
  *
  * @author Reuel
  */
-public class ManualDFS implements StrongConnectedComponents {
-
-    private final GraphDatabaseService graph;
+public class ManualDFS extends AbstractStrongConnectedComponentsAlgorithm {
 
     /**
      * HelperNode is an antificial node linking to everyone else in the graph.
      */
-    private Node x;
-    private TraversalDescription dfsTD;
     private int N;
+    private Node x;
     private Stack<Node> L;
     private List<List<Node>> components;
     private Set<Long> T;
     private Map<Long, Integer> low;
     private Map<Long, Integer> dfsnum;
 
-    public ManualDFS(GraphDatabaseService graph) {
-        this.graph = graph;
-
-        configure();
+    
+    public ManualDFS(GraphDatabaseService graph, Node initialNode, Relationship... relationship){
+        this(graph, initialNode);
+    }
+    
+    public ManualDFS(GraphDatabaseService graph, Node initialNode) {
+        super(graph, initialNode);
     }
 
-    private void configure() {
+    @Override
+    public void configure() {
 
-        dfsTD = graph.traversalDescription()
-                .depthFirst()
-                .relationships(RelTypes.SUPPORTS, Direction.BOTH)
-                .relationships(HelperRel.HELPER, Direction.OUTGOING);
-
+        x = initialNode;
         low = new TreeMap<>();
         dfsnum = new TreeMap<>();
         components = new LinkedList<>();
     }
 
-    /**
-     * Creates a helper relationship
-     */
-    private enum HelperRel implements RelationshipType {
-        HELPER
-    }
-
     @Override
     public void execute() {
-
-        try (Transaction tx = graph.beginTx()) {
-
-            /* make a new vertex x with edges x->v for all v */
-            x = graph.createNode();
-            ResourceIterator<Node> axiomNodes = graph.findNodes(Label.AXIOM);
-            for (; axiomNodes.hasNext();) {
-                Node axiom = axiomNodes.next();
-                x.createRelationshipTo(axiom, HelperRel.HELPER);
-            }
 
             /* initialize a counter N to zero */
             N = 0;
@@ -91,9 +64,6 @@ public class ManualDFS implements StrongConnectedComponents {
 //                visit(position.endNode());
 //            }
             visit(x);
-
-            tx.failure();
-        }
 
     }
 
@@ -120,7 +90,13 @@ public class ManualDFS implements StrongConnectedComponents {
                 } else 
                     low(p) = min(low(p), dfsnum(q)) 
          */
-        for (Relationship p_q : p.getRelationships(HelperRel.HELPER, RelTypes.SUPPORTS)) {
+        Iterable<Relationship> relationships;
+        if (relationshipTypes != null){
+             relationships = p.getRelationships(relationshipTypes);
+        } else {
+            relationships = p.getRelationships();
+        }
+        for (Relationship p_q : relationships) {
             
             Node q = p_q.getEndNode();
             if (!T.contains(q.getId())) {

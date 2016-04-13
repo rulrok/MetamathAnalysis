@@ -1,8 +1,12 @@
 
 import Graph.Algorithms.ManualDFS;
 import Graph.Algorithms.Contracts.StrongConnectedComponents;
+import Graph.Label;
+import Graph.RelTypes;
 import java.io.File;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
@@ -23,9 +27,22 @@ public class Main {
                 .newGraphDatabase();
 
         registerShutdownHook(graphDb);
-        
-        StrongConnectedComponents scc = new ManualDFS(graphDb);
-        scc.execute();
+
+        try (Transaction tx = graphDb.beginTx()) {
+
+            /* make a new vertex x with edges x->v for all v */
+            Node helperNode = graphDb.createNode();
+            ResourceIterator<Node> axiomNodes = graphDb.findNodes(Label.AXIOM);
+            for (; axiomNodes.hasNext();) {
+                Node axiom = axiomNodes.next();
+                helperNode.createRelationshipTo(axiom, RelTypes.SUPPORTS);
+            }
+
+            StrongConnectedComponents scc = new ManualDFS(graphDb, helperNode);
+            scc.execute();
+
+            tx.failure();
+        }
 
         graphDb.shutdown();
     }
