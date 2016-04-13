@@ -1,4 +1,5 @@
 
+import Graph.Algorithms.StronglyConnectedComponents;
 import java.io.File;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
@@ -12,10 +13,8 @@ import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 public class Main {
 
     public static void main(String[] args) {
-        String DB_PATH = "db/metamath";
-        File dbPath = new File(DB_PATH);
-        GraphDatabaseService graphDb;
-        graphDb = new GraphDatabaseFactory()
+        File dbPath = new File("db/metamath");
+        GraphDatabaseService graphDb = new GraphDatabaseFactory()
                 .newEmbeddedDatabaseBuilder(dbPath)
                 .setConfig(GraphDatabaseSettings.pagecache_memory, "512M")
                 .setConfig(GraphDatabaseSettings.string_block_size, "60")
@@ -23,12 +22,9 @@ public class Main {
                 .newGraphDatabase();
 
         registerShutdownHook(graphDb);
-
-        //
-        try (Transaction tx = graphDb.beginTx()) {
-            // Database operations go here
-            tx.success();
-        }
+        
+        StronglyConnectedComponents scc = new StronglyConnectedComponents(graphDb);
+        scc.execute();
 
         graphDb.shutdown();
     }
