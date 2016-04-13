@@ -1,5 +1,6 @@
 package Graph.Algorithms;
 
+import Graph.Algorithms.Contracts.StrongConnectedComponents;
 import Graph.*;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -21,7 +22,7 @@ import org.neo4j.graphdb.traversal.*;
  *
  * @author Reuel
  */
-public class StronglyConnectedComponents {
+public class ManualDFS implements StrongConnectedComponents {
 
     private final GraphDatabaseService graph;
 
@@ -37,7 +38,7 @@ public class StronglyConnectedComponents {
     private Map<Long, Integer> low;
     private Map<Long, Integer> dfsnum;
 
-    public StronglyConnectedComponents(GraphDatabaseService graph) {
+    public ManualDFS(GraphDatabaseService graph) {
         this.graph = graph;
 
         configure();
@@ -62,6 +63,7 @@ public class StronglyConnectedComponents {
         HELPER
     }
 
+    @Override
     public void execute() {
 
         try (Transaction tx = graph.beginTx()) {

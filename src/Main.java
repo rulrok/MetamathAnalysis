@@ -1,5 +1,6 @@
 
-import Graph.Algorithms.StronglyConnectedComponents;
+import Graph.Algorithms.ManualDFS;
+import Graph.Algorithms.Contracts.StrongConnectedComponents;
 import java.io.File;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
@@ -23,7 +24,7 @@ public class Main {
 
         registerShutdownHook(graphDb);
         
-        StronglyConnectedComponents scc = new StronglyConnectedComponents(graphDb);
+        StrongConnectedComponents scc = new ManualDFS(graphDb);
         scc.execute();
 
         graphDb.shutdown();
