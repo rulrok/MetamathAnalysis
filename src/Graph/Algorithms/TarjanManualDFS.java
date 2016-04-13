@@ -15,7 +15,7 @@ import org.neo4j.graphdb.Relationship;
  *
  * @author Reuel
  */
-public class ManualDFS extends AbstractStrongConnectedComponentsAlgorithm {
+public class TarjanManualDFS extends AbstractStrongConnectedComponentsAlgorithm {
 
     /**
      * HelperNode is an antificial node linking to everyone else in the graph.
@@ -29,11 +29,11 @@ public class ManualDFS extends AbstractStrongConnectedComponentsAlgorithm {
     private Map<Long, Integer> dfsnum;
 
     
-    public ManualDFS(GraphDatabaseService graph, Node initialNode, Relationship... relationship){
+    public TarjanManualDFS(GraphDatabaseService graph, Node initialNode, Relationship... relationship){
         this(graph, initialNode);
     }
     
-    public ManualDFS(GraphDatabaseService graph, Node initialNode) {
+    public TarjanManualDFS(GraphDatabaseService graph, Node initialNode) {
         super(graph, initialNode);
     }
 

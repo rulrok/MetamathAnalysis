@@ -1,5 +1,5 @@
 
-import Graph.Algorithms.ManualDFS;
+import Graph.Algorithms.TarjanManualDFS;
 import Graph.Algorithms.Contracts.StrongConnectedComponents;
 import Graph.Label;
 import Graph.RelTypes;
@@ -38,7 +38,7 @@ public class Main {
                 helperNode.createRelationshipTo(axiom, RelTypes.SUPPORTS);
             }
 
-            StrongConnectedComponents scc = new ManualDFS(graphDb, helperNode);
+            StrongConnectedComponents scc = new TarjanManualDFS(graphDb, helperNode);
             scc.execute();
 
             tx.failure();
