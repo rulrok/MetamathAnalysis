@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.TreeMap;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -29,7 +30,7 @@ public class StronglyConnectedComponents {
     private Node x;
     private TraversalDescription dfsTD;
     private int N;
-    private List<Node> L;
+    private Stack<Node> L;
     private List<List<Node>> components;
     private List<Long> T;
     private Map<Long, Integer> low;
@@ -76,7 +77,7 @@ public class StronglyConnectedComponents {
             N = 0;
 
             /*  initialize list L to empty */
-            L = new ArrayList<>();
+            L = new Stack<>();
 
             /* build directed tree T, initially a single vertex {x} */
             T = new LinkedList<>();
@@ -96,7 +97,7 @@ public class StronglyConnectedComponents {
     private void visit(Node p) {
 
         /* add p to L */
-        L.add(p);
+        L.push(p);
 
         /* dfsnum(p) = N */
         dfsnum.put(p.getId(), N);
@@ -142,7 +143,7 @@ public class StronglyConnectedComponents {
         if ((int) low.get(p.getId()) == (int) dfsnum.get(p.getId())) {
             Node v;
             do {
-                v = L.remove(L.size() - 1);
+                v = L.pop();
                 currentComponent.add(v);
                 v.delete();
             } while (v.getId() != p.getId());
