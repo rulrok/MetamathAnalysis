@@ -19,6 +19,7 @@ public enum RelTypes implements RelationshipType {
     
     RELIES("Relies"),
     USES("Uses"),
+    SUPPORTS("Supports"),
     
     /*
     General unknown label

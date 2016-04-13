@@ -334,9 +334,11 @@ label_list          ::=
 
                             //TODO Treat duplicated cases
                             if (foundAssertions.contains(l)){
-                                createRelationship(actualTheorem,l, "RELIES");
+                                createRelationship(l, actualTheorem, "SUPPORTS");
+                                /* createRelationship(actualTheorem,l, "RELIES"); */
                             } else if(foundHypothesis.contains(l)) {
-                                createRelationship(actualTheorem, l, "USES");
+                                createRelationship(l, actualTheorem, "SUPPORTS");
+                                /* createRelationship(actualTheorem, l, "USES"); */
                             } else {
                                 /* We are probably looking to a syntax definition of hypothesis */
                             }
@@ -351,9 +353,11 @@ label_list          ::=
 
                             //TODO Treat duplicated cases
                             if (foundAssertions.contains(l)){
-                                createRelationship(actualTheorem,l, "RELIES");
+                                createRelationship(l, actualTheorem, "SUPPORTS");
+                                /* createRelationship(actualTheorem,l, "RELIES"); */
                             } else if(foundHypothesis.contains(l)) {
-                                createRelationship(actualTheorem, l, "USES");
+                                createRelationship(l, actualTheorem, "SUPPORTS");
+                                /* createRelationship(actualTheorem, l, "USES"); */
                             } else {
                                 /* We are probably looking to a syntax definition of hypothesis */
                             }
