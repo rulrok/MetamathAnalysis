@@ -1,9 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Graph.Algorithms.Contracts;
+
+import java.util.List;
+import org.neo4j.graphdb.Node;
 
 /**
  *
@@ -11,6 +9,11 @@ package Graph.Algorithms.Contracts;
  */
 public interface StrongConnectedComponents {
 
-    void execute();
+    /**
+     * Execute the algorithm and return a list of components.
+     * 
+     * @return 
+     */
+    List<List<Node>> execute();
     
 }

@@ -4,6 +4,7 @@ import Graph.Algorithms.Contracts.StrongConnectedComponents;
 import Graph.Label;
 import Graph.RelTypes;
 import java.io.File;
+import java.util.List;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
@@ -39,7 +40,7 @@ public class Main {
             }
 
             StrongConnectedComponents scc = new TarjanManualDFS(graphDb, helperNode);
-            scc.execute();
+            List<List<Node>> components = scc.execute();
 
             tx.failure();
         }

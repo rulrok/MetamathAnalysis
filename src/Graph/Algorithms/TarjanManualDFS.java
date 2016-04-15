@@ -47,7 +47,7 @@ public class TarjanManualDFS extends AbstractStrongConnectedComponentsAlgorithm 
     }
 
     @Override
-    public void execute() {
+    public List<List<Node>> execute() {
 
             /* initialize a counter N to zero */
             N = 0;
@@ -60,10 +60,9 @@ public class TarjanManualDFS extends AbstractStrongConnectedComponentsAlgorithm 
             T.add(x.getId());
 
             /* visit(x) */
-//            for (Path position : dfsTD.traverse(helperNode)) {
-//                visit(position.endNode());
-//            }
             visit(x);
+            
+            return components;
 
     }
 
@@ -91,11 +90,8 @@ public class TarjanManualDFS extends AbstractStrongConnectedComponentsAlgorithm 
                     low(p) = min(low(p), dfsnum(q)) 
          */
         Iterable<Relationship> relationships;
-        if (relationshipTypes != null){
-             relationships = p.getRelationships(relationshipTypes);
-        } else {
-            relationships = p.getRelationships();
-        }
+        relationships = (relationshipTypes != null) ? p.getRelationships(relationshipTypes) : p.getRelationships();
+
         for (Relationship p_q : relationships) {
             
             Node q = p_q.getEndNode();
@@ -126,7 +122,7 @@ public class TarjanManualDFS extends AbstractStrongConnectedComponentsAlgorithm 
             do {
                 v = L.pop();
                 currentComponent.add(v);
-//                v.delete();
+                v.delete();
             } while (v.getId() != p.getId());
             components.add(currentComponent);
         }
