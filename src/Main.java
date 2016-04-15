@@ -19,7 +19,7 @@ import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 public class Main {
 
     public static void main(String[] args) {
-        File dbPath = new File("db/metamath");
+        File dbPath = new File("db/metamath_copie");
         GraphDatabaseService graphDb = new GraphDatabaseFactory()
                 .newEmbeddedDatabaseBuilder(dbPath)
                 .setConfig(GraphDatabaseSettings.pagecache_memory, "512M")
@@ -39,7 +39,7 @@ public class Main {
                 helperNode.createRelationshipTo(axiom, RelTypes.SUPPORTS);
             }
 
-            StrongConnectedComponents scc = new TarjanManualDFS(graphDb, helperNode);
+            StrongConnectedComponents scc = new TarjanManualDFS(graphDb, helperNode, RelTypes.SUPPORTS);
             List<List<Node>> components = scc.execute();
 
             tx.failure();

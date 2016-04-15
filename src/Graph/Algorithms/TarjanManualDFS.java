@@ -10,6 +10,7 @@ import java.util.TreeMap;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.RelationshipType;
 
 /**
  *
@@ -29,7 +30,7 @@ public class TarjanManualDFS extends AbstractStrongConnectedComponentsAlgorithm 
     private Map<Long, Integer> dfsnum;
 
     
-    public TarjanManualDFS(GraphDatabaseService graph, Node initialNode, Relationship... relationship){
+    public TarjanManualDFS(GraphDatabaseService graph, Node initialNode, RelationshipType... relationship){
         this(graph, initialNode);
     }
     
