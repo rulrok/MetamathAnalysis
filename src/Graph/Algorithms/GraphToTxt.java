@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -44,55 +43,53 @@ public class GraphToTxt {
             return false;
         }
 
-        try {
-            PrintWriter printWriter = new PrintWriter(outputFile);
 
-            /*
-             * Count nodes
-             */
-            int nodesCount = 0;
-            ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
-            for (Node node : allNodes) {
-                nodesCount++;
+        /*
+         * Count nodes
+         */
+        int nodesCount = 0;
+        ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
+        for (Node node : allNodes) {
+            nodesCount++;
+        }
+
+        /*
+         * Get relationships
+         */
+        Iterable<Relationship> allRelationships = GlobalGraphOperations.at(graph).getAllRelationships();
+        Map<Long, Set<Long>> relationships = new HashMap<>();
+        allRelationships.forEach((Relationship relationship) -> {
+            Node startNode = relationship.getStartNode();
+            Node endNode = relationship.getEndNode();
+            long k = startNode.getId();
+            long v = endNode.getId();
+
+            if (!relationships.containsKey(k)) {
+                relationships.put(k, new LinkedHashSet<>());
             }
+            relationships.get(k).add(v);
 
-            /*
-             * Get relationships
-             */
-            Iterable<Relationship> allRelationships = GlobalGraphOperations.at(graph).getAllRelationships();
-            Map<Long, Set<Long>> relationships = new HashMap<>();
-            allRelationships.forEach((Relationship relationship) -> {
-                Node startNode = relationship.getStartNode();
-                Node endNode = relationship.getEndNode();
-                long k = startNode.getId();
-                long v = endNode.getId();
+            relationship.delete();
+        });
 
-                if (!relationships.containsKey(startNode.getId())){
-                    relationships.put(k, new LinkedHashSet<>());
-                }
-                relationships.get(k).add(v);
-                
-                relationship.delete();
-            });
-
-            /*
-             * Print elements
-             */
+        /*
+         * Print elements
+         */
+        try (PrintWriter printWriter = new PrintWriter(outputFile)) {
             printWriter.println(nodesCount);
             relationships.forEach((Long sourceNode, Set<Long> hashset) -> {
                 hashset.forEach((Long destNode) -> {
                     printWriter.println(sourceNode + "\t" + destNode);
                 });
             });
-            
-            printWriter.flush();
-            printWriter.close();
 
-            return true;
+            printWriter.flush();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(GraphToTxt.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
+
+        return true;
 
     }
 
