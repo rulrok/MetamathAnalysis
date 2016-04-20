@@ -16,6 +16,7 @@ private final Stack<Integer>  symStack        = new Stack<>();
 private final TreeSet<String> foundAssertions = new TreeSet<>();
 private final TreeSet<String> foundConstants  = new TreeSet<>();
 private final TreeSet<String> foundHypothesis = new TreeSet<>();
+private final Map<String, Set<String>> relationships = new HashMap<>();
 private final StringBuilder   mathSymbolList  = new StringBuilder("");
 private String actualTheorem = null;
 private String actualAxiom   = null;
@@ -381,12 +382,18 @@ label_list          ::=
                                 throw new Exception("No theorem is being refered actually");
                             }
 
-                            //TODO Treat duplicated cases
+                            relationships.putIfAbsent(l, new HashSet<>());
                             if (foundAssertions.contains(l)){
-                                createRelationship(l, actualTheorem, "SUPPORTS");
+                                if (!relationships.get(l).contains(actualTheorem)) {
+                                    relationships.get(l).add(actualTheorem);
+                                    createRelationship(l, actualTheorem, "SUPPORTS");
+                                }
                                 /* createRelationship(actualTheorem,l, "RELIES"); */
                             } else if(foundHypothesis.contains(l)) {
-                                createRelationship(l, actualTheorem, "SUPPORTS");
+                                if (!relationships.get(l).contains(actualTheorem)) {
+                                    relationships.get(l).add(actualTheorem);
+                                    createRelationship(l, actualTheorem, "SUPPORTS");
+                                }
                                 /* createRelationship(actualTheorem, l, "USES"); */
                             } else {
                                 /* We are probably looking to a syntax definition of hypothesis */
@@ -400,12 +407,18 @@ label_list          ::=
                                 throw new Exception("No theorem is being refered actually");
                             }
 
-                            //TODO Treat duplicated cases
+                            relationships.putIfAbsent(l, new HashSet<>());
                             if (foundAssertions.contains(l)){
-                                createRelationship(l, actualTheorem, "SUPPORTS");
+                                if (!relationships.get(l).contains(actualTheorem)) {
+                                    relationships.get(l).add(actualTheorem);
+                                    createRelationship(l, actualTheorem, "SUPPORTS");
+                                }
                                 /* createRelationship(actualTheorem,l, "RELIES"); */
                             } else if(foundHypothesis.contains(l)) {
-                                createRelationship(l, actualTheorem, "SUPPORTS");
+                                if (!relationships.get(l).contains(actualTheorem)) {
+                                    relationships.get(l).add(actualTheorem);
+                                    createRelationship(l, actualTheorem, "SUPPORTS");
+                                }
                                 /* createRelationship(actualTheorem, l, "USES"); */
                             } else {
                                 /* We are probably looking to a syntax definition of hypothesis */
