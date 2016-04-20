@@ -12,3 +12,4 @@
 *.log
 *.java~
 *.mm
+/grafo.txt
