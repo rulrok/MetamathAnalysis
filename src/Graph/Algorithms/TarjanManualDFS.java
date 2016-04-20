@@ -24,7 +24,6 @@ public class TarjanManualDFS extends AbstractStrongConnectedComponentsAlgorithm 
     private int N;
     private Node x;
     private Stack<Node> L;
-    private List<List<Node>> components;
     private Set<Long> T;
     private Map<Long, Integer> low;
     private Map<Long, Integer> dfsnum;
