@@ -32,16 +32,6 @@ public class Main {
 
         try (Transaction tx = graphDb.beginTx()) {
 
-            GraphToTxt graphToTxt = new GraphToTxt(graphDb, "grafo.txt");
-            graphToTxt.execute();
-
-            tx.failure();
-        }
-
-        System.exit(0);
-
-        try (Transaction tx = graphDb.beginTx()) {
-
             /* make a new vertex x with edges x->v for all v */
             Node helperNode = graphDb.createNode();
 
@@ -50,7 +40,16 @@ public class Main {
                 Node node = allNodes.next();
                 helperNode.createRelationshipTo(node, RelTypes.SUPPORTS);
             }
-
+            
+            /*
+             * Export to txt
+             */
+            GraphToTxt graphToTxt = new GraphToTxt(graphDb, "grafo.txt");
+            graphToTxt.execute(RelTypes.SUPPORTS);
+            
+            /*
+             * Calculate SCC
+             */
             StrongConnectedComponents scc = new TarjanManualDFS(graphDb, helperNode, RelTypes.SUPPORTS);
             List<List<Node>> components = scc.execute();
 
