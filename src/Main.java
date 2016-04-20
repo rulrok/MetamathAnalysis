@@ -35,6 +35,7 @@ public class Main {
             GraphToTxt graphToTxt = new GraphToTxt(graphDb, "grafo.txt");
             graphToTxt.execute();
 
+            tx.failure();
         }
 
         System.exit(0);
