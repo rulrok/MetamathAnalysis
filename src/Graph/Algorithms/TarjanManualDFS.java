@@ -81,50 +81,47 @@ public class TarjanManualDFS extends AbstractStrongConnectedComponentsAlgorithm 
         /* low(p) = dfsnum(p) */
         low.put(p.getId(), dfsnum.get(p.getId()));
 
-        /*  for each edge p->q
-                if q is not already in T
-                {
-                    add p->q to T
-                    visit(q)
-                    low(p) = min(low(p), low(q))
-                } else 
-                    low(p) = min(low(p), dfsnum(q)) 
-         */
         Iterable<Relationship> relationships;
         relationships = (relationshipTypes != null) ? p.getRelationships(relationshipTypes) : p.getRelationships();
 
+        /* for each edge p->q */
         for (Relationship p_q : relationships) {
             
+            /* if q is not already in T */
             Node q = p_q.getEndNode();
             if (!T.contains(q.getId())) {
+                /* add p->q to T */
                 T.add(q.getId());
+                /* visit(q) */
                 visit(q);
+                /* low(p) = min(low(p), low(q)) */
                 low.put(p.getId(), Math.min(low.get(p.getId()), low.get(q.getId())));
-            } else {
+            } else { /* else */
+                /* low(p) = min(low(p), dfsnum(q)) */
                 low.put(p.getId(), Math.min(low.get(p.getId()), dfsnum.get(q.getId())));
             }
 
         }
-
-        /*     if low(p)=dfsnum(p)
-        {
-        output "component:"
-        repeat
-            remove last element v from L
-            output v
-            remove v from G
-        until v=p
-        } */
+        
         List<Node> currentComponent = new LinkedList<>();
+        
+        /* if low(p)=dfsnum(p) */
         int lowlink = low.get(p.getId());
         int index = dfsnum.get(p.getId());
         if (lowlink == index) {
             Node v;
+            /* repeat */
             do {
+                /* remove last element v from L */
                 v = L.pop();
+                /* output v */
                 currentComponent.add(v);
+                /* remove v from G */
                 v.delete();
+                
+                /* until v=p */
             } while (v.getId() != p.getId());
+            
             components.add(currentComponent);
         }
     }
