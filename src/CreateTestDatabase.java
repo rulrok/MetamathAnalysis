@@ -7,6 +7,8 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
+import org.neo4j.graphdb.traversal.TraversalDescription;
+import org.neo4j.graphdb.traversal.Traverser;
 import org.neo4j.io.fs.FileUtils;
 
 /**
@@ -58,6 +60,19 @@ public class CreateTestDatabase {
             i.createRelationshipTo(j, RelTypes.SUPPORTS);
 
             beginTx.success();
+
+            TraversalDescription depthFirst = graphTest.traversalDescription().depthFirst();
+
+            depthFirst.traverse(e).forEach((path) -> {
+                System.out.println(path.endNode().getProperties("Name"));
+            });
+
+            System.out.println("--------------------------");
+
+            depthFirst.reverse().traverse(j).forEach((path) -> {
+                System.out.println(path.endNode().getProperties("Name"));
+            });
+
         }
     }
 }
