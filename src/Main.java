@@ -1,7 +1,6 @@
 
 import Graph.Algorithms.TarjanManualDFS;
 import Graph.Algorithms.Contracts.StrongConnectedComponents;
-import Graph.Label;
 import Graph.RelTypes;
 import java.io.File;
 import java.util.List;
@@ -11,6 +10,7 @@ import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
+import org.neo4j.tooling.GlobalGraphOperations;
 
 /**
  *
@@ -19,7 +19,7 @@ import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 public class Main {
 
     public static void main(String[] args) {
-        File dbPath = new File("db/metamath_copie");
+        File dbPath = new File("db/metamath");
         GraphDatabaseService graphDb = new GraphDatabaseFactory()
                 .newEmbeddedDatabaseBuilder(dbPath)
                 .setConfig(GraphDatabaseSettings.pagecache_memory, "512M")
@@ -33,15 +33,23 @@ public class Main {
 
             /* make a new vertex x with edges x->v for all v */
             Node helperNode = graphDb.createNode();
-            ResourceIterator<Node> axiomNodes = graphDb.findNodes(Label.AXIOM);
-            for (; axiomNodes.hasNext();) {
-                Node axiom = axiomNodes.next();
-                helperNode.createRelationshipTo(axiom, RelTypes.SUPPORTS);
+
+            ResourceIterator<Node> allNodes = GlobalGraphOperations.at(graphDb).getAllNodes().iterator();// graphDb.findNodes(Label.AXIOM);
+            for (; allNodes.hasNext();) {
+                Node node = allNodes.next();
+                helperNode.createRelationshipTo(node, RelTypes.SUPPORTS);
             }
 
             StrongConnectedComponents scc = new TarjanManualDFS(graphDb, helperNode, RelTypes.SUPPORTS);
             List<List<Node>> components = scc.execute();
 
+            components.stream()
+                    .filter((component) -> (component.size() > 1))
+                    .forEach((component) -> {
+                        System.out.printf("Componente com mais de um elemento encontrado. (Tamanho: %d)\n", component.size());
+                    });
+
+            //Make sure we don't change the graph
             tx.failure();
         }
 
