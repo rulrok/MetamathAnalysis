@@ -1,11 +1,13 @@
 
 import Graph.RelTypes;
 import java.io.File;
+import java.io.IOException;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
+import org.neo4j.io.fs.FileUtils;
 
 /**
  *
@@ -13,8 +15,9 @@ import org.neo4j.graphdb.factory.GraphDatabaseSettings;
  */
 public class CreateTestDatabase {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         File testPath = new File("db/test");
+        FileUtils.deleteRecursively(testPath);
         GraphDatabaseService graphTest = new GraphDatabaseFactory()
                 .newEmbeddedDatabaseBuilder(testPath)
                 .setConfig(GraphDatabaseSettings.pagecache_memory, "512M")
