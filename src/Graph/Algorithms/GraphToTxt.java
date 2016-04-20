@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.ResourceIterable;
 import org.neo4j.tooling.GlobalGraphOperations;
 
@@ -27,7 +28,7 @@ public class GraphToTxt {
         this.outputFilePath = outputFilePath;
     }
 
-    public boolean execute() {
+    public boolean execute(RelationshipType relationshipType) {
         File outputFile = new File(outputFilePath);
 
         try {
@@ -57,19 +58,25 @@ public class GraphToTxt {
          * Get relationships
          */
         Iterable<Relationship> allRelationships = GlobalGraphOperations.at(graph).getAllRelationships();
+
         Map<Long, Set<Long>> relationships = new HashMap<>();
         allRelationships.forEach((Relationship relationship) -> {
-            Node startNode = relationship.getStartNode();
-            Node endNode = relationship.getEndNode();
-            long k = startNode.getId();
-            long v = endNode.getId();
 
-            if (!relationships.containsKey(k)) {
-                relationships.put(k, new LinkedHashSet<>());
+            if (relationship.isType(relationshipType)) {
+
+                Node startNode = relationship.getStartNode();
+                Node endNode = relationship.getEndNode();
+                long k = startNode.getId();
+                long v = endNode.getId();
+
+                if (!relationships.containsKey(k)) {
+                    relationships.put(k, new LinkedHashSet<>());
+                }
+
+                relationships.get(k).add(v);
+
             }
-            relationships.get(k).add(v);
 
-            relationship.delete();
         });
 
         /*
