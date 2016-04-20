@@ -1,6 +1,7 @@
 
 import Graph.Algorithms.TarjanManualDFS;
 import Graph.Algorithms.Contracts.StrongConnectedComponents;
+import Graph.Algorithms.GraphToTxt;
 import Graph.RelTypes;
 import java.io.File;
 import java.util.List;
@@ -28,6 +29,15 @@ public class Main {
                 .newGraphDatabase();
 
         registerShutdownHook(graphDb);
+
+        try (Transaction tx = graphDb.beginTx()) {
+
+            GraphToTxt graphToTxt = new GraphToTxt(graphDb, "grafo.txt");
+            graphToTxt.execute();
+
+        }
+
+        System.exit(0);
 
         try (Transaction tx = graphDb.beginTx()) {
 
