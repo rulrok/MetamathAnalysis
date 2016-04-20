@@ -30,8 +30,9 @@ public class TarjanManualDFS extends AbstractStrongConnectedComponentsAlgorithm 
     private Map<Long, Integer> dfsnum;
 
     
-    public TarjanManualDFS(GraphDatabaseService graph, Node initialNode, RelationshipType... relationship){
+    public TarjanManualDFS(GraphDatabaseService graph, Node initialNode, RelationshipType... relationshipTypes){
         this(graph, initialNode);
+        this.relationshipTypes = relationshipTypes;
     }
     
     public TarjanManualDFS(GraphDatabaseService graph, Node initialNode) {
