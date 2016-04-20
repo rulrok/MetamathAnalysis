@@ -24,15 +24,25 @@ public class CreateTestDatabase {
 
         try (Transaction beginTx = graphTest.beginTx()) {
             Node a = graphTest.createNode();
+            a.setProperty("Name", "A");
             Node b = graphTest.createNode();
+            b.setProperty("Name", "B");
             Node c = graphTest.createNode();
+            c.setProperty("Name", "C");
             Node d = graphTest.createNode();
+            d.setProperty("Name", "D");
             Node e = graphTest.createNode();
+            e.setProperty("Name", "E");
             Node f = graphTest.createNode();
+            f.setProperty("Name", "F");
             Node g = graphTest.createNode();
+            g.setProperty("Name", "G");
             Node h = graphTest.createNode();
+            h.setProperty("Name", "H");
             Node i = graphTest.createNode();
+            i.setProperty("Name", "I");
             Node j = graphTest.createNode();
+            j.setProperty("Name", "J");
 
             e.createRelationshipTo(d, RelTypes.SUPPORTS);
             d.createRelationshipTo(b, RelTypes.SUPPORTS);
