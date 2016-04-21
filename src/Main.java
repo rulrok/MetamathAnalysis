@@ -1,7 +1,8 @@
 
-import Graph.Algorithms.TarjanManualDFS;
+import Graph.Algorithms.TarjanSCC;
 import Graph.Algorithms.Contracts.StrongConnectedComponents;
-import Graph.Algorithms.GraphToTxt;
+import Graph.Algorithms.GabowSCC;
+import Graph.Algorithms.KosarajuSCC;
 import Graph.RelTypes;
 import java.io.File;
 import java.util.List;
@@ -40,17 +41,17 @@ public class Main {
                 Node node = allNodes.next();
                 helperNode.createRelationshipTo(node, RelTypes.SUPPORTS);
             }
-            
-            /*
-             * Export to txt
-             */
-            GraphToTxt graphToTxt = new GraphToTxt(graphDb, "grafo.txt");
-            graphToTxt.execute(RelTypes.SUPPORTS);
-            
+
+//            /*
+//             * Export to txt
+//             */
+//            GraphToTxt graphToTxt = new GraphToTxt(graphDb, "grafo.txt");
+//            graphToTxt.execute(RelTypes.SUPPORTS);
+
             /*
              * Calculate SCC
              */
-            StrongConnectedComponents scc = new TarjanManualDFS(graphDb, helperNode, RelTypes.SUPPORTS);
+            StrongConnectedComponents scc = new TarjanSCC(graphDb, helperNode, RelTypes.SUPPORTS);
             List<List<Node>> components = scc.execute();
 
             components.stream()
