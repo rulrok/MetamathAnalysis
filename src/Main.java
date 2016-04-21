@@ -1,10 +1,7 @@
-
 import Graph.Algorithms.TarjanSCC;
 import Graph.Algorithms.Contracts.StrongConnectedComponents;
 import Graph.Algorithms.DegreeDistribution;
-import Graph.Algorithms.GabowSCC;
 import Graph.Algorithms.GraphToTxt;
-import Graph.Algorithms.KosarajuSCC;
 import Graph.RelTypes;
 import java.io.File;
 import java.util.List;
@@ -51,16 +48,16 @@ public class Main {
             /*
              * Export to txt
              */
-            exportToTxt(graphDb);
+            //exportToTxt(graphDb);
             /*
              * Calculate SCC
              */
-            calculateSCC(graphDb, helperNode);
+            //calculateSCC(graphDb, helperNode);
 
             /*
              * Calculate the distributions
              */
-            calculateDegrees(graphDb);
+            //calculateDegrees(graphDb);
 
             //Make sure we don't change the graph
             tx.failure();
@@ -99,6 +96,7 @@ public class Main {
             {
                 terminal = "pngcairo enhanced dashed";
                 output = "plot2d.png";
+                extra = "set xrange[0:500]; set yrange[0:1000];";
             }
         };
         Plot plot = new Plot("") {
@@ -122,6 +120,7 @@ public class Main {
         dts.addNewDataTable("All degrees", allX, allY);
 
         jg.execute(plot, jg.plot2d);
+        jg.compile(plot, jg.plot2d, "degree.plt");
     }
 
     private static void registerShutdownHook(final GraphDatabaseService graphDb) {
