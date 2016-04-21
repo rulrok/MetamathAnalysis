@@ -1,5 +1,5 @@
 
-import Graph.Algorithms.TarjanManualDFS;
+import Graph.Algorithms.TarjanSCC;
 import Graph.Algorithms.Contracts.StrongConnectedComponents;
 import Graph.RelTypes;
 import java.io.File;
@@ -49,7 +49,7 @@ public class Main {
             /*
              * Calculate SCC
              */
-            StrongConnectedComponents scc = new TarjanManualDFS(graphDb, helperNode, RelTypes.SUPPORTS);
+            StrongConnectedComponents scc = new TarjanSCC(graphDb, helperNode, RelTypes.SUPPORTS);
             List<List<Node>> components = scc.execute();
 
             components.stream()

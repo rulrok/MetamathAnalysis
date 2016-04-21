@@ -19,7 +19,7 @@ import org.neo4j.tooling.GlobalGraphOperations;
  *
  * @author Reuel
  */
-public class TarjanManualDFS extends AbstractStrongConnectedComponentsAlgorithm {
+public class TarjanSCC extends AbstractStrongConnectedComponentsAlgorithm {
 
     private int time;
     private Stack<Node> stack;
@@ -27,12 +27,12 @@ public class TarjanManualDFS extends AbstractStrongConnectedComponentsAlgorithm 
     private Map<Long, Integer> lowlink;
     private Map<Long, Integer> dfsnum;
 
-    public TarjanManualDFS(GraphDatabaseService graph, Node initialNode, RelationshipType... relationshipTypes) {
+    public TarjanSCC(GraphDatabaseService graph, Node initialNode, RelationshipType... relationshipTypes) {
         this(graph, initialNode);
         this.relationshipTypes = relationshipTypes;
     }
 
-    public TarjanManualDFS(GraphDatabaseService graph, Node initialNode) {
+    public TarjanSCC(GraphDatabaseService graph, Node initialNode) {
         super(graph, initialNode);
     }
 
