@@ -9,7 +9,7 @@ import org.neo4j.graphdb.ResourceIterable;
 import org.neo4j.tooling.GlobalGraphOperations;
 
 /**
- *
+ * Adapted from here https://sites.google.com/site/indy256/algo/strongly_connected_components
  * @author Reuel
  */
 public class KosarajuSCC extends AbstractStrongConnectedComponentsAlgorithm {
