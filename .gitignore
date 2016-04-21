@@ -12,4 +12,7 @@
 *.log
 *.java~
 *.mm
+*.plt
+*.png
 /grafo.txt
+/jgnuplot.xml
