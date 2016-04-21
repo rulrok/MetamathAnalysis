@@ -66,7 +66,7 @@ public class TarjanSCC extends AbstractStrongConnectedComponentsAlgorithm {
     private void visit(Node p) {
 
         stack.push(p);
-
+        visited.add(p.getId());
         dfsnum.put(p.getId(), time);
         time++;
 
@@ -80,7 +80,6 @@ public class TarjanSCC extends AbstractStrongConnectedComponentsAlgorithm {
         for (Relationship p_q : relationships) {
             Node q = p_q.getEndNode();
             if (!visited.contains(q.getId())) {
-                visited.add(q.getId());
                 visit(q);
             }
             if (lowlink.get(p.getId()) > lowlink.get(q.getId())) {

@@ -1,6 +1,8 @@
 
 import Graph.Algorithms.TarjanSCC;
 import Graph.Algorithms.Contracts.StrongConnectedComponents;
+import Graph.Algorithms.GabowSCC;
+import Graph.Algorithms.KosarajuSCC;
 import Graph.RelTypes;
 import java.io.File;
 import java.util.List;
