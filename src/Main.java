@@ -1,9 +1,6 @@
 
 import Graph.Algorithms.TarjanManualDFS;
 import Graph.Algorithms.Contracts.StrongConnectedComponents;
-import Graph.Algorithms.GabowSCC;
-import Graph.Algorithms.GraphToTxt;
-import Graph.Algorithms.KosarajuSCC;
 import Graph.RelTypes;
 import java.io.File;
 import java.util.List;
@@ -52,7 +49,7 @@ public class Main {
             /*
              * Calculate SCC
              */
-            StrongConnectedComponents scc = new KosarajuSCC(graphDb, helperNode, RelTypes.SUPPORTS);
+            StrongConnectedComponents scc = new TarjanManualDFS(graphDb, helperNode, RelTypes.SUPPORTS);
             List<List<Node>> components = scc.execute();
 
             components.stream()
