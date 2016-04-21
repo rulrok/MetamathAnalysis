@@ -37,6 +37,7 @@ public class DegreeDistribution {
 
         ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
 
+        //TODO: Improve this!!!
         allNodes.forEach((Node node) -> {
             int allDegree = node.getDegree();
             allDegrees.put(allDegree, allDegrees.getOrDefault(allDegree, 0) + 1);
