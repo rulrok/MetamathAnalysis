@@ -1,13 +1,19 @@
 
 import Graph.Algorithms.TarjanSCC;
 import Graph.Algorithms.Contracts.StrongConnectedComponents;
+import Graph.Algorithms.DecompositionTarget;
 import Graph.Algorithms.DegreeDistribution;
+import Graph.Algorithms.GraphDecomposition;
 import Graph.Algorithms.GraphToTxt;
 import Graph.Label;
+import Graph.Neo4jBatchGraph;
 import Graph.RelTypes;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.leores.plot.JGnuplot;
 import org.leores.plot.JGnuplot.Plot;
 import org.leores.util.data.DataTableSet;
@@ -46,30 +52,49 @@ public class Main {
 
 //            ResourceIterator<Node> allNodes = GlobalGraphOperations.at(graphDb).getAllNodes().iterator();
             ResourceIterator<Node> allAxioms = graphDb.findNodes(Label.AXIOM);
+            List<Node> axiomNodes = new ArrayList<>();
             for (; allAxioms.hasNext();) {
                 Node node = allAxioms.next();
                 helperNode.createRelationshipTo(node, RelTypes.SUPPORTS);
+                axiomNodes.add(node);
             }
 
             /*
              * Export to txt
              */
             //exportToTxt(graphDb);
+            
+            
             /*
              * Calculate SCC
              */
-            calculateSCC(graphDb, helperNode);
+            //calculateSCC(graphDb, helperNode);
 
             /*
              * Calculate the distributions
              */
-            calculateDegrees(graphDb);
-            
+            //calculateDegrees(graphDb);
+
+            /*
+             * Decompose the graph into sinks
+             */
+            List<List<Node>> sinks = decomposeIntoSinks(graphDb, axiomNodes);
+
+
             //Make sure we don't change the graph
             tx.failure();
+        } catch (Exception ex) {
+            Logger.getLogger(Neo4jBatchGraph.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         graphDb.shutdown();
+    }
+
+    private static List<List<Node>> decomposeIntoSinks(GraphDatabaseService graphDb, List<Node> initialNodes) {
+
+        GraphDecomposition decomposition = new GraphDecomposition(graphDb);
+        List<List<Node>> components = decomposition.execute(DecompositionTarget.SINK, initialNodes);
+        return components;
     }
 
     private static void exportToTxt(GraphDatabaseService graphDb) {
