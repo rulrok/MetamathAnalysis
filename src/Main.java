@@ -1,7 +1,9 @@
+
 import Graph.Algorithms.TarjanSCC;
 import Graph.Algorithms.Contracts.StrongConnectedComponents;
 import Graph.Algorithms.DegreeDistribution;
 import Graph.Algorithms.GraphToTxt;
+import Graph.Label;
 import Graph.RelTypes;
 import java.io.File;
 import java.util.List;
@@ -34,14 +36,18 @@ public class Main {
 
         registerShutdownHook(graphDb);
 
+        /*
+         * Begin graph analisys
+         */
         try (Transaction tx = graphDb.beginTx()) {
 
             /* make a new vertex x with edges x->v for all v */
             Node helperNode = graphDb.createNode();
 
-            ResourceIterator<Node> allNodes = GlobalGraphOperations.at(graphDb).getAllNodes().iterator();// graphDb.findNodes(Label.AXIOM);
-            for (; allNodes.hasNext();) {
-                Node node = allNodes.next();
+//            ResourceIterator<Node> allNodes = GlobalGraphOperations.at(graphDb).getAllNodes().iterator();
+            ResourceIterator<Node> allAxioms = graphDb.findNodes(Label.AXIOM);
+            for (; allAxioms.hasNext();) {
+                Node node = allAxioms.next();
                 helperNode.createRelationshipTo(node, RelTypes.SUPPORTS);
             }
 
@@ -52,13 +58,13 @@ public class Main {
             /*
              * Calculate SCC
              */
-            //calculateSCC(graphDb, helperNode);
+            calculateSCC(graphDb, helperNode);
 
             /*
              * Calculate the distributions
              */
             //calculateDegrees(graphDb);
-
+            
             //Make sure we don't change the graph
             tx.failure();
         }
