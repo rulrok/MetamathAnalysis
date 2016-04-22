@@ -63,7 +63,7 @@ public class Main {
             /*
              * Calculate the distributions
              */
-            //calculateDegrees(graphDb);
+            calculateDegrees(graphDb);
             
             //Make sure we don't change the graph
             tx.failure();
@@ -107,8 +107,8 @@ public class Main {
         };
         Plot plot = new Plot("") {
             {
-                xlabel = "x";
-                ylabel = "y";
+                xlabel = "Number of Links(k)";
+                ylabel = "Number of nodes with k Links";
             }
         };
         double[] innerX = innerDegrees.keySet().stream().mapToDouble(i -> i).toArray();
