@@ -1,14 +1,14 @@
 
+import Graph.Algorithms.*;
+import Graph.*;
+import Graph.Label;
 import Graph.RelTypes;
 import java.io.File;
 import java.io.IOException;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import org.neo4j.graphdb.factory.GraphDatabaseSettings;
-import org.neo4j.graphdb.traversal.TraversalDescription;
-import org.neo4j.graphdb.traversal.Traverser;
+import java.util.*;
+import org.neo4j.graphdb.*;
+import org.neo4j.graphdb.factory.*;
+import org.neo4j.graphdb.traversal.*;
 import org.neo4j.io.fs.FileUtils;
 
 /**
@@ -36,7 +36,7 @@ public class CreateTestDatabase {
             c.setProperty("Name", "C");
             Node d = graphTest.createNode();
             d.setProperty("Name", "D");
-            Node e = graphTest.createNode();
+            Node e = graphTest.createNode(Label.UNKNOWN);
             e.setProperty("Name", "E");
             Node f = graphTest.createNode();
             f.setProperty("Name", "F");
@@ -61,18 +61,43 @@ public class CreateTestDatabase {
 
             beginTx.success();
 
-            TraversalDescription depthFirst = graphTest.traversalDescription().depthFirst();
+//            TraversalDescription traversalDescription = graphTest
+//                    .traversalDescription()
+//                    .breadthFirst()
+//                    .order(BranchOrderingPolicies.POSTORDER_BREADTH_FIRST)
+//                    .evaluator(new SinkEvaluator());
+//
+//            System.out.println("Normal order:");
+//            traversalDescription.traverse(e).forEach((path) -> {
+//                System.out.println(path.endNode().getProperties("Name"));
+//            });
+//
+//            System.out.println("--------------------------");
+//
+//            System.out.println("\nReverse graph:");
+//            traversalDescription.reverse().traverse(j).forEach((path) -> {
+//                System.out.println(path.endNode().getProperties("Name"));
+//            });
+        }
 
-            depthFirst.traverse(e).forEach((path) -> {
-                System.out.println(path.endNode().getProperties("Name"));
+        GraphDecomposition gd = new GraphDecomposition(graphTest);
+        List<Node> sinkInitialNodes = new LinkedList<>();
+
+        try (Transaction tx = graphTest.beginTx()) {
+            Node e = graphTest.findNode(Label.UNKNOWN, "Name", "E");
+            sinkInitialNodes.add(e);
+        }
+        List<List<Node>> components = gd.execute(DecompositionTarget.SINK, sinkInitialNodes);
+
+        try (Transaction tx = graphTest.beginTx()) {
+
+            components.stream().forEach((List<Node> nodeList) -> {
+                System.out.println("Sink component:");
+                nodeList.forEach(node -> {
+                    Node realNode = graphTest.getNodeById(node.getId());
+                    System.out.println("\t" + realNode.getProperty("Name"));
+                });
             });
-
-            System.out.println("--------------------------");
-
-            depthFirst.reverse().traverse(j).forEach((path) -> {
-                System.out.println(path.endNode().getProperties("Name"));
-            });
-
         }
     }
 }
