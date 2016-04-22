@@ -48,12 +48,15 @@ public class CreateTestDatabase {
             i.setProperty("Name", "I");
             Node j = graphTest.createNode();
             j.setProperty("Name", "J");
+            Node aux = graphTest.createNode(Label.UNKNOWN);
+            aux.setProperty("Name", "AUX");
 
             e.createRelationshipTo(d, RelTypes.SUPPORTS);
             d.createRelationshipTo(b, RelTypes.SUPPORTS);
             b.createRelationshipTo(a, RelTypes.SUPPORTS);
             b.createRelationshipTo(c, RelTypes.SUPPORTS);
             e.createRelationshipTo(g, RelTypes.SUPPORTS);
+            aux.createRelationshipTo(g, RelTypes.SUPPORTS);
             g.createRelationshipTo(f, RelTypes.SUPPORTS);
             g.createRelationshipTo(i, RelTypes.SUPPORTS);
             i.createRelationshipTo(h, RelTypes.SUPPORTS);
@@ -85,7 +88,10 @@ public class CreateTestDatabase {
 
         try (Transaction tx = graphTest.beginTx()) {
             Node e = graphTest.findNode(Label.UNKNOWN, "Name", "E");
+            Node aux = graphTest.findNode(Label.UNKNOWN, "Name", "AUX");
+
             sinkInitialNodes.add(e);
+            sinkInitialNodes.add(aux);
         }
         List<List<Node>> components = gd.execute(DecompositionTarget.SINK, sinkInitialNodes);
 

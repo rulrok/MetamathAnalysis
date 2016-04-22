@@ -4,6 +4,7 @@ import Graph.Algorithms.Evaluators.SinkEvaluator;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;
@@ -51,7 +52,7 @@ public class GraphDecomposition {
                     List<Node> component = new LinkedList<>();
                     bfs.traverse(initialNodesList).forEach((Path path) -> {
                         Node endNode = path.endNode();
-                        endNode.getRelationships().forEach(relationship -> {
+                        endNode.getRelationships(Direction.INCOMING).forEach(relationship -> {
                             relationship.delete();
                         });
                         component.add(endNode);
@@ -64,6 +65,8 @@ public class GraphDecomposition {
                     if (!component.isEmpty()) {
                         components.add(component);
                     } else {
+                        component.addAll(initialNodes);
+                        components.add(component);
                         break;
                     }
                 } while (true);
