@@ -1,6 +1,7 @@
 package Graph.Algorithms;
 
 import Graph.Algorithms.Evaluators.SinkEvaluator;
+import Graph.Algorithms.Evaluators.SourceEvaluator;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,48 +41,43 @@ public class GraphDecomposition {
         LinkedList<Node> initialNodesList = new LinkedList<>(initialNodes);
 
         TraversalDescription bfs = graph.traversalDescription().breadthFirst();
-        Direction direction = Direction.BOTH;
 
         if (decompositionTarget == DecompositionTarget.SINK) {
             bfs = bfs
                     .order(BranchOrderingPolicies.PREORDER_BREADTH_FIRST)
                     .evaluator(new SinkEvaluator());
-            direction = Direction.INCOMING;
 
-        }
+            try (Transaction tx = graph.beginTx()) {
 
-        if (decompositionTarget == DecompositionTarget.SOURCE) {
+                do {
+                    List<Node> component = new LinkedList<>();
+                    bfs.traverse(initialNodesList).forEach((Path path) -> {
+                        Node endNode = path.endNode();
+                        endNode.getRelationships(Direction.INCOMING).forEach(relationship -> {
+                            relationship.delete();
+                        });
+                        component.add(endNode);
+                        initialNodesList.removeIf((Node node) -> {
+                            return endNode.equals(node);
+                        });
+                        endNode.delete();
+
+                    });
+                    if (!component.isEmpty()) {
+                        components.add(component);
+                    } else {
+                        component.addAll(initialNodes);
+                        components.add(component);
+                        break;
+                    }
+                } while (true);
+                tx.failure();
+            }
+        } else if (decompositionTarget == DecompositionTarget.SOURCE) {
             bfs = bfs
-                    .order(BranchOrderingPolicies.PREORDER_BREADTH_FIRST);
-            direction = Direction.OUTGOING;
-        }
+                    .order(BranchOrderingPolicies.PREORDER_BREADTH_FIRST)
+                    .evaluator(new SourceEvaluator());
 
-        try (Transaction tx = graph.beginTx()) {
-
-            do {
-                List<Node> component = new LinkedList<>();
-                final Direction relationshipDirection = direction;
-                bfs.traverse(initialNodesList).forEach((Path path) -> {
-                    Node endNode = path.endNode();
-                    endNode.getRelationships(relationshipDirection).forEach(relationship -> {
-                        relationship.delete();
-                    });
-                    component.add(endNode);
-                    initialNodesList.removeIf((Node node) -> {
-                        return endNode.equals(node);
-                    });
-                    endNode.delete();
-
-                });
-                if (!component.isEmpty()) {
-                    components.add(component);
-                } else {
-                    component.addAll(initialNodes);
-                    components.add(component);
-                    break;
-                }
-            } while (true);
-            tx.failure();
         }
 
         return components;

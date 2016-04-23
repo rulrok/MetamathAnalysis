@@ -93,12 +93,32 @@ public class CreateTestDatabase {
             sinkInitialNodes.add(e);
             sinkInitialNodes.add(aux);
         }
-        List<List<Node>> components = gd.execute(DecompositionTarget.SINK, sinkInitialNodes);
+        List<List<Node>> sinkComponents = gd.execute(DecompositionTarget.SINK, sinkInitialNodes);
 
         try (Transaction tx = graphTest.beginTx()) {
 
-            components.stream().forEach((List<Node> nodeList) -> {
+            sinkComponents.stream().forEach((List<Node> nodeList) -> {
                 System.out.println("Sink component:");
+                nodeList.forEach(node -> {
+                    Node realNode = graphTest.getNodeById(node.getId());
+                    System.out.println("\t" + realNode.getProperty("Name"));
+                });
+            });
+        }
+
+        List<Node> sourceInitialNodes = new LinkedList<>();
+
+        try (Transaction tx = graphTest.beginTx()) {
+            Node e = graphTest.findNode(Label.UNKNOWN, "Name", "E");
+
+            sourceInitialNodes.add(e);
+        }
+        List<List<Node>> sourceComponents = gd.execute(DecompositionTarget.SINK, sourceInitialNodes);
+
+        try (Transaction tx = graphTest.beginTx()) {
+
+            sourceComponents.stream().forEach((List<Node> nodeList) -> {
+                System.out.println("Source component:");
                 nodeList.forEach(node -> {
                     Node realNode = graphTest.getNodeById(node.getId());
                     System.out.println("\t" + realNode.getProperty("Name"));
