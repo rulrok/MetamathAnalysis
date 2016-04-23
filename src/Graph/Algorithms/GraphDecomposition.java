@@ -78,6 +78,38 @@ public class GraphDecomposition {
                     .order(BranchOrderingPolicies.PREORDER_BREADTH_FIRST)
                     .evaluator(new SourceEvaluator());
 
+            try (Transaction tx = graph.beginTx()) {
+
+                do {
+                    List<Node> component = new LinkedList<>();
+                    bfs.traverse(initialNodesList).forEach((Path path) -> {
+                        Node startNode = path.startNode();
+                        component.add(startNode);
+
+                        initialNodesList.removeIf((Node node) -> {
+                            return node.equals(startNode);
+                        });
+                    });
+
+                    if (!component.isEmpty()) {
+                        component.forEach(node -> {
+                            node.getRelationships(Direction.OUTGOING).forEach(relationship -> {
+                                Node endNode = relationship.getEndNode();
+                                if (!initialNodesList.contains(endNode)) {
+                                    initialNodesList.add(endNode);
+                                }
+                                relationship.delete();
+
+                            });
+                            node.delete();
+                        });
+                        components.add(component);
+                    } else {
+                        break;
+                    }
+                } while (true);
+                tx.failure();
+            }
         }
 
         return components;

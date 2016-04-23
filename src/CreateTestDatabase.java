@@ -1,6 +1,8 @@
 
 import Graph.Algorithms.*;
 import Graph.*;
+import Graph.Algorithms.Evaluators.SinkEvaluator;
+import Graph.Algorithms.Evaluators.SourceEvaluator;
 import Graph.Label;
 import Graph.RelTypes;
 import java.io.File;
@@ -50,6 +52,8 @@ public class CreateTestDatabase {
             j.setProperty("Name", "J");
             Node aux = graphTest.createNode(Label.UNKNOWN);
             aux.setProperty("Name", "AUX");
+            Node aux2 = graphTest.createNode(Label.UNKNOWN);
+            aux2.setProperty("Name", "AUX2");
 
             e.createRelationshipTo(d, RelTypes.SUPPORTS);
             d.createRelationshipTo(b, RelTypes.SUPPORTS);
@@ -57,6 +61,7 @@ public class CreateTestDatabase {
             b.createRelationshipTo(c, RelTypes.SUPPORTS);
             e.createRelationshipTo(g, RelTypes.SUPPORTS);
             aux.createRelationshipTo(g, RelTypes.SUPPORTS);
+            aux2.createRelationshipTo(d, RelTypes.SUPPORTS);
             g.createRelationshipTo(f, RelTypes.SUPPORTS);
             g.createRelationshipTo(i, RelTypes.SUPPORTS);
             i.createRelationshipTo(h, RelTypes.SUPPORTS);
@@ -67,12 +72,17 @@ public class CreateTestDatabase {
 //            TraversalDescription traversalDescription = graphTest
 //                    .traversalDescription()
 //                    .breadthFirst()
-//                    .order(BranchOrderingPolicies.POSTORDER_BREADTH_FIRST)
-//                    .evaluator(new SinkEvaluator());
+//                    .order(BranchOrderingPolicies.PREORDER_BREADTH_FIRST)
+//                    .evaluator(new SourceEvaluator());
 //
 //            System.out.println("Normal order:");
-//            traversalDescription.traverse(e).forEach((path) -> {
-//                System.out.println(path.endNode().getProperties("Name"));
+//            traversalDescription.traverse(e, aux, aux2).forEach((path) -> {
+////                System.out.println(path);
+//                System.out.println(path.nodes());
+////                System.out.print(path.startNode());
+////                System.out.print("->");
+////                System.out.println(path.endNode());
+//                System.out.println("-----------------");
 //            });
 //
 //            System.out.println("--------------------------");
@@ -105,15 +115,20 @@ public class CreateTestDatabase {
                 });
             });
         }
-
+        
+        
         List<Node> sourceInitialNodes = new LinkedList<>();
 
         try (Transaction tx = graphTest.beginTx()) {
             Node e = graphTest.findNode(Label.UNKNOWN, "Name", "E");
+            Node aux = graphTest.findNode(Label.UNKNOWN, "Name", "AUX");
+            Node aux2 = graphTest.findNode(Label.UNKNOWN, "Name", "AUX2");
 
             sourceInitialNodes.add(e);
+            sourceInitialNodes.add(aux);
+            sourceInitialNodes.add(aux2);
         }
-        List<List<Node>> sourceComponents = gd.execute(DecompositionTarget.SINK, sourceInitialNodes);
+        List<List<Node>> sourceComponents = gd.execute(DecompositionTarget.SOURCE, sourceInitialNodes);
 
         try (Transaction tx = graphTest.beginTx()) {
 
