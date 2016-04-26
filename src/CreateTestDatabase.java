@@ -8,6 +8,8 @@ import Graph.RelTypes;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.factory.*;
 import org.neo4j.graphdb.traversal.*;
@@ -103,9 +105,9 @@ public class CreateTestDatabase {
             sinkInitialNodes.add(e);
             sinkInitialNodes.add(aux);
         }
-        List<List<Node>> sinkComponents = gd.execute(DecompositionTarget.SINK, sinkInitialNodes);
 
         try (Transaction tx = graphTest.beginTx()) {
+            List<List<Node>> sinkComponents = gd.execute(DecompositionTarget.SINK, sinkInitialNodes);
 
             sinkComponents.stream().forEach((List<Node> nodeList) -> {
                 System.out.println("Sink component:");
@@ -114,9 +116,10 @@ public class CreateTestDatabase {
                     System.out.println("\t" + realNode.getProperty("Name"));
                 });
             });
+        } catch (Exception ex) {
+            Logger.getLogger(CreateTestDatabase.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
+
         List<Node> sourceInitialNodes = new LinkedList<>();
 
         try (Transaction tx = graphTest.beginTx()) {
@@ -128,9 +131,9 @@ public class CreateTestDatabase {
             sourceInitialNodes.add(aux);
             sourceInitialNodes.add(aux2);
         }
-        List<List<Node>> sourceComponents = gd.execute(DecompositionTarget.SOURCE, sourceInitialNodes);
 
         try (Transaction tx = graphTest.beginTx()) {
+            List<List<Node>> sourceComponents = gd.execute(DecompositionTarget.SOURCE, sourceInitialNodes);
 
             sourceComponents.stream().forEach((List<Node> nodeList) -> {
                 System.out.println("Source component:");
@@ -139,6 +142,8 @@ public class CreateTestDatabase {
                     System.out.println("\t" + realNode.getProperty("Name"));
                 });
             });
+        } catch (Exception ex) {
+            Logger.getLogger(CreateTestDatabase.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

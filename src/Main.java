@@ -10,12 +10,14 @@ import Graph.Neo4jBatchGraph;
 import Graph.RelTypes;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.leores.plot.JGnuplot;
 import org.leores.plot.JGnuplot.Plot;
+import org.leores.util.ListUtil;
 import org.leores.util.data.DataTableSet;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -63,8 +65,6 @@ public class Main {
              * Export to txt
              */
             //exportToTxt(graphDb);
-            
-            
             /*
              * Calculate SCC
              */
@@ -78,8 +78,10 @@ public class Main {
             /*
              * Decompose the graph into sinks
              */
-            List<List<Node>> sinks = decomposeIntoSinks(graphDb, axiomNodes);
-
+//            List<List<Node>> sinks = decomposeIntoSinks(graphDb, axiomNodes);
+            List<Node> initialNode = new LinkedList<>();
+            initialNode.add(helperNode);
+            List<List<Node>> decomposeIntoSources = decomposeIntoSources(graphDb,initialNode);
 
             //Make sure we don't change the graph
             tx.failure();
@@ -90,10 +92,17 @@ public class Main {
         graphDb.shutdown();
     }
 
-    private static List<List<Node>> decomposeIntoSinks(GraphDatabaseService graphDb, List<Node> initialNodes) {
+    private static List<List<Node>> decomposeIntoSinks(GraphDatabaseService graphDb, List<Node> initialNodes) throws Exception {
 
         GraphDecomposition decomposition = new GraphDecomposition(graphDb);
         List<List<Node>> components = decomposition.execute(DecompositionTarget.SINK, initialNodes);
+        return components;
+    }
+
+    private static List<List<Node>> decomposeIntoSources(GraphDatabaseService graphDb, List<Node> initialNodes) throws Exception {
+
+        GraphDecomposition decomposition = new GraphDecomposition(graphDb);
+        List<List<Node>> components = decomposition.execute(DecompositionTarget.SOURCE, initialNodes);
         return components;
     }
 

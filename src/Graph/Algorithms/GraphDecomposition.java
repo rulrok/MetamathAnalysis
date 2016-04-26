@@ -1,7 +1,6 @@
 package Graph.Algorithms;
 
 import Graph.Algorithms.Evaluators.SinkEvaluator;
-import Graph.Algorithms.Evaluators.SourceEvaluator;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,7 +30,7 @@ public class GraphDecomposition {
         components = new ArrayList<>();
     }
 
-    public List<List<Node>> execute(DecompositionTarget decompositionTarget, List<Node> initialNodes) {
+    public List<List<Node>> execute(DecompositionTarget decompositionTarget, List<Node> initialNodes) throws Exception {
 
         if (initialNodes.isEmpty() || initialNodes.contains(null)) {
             return components;
@@ -74,42 +73,47 @@ public class GraphDecomposition {
                 tx.failure();
             }
         } else if (decompositionTarget == DecompositionTarget.SOURCE) {
-            bfs = bfs
-                    .order(BranchOrderingPolicies.PREORDER_BREADTH_FIRST)
-                    .evaluator(new SourceEvaluator());
+            
+            throw new Exception("Not implemented yet");
+//            bfs = bfs
+//                    .order(BranchOrderingPolicies.PREORDER_BREADTH_FIRST)
+//                    .evaluator(new SourceEvaluator());
 
-            try (Transaction tx = graph.beginTx()) {
+//            try (Transaction tx = graph.beginTx()) {
 
-                do {
-                    List<Node> component = new LinkedList<>();
-                    bfs.traverse(initialNodesList).forEach((Path path) -> {
-                        Node startNode = path.startNode();
-                        component.add(startNode);
-
-                        initialNodesList.removeIf((Node node) -> {
-                            return node.equals(startNode);
-                        });
-                    });
-
-                    if (!component.isEmpty()) {
-                        component.forEach(node -> {
-                            node.getRelationships(Direction.OUTGOING).forEach(relationship -> {
-                                Node endNode = relationship.getEndNode();
-                                if (!initialNodesList.contains(endNode)) {
-                                    initialNodesList.add(endNode);
-                                }
-                                relationship.delete();
-
-                            });
-                            node.delete();
-                        });
-                        components.add(component);
-                    } else {
-                        break;
-                    }
-                } while (true);
-                tx.failure();
-            }
+//                do {
+//                    List<Node> component = new LinkedList<>();
+//                    bfs.traverse(initialNodesList).forEach((Path path) -> {
+//                        Node startNode = path.startNode();
+//                        component.add(startNode);
+//
+//                        if (initialNodesList.contains(startNode)) {
+//                            initialNodesList.remove(startNode);
+//                        }
+//                    });
+//
+//                    System.out.println("Component:");
+//                    if (!component.isEmpty()) {
+//                        component.forEach(node -> {
+//                            System.out.println(node);
+//                            node.getRelationships(Direction.OUTGOING).forEach(relationship -> {
+//                                Node endNode = relationship.getEndNode();
+//                                if (!initialNodesList.contains(endNode)) {
+//                                    initialNodesList.add(endNode);
+//                                }
+//                                relationship.delete();
+//
+//                            });
+//                            node.delete();
+//                        });
+//                        components.add(component);
+//                    } else {
+//                        break;
+//                    }
+//                    System.out.println("---------------------------");
+//                } while (true);
+//                tx.failure();
+//            }
         }
 
         return components;
