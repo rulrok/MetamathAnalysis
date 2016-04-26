@@ -1,9 +1,10 @@
 
+import Graph.Algorithms.Contracts.GraphDecomposition;
 import Graph.Algorithms.TarjanSCC;
 import Graph.Algorithms.Contracts.StrongConnectedComponents;
 import Graph.Algorithms.DecompositionTarget;
 import Graph.Algorithms.DegreeDistribution;
-import Graph.Algorithms.GraphDecomposition;
+import Graph.Algorithms.TraverserGraphDecomposition;
 import Graph.Algorithms.GraphToTxt;
 import Graph.Label;
 import Graph.Neo4jBatchGraph;
@@ -17,7 +18,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.leores.plot.JGnuplot;
 import org.leores.plot.JGnuplot.Plot;
-import org.leores.util.ListUtil;
 import org.leores.util.data.DataTableSet;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -25,7 +25,6 @@ import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
-import org.neo4j.tooling.GlobalGraphOperations;
 
 /**
  *
@@ -94,14 +93,14 @@ public class Main {
 
     private static List<List<Node>> decomposeIntoSinks(GraphDatabaseService graphDb, List<Node> initialNodes) throws Exception {
 
-        GraphDecomposition decomposition = new GraphDecomposition(graphDb);
+        GraphDecomposition decomposition = new TraverserGraphDecomposition(graphDb);
         List<List<Node>> components = decomposition.execute(DecompositionTarget.SINK, initialNodes);
         return components;
     }
 
     private static List<List<Node>> decomposeIntoSources(GraphDatabaseService graphDb, List<Node> initialNodes) throws Exception {
 
-        GraphDecomposition decomposition = new GraphDecomposition(graphDb);
+        GraphDecomposition decomposition = new TraverserGraphDecomposition(graphDb);
         List<List<Node>> components = decomposition.execute(DecompositionTarget.SOURCE, initialNodes);
         return components;
     }

@@ -1,8 +1,6 @@
 
 import Graph.Algorithms.*;
-import Graph.*;
-import Graph.Algorithms.Evaluators.SinkEvaluator;
-import Graph.Algorithms.Evaluators.SourceEvaluator;
+import Graph.Algorithms.Contracts.GraphDecomposition;
 import Graph.Label;
 import Graph.RelTypes;
 import java.io.File;
@@ -12,7 +10,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.factory.*;
-import org.neo4j.graphdb.traversal.*;
 import org.neo4j.io.fs.FileUtils;
 
 /**
@@ -95,7 +92,7 @@ public class CreateTestDatabase {
 //            });
         }
 
-        GraphDecomposition gd = new GraphDecomposition(graphTest);
+        GraphDecomposition gd = new TraverserGraphDecomposition(graphTest);
         List<Node> sinkInitialNodes = new LinkedList<>();
 
         try (Transaction tx = graphTest.beginTx()) {

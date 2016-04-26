@@ -1,5 +1,6 @@
 package Graph.Algorithms;
 
+import Graph.Algorithms.Contracts.GraphDecomposition;
 import Graph.Algorithms.Evaluators.SinkEvaluator;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -16,12 +17,12 @@ import org.neo4j.graphdb.traversal.TraversalDescription;
  *
  * @author Reuel
  */
-public class GraphDecomposition {
+public class TraverserGraphDecomposition implements GraphDecomposition {
 
     private final GraphDatabaseService graph;
     private ArrayList<List<Node>> components;
 
-    public GraphDecomposition(GraphDatabaseService graph) {
+    public TraverserGraphDecomposition(GraphDatabaseService graph) {
         this.graph = graph;
         configure();
     }
@@ -30,6 +31,7 @@ public class GraphDecomposition {
         components = new ArrayList<>();
     }
 
+    @Override
     public List<List<Node>> execute(DecompositionTarget decompositionTarget, List<Node> initialNodes) throws Exception {
 
         if (initialNodes.isEmpty() || initialNodes.contains(null)) {
