@@ -33,71 +33,74 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
     @Override
     public List<List<Node>> execute(DecompositionTarget decompositionTarget, List<Node> initialNodes) throws Exception {
 
-        try (Transaction tx = graph.beginTx()) {
-            ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
+        if (decompositionTarget == DecompositionTarget.SINK) {
 
-            if (decompositionTarget == DecompositionTarget.SINK) {
+            decomposeIntoSinks();
 
-                decomposeIntoSinks(allNodes);
+        } else if (decompositionTarget == DecompositionTarget.SOURCE) {
+            decomposeIntoSources();
 
-            } else if (decompositionTarget == DecompositionTarget.SOURCE) {
-                
-                decomposeIntoSources(allNodes);
-                
-            }
-            tx.failure();
         }
         return components;
     }
 
-    private void decomposeIntoSinks(ResourceIterable<Node> allNodes) {
-        List<Node> component;
-        do {
-            component = new LinkedList<>();
+    private void decomposeIntoSinks() {
+        try (Transaction tx = graph.beginTx()) {
+            List<Node> component;
+            do {
+                component = new LinkedList<>();
+                ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
+                for (ResourceIterator<Node> iterator = allNodes.iterator(); iterator.hasNext();) {
+                    Node node = iterator.next();
 
-            for (ResourceIterator<Node> iterator = allNodes.iterator(); iterator.hasNext();) {
-                Node node = iterator.next();
-
-                if (node.getDegree(Direction.INCOMING) > 0 && node.getDegree(Direction.OUTGOING) == 0) {
-                    component.add(node);
-                    node.getRelationships().forEach(relationship -> {
-                        relationship.delete();
-                    });
-                    node.delete();
+                    if (node.getDegree(Direction.INCOMING) > 0 && node.getDegree(Direction.OUTGOING) == 0) {
+                        component.add(node);
+                        node.getRelationships().forEach(relationship -> {
+                            relationship.delete();
+                        });
+                        node.delete();
+                    }
                 }
-            }
 
-            if (component.size() > 0) {
-                components.add(component);
-            } else {
-                break;
-            }
-        } while (true);
+                if (component.size() > 0) {
+                    components.add(component);
+                } else {
+                    break;
+                }
+            } while (true);
+
+            tx.failure();
+        }
     }
 
-    private void decomposeIntoSources(ResourceIterable<Node> allNodes) {
-        List<Node> component;
-        do {
-            component = new LinkedList<>();
+    private void decomposeIntoSources() {
+        try (Transaction tx = graph.beginTx()) {
 
-            for (ResourceIterator<Node> iterator = allNodes.iterator(); iterator.hasNext();) {
-                Node node = iterator.next();
+            ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
+            List<Node> component;
+            do {
+                component = new LinkedList<>();
 
-                if (node.getDegree(Direction.OUTGOING) > 0 && node.getDegree(Direction.INCOMING) == 0) {
-                    component.add(node);
-                    node.getRelationships().forEach(relationship -> {
-                        relationship.delete();
-                    });
-                    node.delete();
+                for (ResourceIterator<Node> iterator = allNodes.iterator(); iterator.hasNext();) {
+                    Node node = iterator.next();
+
+                    if (node.getDegree(Direction.OUTGOING) > 0 && node.getDegree(Direction.INCOMING) == 0) {
+                        component.add(node);
+                        node.getRelationships().forEach(relationship -> {
+                            relationship.delete();
+                        });
+                        node.delete();
+                    }
                 }
-            }
 
-            if (component.size() > 0) {
-                components.add(component);
-            } else {
-                break;
-            }
-        } while (true);
+                if (component.size() > 0) {
+                    components.add(component);
+                } else {
+                    break;
+                }
+            } while (true);
+            tx.failure();
+        }
     }
 
 }
