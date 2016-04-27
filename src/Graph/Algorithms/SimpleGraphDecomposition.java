@@ -39,9 +39,11 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
             if (decompositionTarget == DecompositionTarget.SINK) {
 
                 decomposeIntoSinks(allNodes);
-                
+
             } else if (decompositionTarget == DecompositionTarget.SOURCE) {
-                //TODO
+                
+                decomposeIntoSources(allNodes);
+                
             }
             tx.failure();
         }
@@ -57,6 +59,31 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
                 Node node = iterator.next();
 
                 if (node.getDegree(Direction.INCOMING) > 0 && node.getDegree(Direction.OUTGOING) == 0) {
+                    component.add(node);
+                    node.getRelationships().forEach(relationship -> {
+                        relationship.delete();
+                    });
+                    node.delete();
+                }
+            }
+
+            if (component.size() > 0) {
+                components.add(component);
+            } else {
+                break;
+            }
+        } while (true);
+    }
+
+    private void decomposeIntoSources(ResourceIterable<Node> allNodes) {
+        List<Node> component;
+        do {
+            component = new LinkedList<>();
+
+            for (ResourceIterator<Node> iterator = allNodes.iterator(); iterator.hasNext();) {
+                Node node = iterator.next();
+
+                if (node.getDegree(Direction.OUTGOING) > 0 && node.getDegree(Direction.INCOMING) == 0) {
                     component.add(node);
                     node.getRelationships().forEach(relationship -> {
                         relationship.delete();

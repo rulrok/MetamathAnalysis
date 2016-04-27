@@ -79,17 +79,25 @@ public class Main {
              * Decompose the graph into sinks
              */
             List<List<Node>> sinks = decomposeIntoSinks(graphDb, axiomNodes);
-            System.out.print("Total number of components: ");
+            System.out.print("Total number of sink components: ");
             System.out.println(sinks.size());
             
-            sinks.forEach((List<Node> component) -> {
-                System.out.print("Component size: ");
-                System.out.println(component.size());
-            });
+//            sinks.forEach((List<Node> component) -> {
+//                System.out.print("Component size: ");
+//                System.out.println(component.size());
+//            });
             
-//            List<Node> initialNode = new LinkedList<>();
-//            initialNode.add(helperNode);
-//            List<List<Node>> decomposeIntoSources = decomposeIntoSources(graphDb,initialNode);
+            /*
+             * Decompose the graph into sources
+             */
+            List<List<Node>> sources = decomposeIntoSources(graphDb, axiomNodes);
+            System.out.print("Total number of source components: ");
+            System.out.println(sources.size());
+            
+//            sources.forEach((List<Node> component) -> {
+//                System.out.print("Component size: ");
+//                System.out.println(component.size());
+//            });
 
             //Make sure we don't change the graph
             tx.failure();
@@ -109,7 +117,7 @@ public class Main {
 
     private static List<List<Node>> decomposeIntoSources(GraphDatabaseService graphDb, List<Node> initialNodes) throws Exception {
 
-        GraphDecomposition decomposition = new TraverserGraphDecomposition(graphDb);
+        GraphDecomposition decomposition = new SimpleGraphDecomposition(graphDb);
         List<List<Node>> components = decomposition.execute(DecompositionTarget.SOURCE, initialNodes);
         return components;
     }
