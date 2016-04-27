@@ -6,6 +6,7 @@ import Graph.Algorithms.DecompositionTarget;
 import Graph.Algorithms.DegreeDistribution;
 import Graph.Algorithms.TraverserGraphDecomposition;
 import Graph.Algorithms.GraphToTxt;
+import Graph.Algorithms.SimpleGraphDecomposition;
 import Graph.Label;
 import Graph.Neo4jBatchGraph;
 import Graph.RelTypes;
@@ -77,10 +78,18 @@ public class Main {
             /*
              * Decompose the graph into sinks
              */
-//            List<List<Node>> sinks = decomposeIntoSinks(graphDb, axiomNodes);
-            List<Node> initialNode = new LinkedList<>();
-            initialNode.add(helperNode);
-            List<List<Node>> decomposeIntoSources = decomposeIntoSources(graphDb,initialNode);
+            List<List<Node>> sinks = decomposeIntoSinks(graphDb, axiomNodes);
+            System.out.print("Total number of components: ");
+            System.out.println(sinks.size());
+            
+            sinks.forEach((List<Node> component) -> {
+                System.out.print("Component size: ");
+                System.out.println(component.size());
+            });
+            
+//            List<Node> initialNode = new LinkedList<>();
+//            initialNode.add(helperNode);
+//            List<List<Node>> decomposeIntoSources = decomposeIntoSources(graphDb,initialNode);
 
             //Make sure we don't change the graph
             tx.failure();
@@ -93,7 +102,7 @@ public class Main {
 
     private static List<List<Node>> decomposeIntoSinks(GraphDatabaseService graphDb, List<Node> initialNodes) throws Exception {
 
-        GraphDecomposition decomposition = new TraverserGraphDecomposition(graphDb);
+        GraphDecomposition decomposition = new SimpleGraphDecomposition(graphDb);
         List<List<Node>> components = decomposition.execute(DecompositionTarget.SINK, initialNodes);
         return components;
     }
