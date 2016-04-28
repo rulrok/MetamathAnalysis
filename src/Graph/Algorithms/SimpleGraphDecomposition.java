@@ -55,14 +55,16 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
 
                     if (node.getDegree(Direction.INCOMING) > 0 && node.getDegree(Direction.OUTGOING) == 0) {
                         component.add(node);
+                    }
+                }
+
+                if (component.size() > 0) {
+                    for (Node node : component) {
                         node.getRelationships().forEach(relationship -> {
                             relationship.delete();
                         });
                         node.delete();
                     }
-                }
-
-                if (component.size() > 0) {
                     components.add(component);
                 } else {
                     break;
@@ -86,14 +88,17 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
 
                     if (node.getDegree(Direction.OUTGOING) > 0 && node.getDegree(Direction.INCOMING) == 0) {
                         component.add(node);
+
+                    }
+                }
+
+                if (component.size() > 0) {
+                    for (Node node : component) {
                         node.getRelationships().forEach(relationship -> {
                             relationship.delete();
                         });
                         node.delete();
                     }
-                }
-
-                if (component.size() > 0) {
                     components.add(component);
                 } else {
                     break;
