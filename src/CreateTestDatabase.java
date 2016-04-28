@@ -49,18 +49,18 @@ public class CreateTestDatabase {
             i.setProperty("Name", "I");
             Node j = graphTest.createNode();
             j.setProperty("Name", "J");
-            Node aux = graphTest.createNode(Label.UNKNOWN);
-            aux.setProperty("Name", "AUX");
-            Node aux2 = graphTest.createNode(Label.UNKNOWN);
-            aux2.setProperty("Name", "AUX2");
+//            Node aux = graphTest.createNode(Label.UNKNOWN);
+//            aux.setProperty("Name", "AUX");
+//            Node aux2 = graphTest.createNode(Label.UNKNOWN);
+//            aux2.setProperty("Name", "AUX2");
 
             e.createRelationshipTo(d, RelTypes.SUPPORTS);
             d.createRelationshipTo(b, RelTypes.SUPPORTS);
             b.createRelationshipTo(a, RelTypes.SUPPORTS);
             b.createRelationshipTo(c, RelTypes.SUPPORTS);
             e.createRelationshipTo(g, RelTypes.SUPPORTS);
-            aux.createRelationshipTo(g, RelTypes.SUPPORTS);
-            aux2.createRelationshipTo(d, RelTypes.SUPPORTS);
+//            aux.createRelationshipTo(g, RelTypes.SUPPORTS);
+//            aux2.createRelationshipTo(d, RelTypes.SUPPORTS);
             g.createRelationshipTo(f, RelTypes.SUPPORTS);
             g.createRelationshipTo(i, RelTypes.SUPPORTS);
             i.createRelationshipTo(h, RelTypes.SUPPORTS);
@@ -92,55 +92,31 @@ public class CreateTestDatabase {
 //            });
         }
 
-        GraphDecomposition gd = new TraverserGraphDecomposition(graphTest);
+        GraphDecomposition gd = new SimpleGraphDecomposition(graphTest);
         List<Node> sinkInitialNodes = new LinkedList<>();
 
-        try (Transaction tx = graphTest.beginTx()) {
-            Node e = graphTest.findNode(Label.UNKNOWN, "Name", "E");
-            Node aux = graphTest.findNode(Label.UNKNOWN, "Name", "AUX");
+//        try (Transaction tx = graphTest.beginTx()) {
+//            Node e = graphTest.findNode(Label.UNKNOWN, "Name", "E");
+//            Node aux = graphTest.findNode(Label.UNKNOWN, "Name", "AUX");
+//
+//            sinkInitialNodes.add(e);
+//            sinkInitialNodes.add(aux);
+//        }
 
-            sinkInitialNodes.add(e);
-            sinkInitialNodes.add(aux);
-        }
+        List<List<Node>> sinkComponents = gd.execute(DecompositionTarget.SOURCE, sinkInitialNodes);
 
         try (Transaction tx = graphTest.beginTx()) {
-            List<List<Node>> sinkComponents = gd.execute(DecompositionTarget.SINK, sinkInitialNodes);
 
             sinkComponents.stream().forEach((List<Node> nodeList) -> {
-                System.out.println("Sink component:");
-                nodeList.forEach(node -> {
-                    Node realNode = graphTest.getNodeById(node.getId());
-                    System.out.println("\t" + realNode.getProperty("Name"));
-                });
-            });
-        } catch (Exception ex) {
-            Logger.getLogger(CreateTestDatabase.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        List<Node> sourceInitialNodes = new LinkedList<>();
-
-        try (Transaction tx = graphTest.beginTx()) {
-            Node e = graphTest.findNode(Label.UNKNOWN, "Name", "E");
-            Node aux = graphTest.findNode(Label.UNKNOWN, "Name", "AUX");
-            Node aux2 = graphTest.findNode(Label.UNKNOWN, "Name", "AUX2");
-
-            sourceInitialNodes.add(e);
-            sourceInitialNodes.add(aux);
-            sourceInitialNodes.add(aux2);
-        }
-
-        try (Transaction tx = graphTest.beginTx()) {
-            List<List<Node>> sourceComponents = gd.execute(DecompositionTarget.SOURCE, sourceInitialNodes);
-
-            sourceComponents.stream().forEach((List<Node> nodeList) -> {
                 System.out.println("Source component:");
                 nodeList.forEach(node -> {
                     Node realNode = graphTest.getNodeById(node.getId());
                     System.out.println("\t" + realNode.getProperty("Name"));
                 });
             });
-        } catch (Exception ex) {
-            Logger.getLogger(CreateTestDatabase.class.getName()).log(Level.SEVERE, null, ex);
+            
+            tx.failure();
         }
+
     }
 }
