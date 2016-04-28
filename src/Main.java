@@ -1,13 +1,22 @@
 
+import Graph.Algorithms.Contracts.GraphDecomposition;
 import Graph.Algorithms.TarjanSCC;
 import Graph.Algorithms.Contracts.StrongConnectedComponents;
+import Graph.Algorithms.DecompositionTarget;
 import Graph.Algorithms.DegreeDistribution;
+import Graph.Algorithms.TraverserGraphDecomposition;
 import Graph.Algorithms.GraphToTxt;
+import Graph.Algorithms.SimpleGraphDecomposition;
 import Graph.Label;
+import Graph.Neo4jBatchGraph;
 import Graph.RelTypes;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.leores.plot.JGnuplot;
 import org.leores.plot.JGnuplot.Plot;
 import org.leores.util.data.DataTableSet;
@@ -17,7 +26,6 @@ import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
-import org.neo4j.tooling.GlobalGraphOperations;
 
 /**
  *
@@ -39,6 +47,7 @@ public class Main {
         /*
          * Begin graph analisys
          */
+        List<Node> axiomNodes;
         try (Transaction tx = graphDb.beginTx()) {
 
             /* make a new vertex x with edges x->v for all v */
@@ -46,9 +55,11 @@ public class Main {
 
 //            ResourceIterator<Node> allNodes = GlobalGraphOperations.at(graphDb).getAllNodes().iterator();
             ResourceIterator<Node> allAxioms = graphDb.findNodes(Label.AXIOM);
+            axiomNodes = new ArrayList<>();
             for (; allAxioms.hasNext();) {
                 Node node = allAxioms.next();
                 helperNode.createRelationshipTo(node, RelTypes.SUPPORTS);
+                axiomNodes.add(node);
             }
 
             /*
@@ -58,18 +69,45 @@ public class Main {
             /*
              * Calculate SCC
              */
-            calculateSCC(graphDb, helperNode);
+            //calculateSCC(graphDb, helperNode);
 
             /*
              * Calculate the distributions
              */
-            calculateDegrees(graphDb);
-            
+            //calculateDegrees(graphDb);
             //Make sure we don't change the graph
             tx.failure();
         }
 
+        /*
+         * Decompose the graph into sinks
+         */
+        List<List<Node>> sinks = decomposeIntoSinks(graphDb, axiomNodes);
+        System.out.print("Total number of sink components: ");
+        System.out.println(sinks.size());
+
+        /*
+         * Decompose the graph into sources
+         */
+        List<List<Node>> sources = decomposeIntoSources(graphDb, axiomNodes);
+        System.out.print("Total number of source components: ");
+        System.out.println(sources.size());
+
         graphDb.shutdown();
+    }
+
+    private static List<List<Node>> decomposeIntoSinks(GraphDatabaseService graphDb, List<Node> initialNodes) {
+
+        GraphDecomposition decomposition = new SimpleGraphDecomposition(graphDb);
+        List<List<Node>> components = decomposition.execute(DecompositionTarget.SINK, initialNodes);
+        return components;
+    }
+
+    private static List<List<Node>> decomposeIntoSources(GraphDatabaseService graphDb, List<Node> initialNodes) {
+
+        GraphDecomposition decomposition = new SimpleGraphDecomposition(graphDb);
+        List<List<Node>> components = decomposition.execute(DecompositionTarget.SOURCE, initialNodes);
+        return components;
     }
 
     private static void exportToTxt(GraphDatabaseService graphDb) {
