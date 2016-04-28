@@ -47,6 +47,7 @@ public class Main {
         /*
          * Begin graph analisys
          */
+        List<Node> axiomNodes;
         try (Transaction tx = graphDb.beginTx()) {
 
             /* make a new vertex x with edges x->v for all v */
@@ -54,7 +55,7 @@ public class Main {
 
 //            ResourceIterator<Node> allNodes = GlobalGraphOperations.at(graphDb).getAllNodes().iterator();
             ResourceIterator<Node> allAxioms = graphDb.findNodes(Label.AXIOM);
-            List<Node> axiomNodes = new ArrayList<>();
+            axiomNodes = new ArrayList<>();
             for (; allAxioms.hasNext();) {
                 Node node = allAxioms.next();
                 helperNode.createRelationshipTo(node, RelTypes.SUPPORTS);
@@ -74,48 +75,35 @@ public class Main {
              * Calculate the distributions
              */
             //calculateDegrees(graphDb);
-
-            /*
-             * Decompose the graph into sinks
-             */
-            List<List<Node>> sinks = decomposeIntoSinks(graphDb, axiomNodes);
-            System.out.print("Total number of sink components: ");
-            System.out.println(sinks.size());
-            
-//            sinks.forEach((List<Node> component) -> {
-//                System.out.print("Component size: ");
-//                System.out.println(component.size());
-//            });
-            
-            /*
-             * Decompose the graph into sources
-             */
-            List<List<Node>> sources = decomposeIntoSources(graphDb, axiomNodes);
-            System.out.print("Total number of source components: ");
-            System.out.println(sources.size());
-            
-//            sources.forEach((List<Node> component) -> {
-//                System.out.print("Component size: ");
-//                System.out.println(component.size());
-//            });
-
             //Make sure we don't change the graph
             tx.failure();
-        } catch (Exception ex) {
-            Logger.getLogger(Neo4jBatchGraph.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        /*
+         * Decompose the graph into sinks
+         */
+        List<List<Node>> sinks = decomposeIntoSinks(graphDb, axiomNodes);
+        System.out.print("Total number of sink components: ");
+        System.out.println(sinks.size());
+
+        /*
+         * Decompose the graph into sources
+         */
+        List<List<Node>> sources = decomposeIntoSources(graphDb, axiomNodes);
+        System.out.print("Total number of source components: ");
+        System.out.println(sources.size());
 
         graphDb.shutdown();
     }
 
-    private static List<List<Node>> decomposeIntoSinks(GraphDatabaseService graphDb, List<Node> initialNodes) throws Exception {
+    private static List<List<Node>> decomposeIntoSinks(GraphDatabaseService graphDb, List<Node> initialNodes) {
 
         GraphDecomposition decomposition = new SimpleGraphDecomposition(graphDb);
         List<List<Node>> components = decomposition.execute(DecompositionTarget.SINK, initialNodes);
         return components;
     }
 
-    private static List<List<Node>> decomposeIntoSources(GraphDatabaseService graphDb, List<Node> initialNodes) throws Exception {
+    private static List<List<Node>> decomposeIntoSources(GraphDatabaseService graphDb, List<Node> initialNodes) {
 
         GraphDecomposition decomposition = new SimpleGraphDecomposition(graphDb);
         List<List<Node>> components = decomposition.execute(DecompositionTarget.SOURCE, initialNodes);
