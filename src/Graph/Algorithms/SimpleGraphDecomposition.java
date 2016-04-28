@@ -31,7 +31,7 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
     }
 
     @Override
-    public List<List<Node>> execute(DecompositionTarget decompositionTarget, List<Node> initialNodes) throws Exception {
+    public List<List<Node>> execute(DecompositionTarget decompositionTarget, List<Node> initialNodes) {
 
         if (decompositionTarget == DecompositionTarget.SINK) {
 

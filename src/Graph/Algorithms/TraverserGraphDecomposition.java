@@ -32,7 +32,7 @@ public class TraverserGraphDecomposition implements GraphDecomposition {
     }
 
     @Override
-    public List<List<Node>> execute(DecompositionTarget decompositionTarget, List<Node> initialNodes) throws Exception {
+    public List<List<Node>> execute(DecompositionTarget decompositionTarget, List<Node> initialNodes) {
 
         if (initialNodes.isEmpty() || initialNodes.contains(null)) {
             return components;
@@ -75,8 +75,6 @@ public class TraverserGraphDecomposition implements GraphDecomposition {
                 tx.failure();
             }
         } else if (decompositionTarget == DecompositionTarget.SOURCE) {
-            
-            throw new Exception("Not implemented yet");
 //            bfs = bfs
 //                    .order(BranchOrderingPolicies.PREORDER_BREADTH_FIRST)
 //                    .evaluator(new SourceEvaluator());

@@ -10,6 +10,6 @@ import org.neo4j.graphdb.Node;
  */
 public interface GraphDecomposition {
 
-    List<List<Node>> execute(DecompositionTarget decompositionTarget, List<Node> initialNodes) throws Exception;
+    List<List<Node>> execute(DecompositionTarget decompositionTarget, List<Node> initialNodes);
     
 }
