@@ -55,33 +55,24 @@ public class Main {
                 axiomNodes.add(node);
             }
 
-            /*
-             * Export to txt
-             */
-            //exportToTxt(graphDb);
-            /*
-             * Calculate SCC
-             */
-            //calculateSCC(graphDb, helperNode);
-
-            /*
-             * Calculate the distributions
-             */
-            //calculateDegrees(graphDb);
-            //Make sure we don't change the graph
             tx.failure();
         }
+        /*
+             * Export to txt
+         */
+        exportToTxt(graphDb);
+        /*
+             * Calculate SCC
+         */
+        //calculateSCC(graphDb, helperNode);
 
-
-
-
+        /*
+             * Calculate the distributions
+         */
+        //calculateDegrees(graphDb);
+        //Make sure we don't change the graph
         graphDb.shutdown();
     }
-
-
-
-
-
 
     private static void exportToTxt(GraphDatabaseService graphDb) {
 
@@ -140,5 +131,4 @@ public class Main {
         jg.compile(plot, jg.plot2d, "degree.plt");
     }
 
-    
 }

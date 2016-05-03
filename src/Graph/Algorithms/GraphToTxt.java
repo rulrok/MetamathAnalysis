@@ -12,6 +12,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.ResourceIterable;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.tooling.GlobalGraphOperations;
 
 /**
@@ -44,43 +45,50 @@ public class GraphToTxt {
             return false;
         }
 
-
-        /*
-         * Count nodes
-         */
         int nodesCount = 0;
-        ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
-        for (Node node : allNodes) {
-            nodesCount++;
-        }
-
-        /*
-         * Get relationships
-         */
-        Iterable<Relationship> allRelationships = GlobalGraphOperations.at(graph).getAllRelationships();
-
         Map<Long, Set<Long>> relationships = new HashMap<>();
-        allRelationships.forEach((Relationship relationship) -> {
+        try (Transaction tx = graph.beginTx()) {
 
-            if (relationship.isType(relationshipType)) {
-
-                Node startNode = relationship.getStartNode();
-                Node endNode = relationship.getEndNode();
-                long k = startNode.getId();
-                long v = endNode.getId();
-
-                if (!relationships.containsKey(k)) {
-                    relationships.put(k, new LinkedHashSet<>());
-                }
-
-                relationships.get(k).add(v);
-
+            /*
+             * Count nodes
+             */
+            ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
+            for (Node node : allNodes) {
+                nodesCount++;
             }
 
-        });
+            /*
+             * Get relationships
+             */
+            Iterable<Relationship> allRelationships = GlobalGraphOperations.at(graph).getAllRelationships();
+            allRelationships.forEach((Relationship relationship) -> {
 
+                if (relationship.isType(relationshipType)) {
+
+                    Node startNode = relationship.getStartNode();
+                    Node endNode = relationship.getEndNode();
+                    long k = startNode.getId();
+                    long v = endNode.getId();
+
+                    if (!relationships.containsKey(k)) {
+                        relationships.put(k, new LinkedHashSet<>());
+                    }
+
+                    relationships.get(k).add(v);
+
+                }
+
+            });
+
+            //Make sure we don't modify the original graph
+            tx.failure();
+        } catch (Exception ex) {
+            Logger.getLogger(Exception.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        
         /*
-         * Print elements
+         * Print elements to a file
          */
         try (PrintWriter printWriter = new PrintWriter(outputFile)) {
             printWriter.println(nodesCount);
