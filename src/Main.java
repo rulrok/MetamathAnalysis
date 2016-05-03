@@ -1,4 +1,5 @@
 
+import Graph.GraphFactory;
 import Graph.Algorithms.Contracts.GraphDecomposition;
 import Graph.Algorithms.TarjanSCC;
 import Graph.Algorithms.Contracts.StrongConnectedComponents;
@@ -34,15 +35,7 @@ import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 public class Main {
 
     public static void main(String[] args) {
-        File dbPath = new File("db/metamath");
-        GraphDatabaseService graphDb = new GraphDatabaseFactory()
-                .newEmbeddedDatabaseBuilder(dbPath)
-                .setConfig(GraphDatabaseSettings.pagecache_memory, "512M")
-                .setConfig(GraphDatabaseSettings.string_block_size, "60")
-                .setConfig(GraphDatabaseSettings.array_block_size, "300")
-                .newGraphDatabase();
-
-        registerShutdownHook(graphDb);
+        GraphDatabaseService graphDb = GraphFactory.makeGraph("db/metamath");
 
         /*
          * Begin graph analisys
@@ -95,6 +88,8 @@ public class Main {
 
         graphDb.shutdown();
     }
+
+
 
     private static List<List<Node>> decomposeIntoSinks(GraphDatabaseService graphDb, List<Node> initialNodes) {
 
@@ -167,15 +162,5 @@ public class Main {
         jg.compile(plot, jg.plot2d, "degree.plt");
     }
 
-    private static void registerShutdownHook(final GraphDatabaseService graphDb) {
-        // Registers a shutdown hook for the Neo4j instance so that it
-        // shuts down nicely when the VM exits (even if you "Ctrl-C" the
-        // running application).
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                graphDb.shutdown();
-            }
-        });
-    }
+    
 }
