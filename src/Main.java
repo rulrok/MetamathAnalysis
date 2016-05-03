@@ -57,10 +57,7 @@ public class Main {
 
             tx.failure();
         }
-        /*
-             * Export to txt
-         */
-        exportToTxt(graphDb);
+        
         /*
              * Calculate SCC
          */
@@ -74,11 +71,6 @@ public class Main {
         graphDb.shutdown();
     }
 
-    private static void exportToTxt(GraphDatabaseService graphDb) {
-
-        GraphToTxt graphToTxt = new GraphToTxt(graphDb, "grafo.txt");
-        graphToTxt.execute(RelTypes.SUPPORTS);
-    }
 
     private static void calculateSCC(GraphDatabaseService graphDb, Node helperNode) {
 
