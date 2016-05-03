@@ -72,12 +72,7 @@ public class Main {
             tx.failure();
         }
 
-        /*
-         * Decompose the graph into sinks
-         */
-        List<List<Node>> sinks = decomposeIntoSinks(graphDb, axiomNodes);
-        System.out.print("Total number of sink components: ");
-        System.out.println(sinks.size());
+
 
         /*
          * Decompose the graph into sources
@@ -91,12 +86,7 @@ public class Main {
 
 
 
-    private static List<List<Node>> decomposeIntoSinks(GraphDatabaseService graphDb, List<Node> initialNodes) {
 
-        GraphDecomposition decomposition = new SimpleGraphDecomposition(graphDb);
-        List<List<Node>> components = decomposition.execute(DecompositionTarget.SINK, initialNodes);
-        return components;
-    }
 
     private static List<List<Node>> decomposeIntoSources(GraphDatabaseService graphDb, List<Node> initialNodes) {
 
