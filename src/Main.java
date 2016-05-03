@@ -74,12 +74,6 @@ public class Main {
 
 
 
-        /*
-         * Decompose the graph into sources
-         */
-        List<List<Node>> sources = decomposeIntoSources(graphDb, axiomNodes);
-        System.out.print("Total number of source components: ");
-        System.out.println(sources.size());
 
         graphDb.shutdown();
     }
@@ -88,12 +82,6 @@ public class Main {
 
 
 
-    private static List<List<Node>> decomposeIntoSources(GraphDatabaseService graphDb, List<Node> initialNodes) {
-
-        GraphDecomposition decomposition = new SimpleGraphDecomposition(graphDb);
-        List<List<Node>> components = decomposition.execute(DecompositionTarget.SOURCE, initialNodes);
-        return components;
-    }
 
     private static void exportToTxt(GraphDatabaseService graphDb) {
 
