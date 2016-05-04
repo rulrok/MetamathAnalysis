@@ -1,25 +1,11 @@
 
 import Graph.GraphFactory;
-import Graph.Algorithms.Contracts.GraphDecomposition;
-import Graph.Algorithms.TarjanSCC;
-import Graph.Algorithms.Contracts.StrongConnectedComponents;
-import Graph.Algorithms.DecompositionTarget;
 import Graph.Algorithms.DegreeDistribution;
-import Graph.Algorithms.GabowSCC;
-import Graph.Algorithms.TraverserGraphDecomposition;
-import Graph.Algorithms.GraphToTxt;
-import Graph.Algorithms.KosarajuSCC;
-import Graph.Algorithms.SimpleGraphDecomposition;
 import Graph.Label;
-import Graph.Neo4jBatchGraph;
 import Graph.RelTypes;
-import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.leores.plot.JGnuplot;
 import org.leores.plot.JGnuplot.Plot;
 import org.leores.util.data.DataTableSet;
@@ -27,8 +13,6 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 
 /**
  *
@@ -58,13 +42,9 @@ public class Main {
                 axiomNodes.add(node);
             }
 
-        /*
-         * Calculate SCC
-         */
-        calculateSCC(graphDb, helperNode);
             tx.failure();
         }
-        
+
 
         /*
              * Calculate the distributions
@@ -72,20 +52,6 @@ public class Main {
         //calculateDegrees(graphDb);
         //Make sure we don't change the graph
         graphDb.shutdown();
-    }
-
-
-    private static void calculateSCC(GraphDatabaseService graphDb, Node helperNode) {
-
-        StrongConnectedComponents scc = new TarjanSCC(graphDb, helperNode, RelTypes.SUPPORTS);
-        List<List<Node>> components = scc.execute();
-
-        System.out.println("Total components found: " + components.size() );
-        components.stream()
-                .filter((component) -> (component.size() > 1))
-                .forEach((component) -> {
-                    System.out.printf("Componente com mais de um elemento encontrado. (Tamanho: %d)\n", component.size());
-                });
     }
 
     private static void calculateDegrees(GraphDatabaseService graphDb) {
