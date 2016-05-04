@@ -28,37 +28,51 @@ public class CalculateDegrees {
 
         /*
          * Prepare GNUPlot
-         */        
+         */
+        String plot2dpng = "plot2d.png";
+        String xLabel = "Number of Links(k)";
+        String yLabel = "Number of nodes with k Links";
+
+        PlotDataSet dataSet = new PlotDataSet("Degree distribution");
+
+        double[] innerX = innerDegrees.keySet().stream().mapToDouble(i -> i).toArray();
+        double[] innerY = innerDegrees.values().stream().mapToDouble(i -> i).toArray();
+        dataSet.addData("Inner degrees", innerX, innerY);
+
+        double[] outterX = outterDegrees.keySet().stream().mapToDouble(i -> i).toArray();
+        double[] outterY = outterDegrees.values().stream().mapToDouble(i -> i).toArray();
+        dataSet.addData("Outter degrees", outterX, outterY);
+
+        double[] allX = allDegrees.keySet().stream().mapToDouble(i -> i).toArray();
+        double[] allY = allDegrees.values().stream().mapToDouble(i -> i).toArray();
+        dataSet.addData("All degrees", allX, allY);
+
+        plot(plot2dpng, xLabel, yLabel, dataSet);
+    }
+
+    private static void plot(String plot2dpng, String xLabel, String yLabel, PlotDataSet set) {
         JGnuplot jg = new JGnuplot() {
             {
                 terminal = "pngcairo enhanced dashed";
-                output = "plot2d.png";
+                output = plot2dpng;
                 extra = "set xrange[0:500]; set yrange[0:1000];";
             }
         };
         JGnuplot.Plot plot = new JGnuplot.Plot("") {
             {
-                xlabel = "Number of Links(k)";
-                ylabel = "Number of nodes with k Links";
+                xlabel = xLabel;
+                ylabel = yLabel;
             }
         };
-        double[] innerX = innerDegrees.keySet().stream().mapToDouble(i -> i).toArray();
-        double[] innerY = innerDegrees.values().stream().mapToDouble(i -> i).toArray();
 
-        double[] outterX = outterDegrees.keySet().stream().mapToDouble(i -> i).toArray();
-        double[] outterY = outterDegrees.values().stream().mapToDouble(i -> i).toArray();
-
-        double[] allX = allDegrees.keySet().stream().mapToDouble(i -> i).toArray();
-        double[] allY = allDegrees.values().stream().mapToDouble(i -> i).toArray();
-
-        DataTableSet dts = plot.addNewDataTableSet("Degree distribution");
-        dts.addNewDataTable("Inner degrees", innerX, innerY);
-        dts.addNewDataTable("Outter degrees", outterX, outterY);
-        dts.addNewDataTable("All degrees", allX, allY);
+        DataTableSet dts = plot.addNewDataTableSet(set.getTitle());
+        for (PlotData data : set.getValues()) {
+            dts.addNewDataTable(data.title, data.xAxis, data.yAxis);
+        }
 
         /*
-         * Plot graphics
-         */        
+        * Plot graphics
+         */
         jg.execute(plot, jg.plot2d);
         jg.compile(plot, jg.plot2d, "degree.plt");
     }
