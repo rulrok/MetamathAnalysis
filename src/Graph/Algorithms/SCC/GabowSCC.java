@@ -1,4 +1,4 @@
-package Graph.Algorithms;
+package Graph.Algorithms.SCC;
 
 import java.util.HashMap;
 import java.util.*;
@@ -7,6 +7,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.ResourceIterable;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.tooling.GlobalGraphOperations;
 
 /**
@@ -44,14 +45,19 @@ public class GabowSCC extends AbstractStrongConnectedComponentsAlgorithm {
     @Override
     public List<List<Node>> execute() {
 
-        visit(initialNode);
+        try (Transaction tx = graph.beginTx()) {
 
-        ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
-        allNodes.forEach((node) -> {
-            if (!assignedNodes.contains(node.getId())) {
-                visit(node);
-            }
-        });
+            visit(initialNode);
+
+            ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
+            allNodes.forEach((node) -> {
+                if (!assignedNodes.contains(node.getId())) {
+                    visit(node);
+                }
+            });
+            
+            tx.failure();
+        }
         return components;
     }
 

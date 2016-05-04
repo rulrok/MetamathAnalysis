@@ -1,4 +1,4 @@
-package Graph.Algorithms;
+package Graph.Algorithms.Decomposition;
 
 import Graph.Algorithms.Contracts.GraphDecomposition;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package Graph.Algorithms;
+package Graph.Algorithms.SCC;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -12,6 +12,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.ResourceIterable;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.tooling.GlobalGraphOperations;
 
 /**
@@ -49,16 +50,21 @@ public class TarjanSCC extends AbstractStrongConnectedComponentsAlgorithm {
     @Override
     public List<List<Node>> execute() {
 
-        /* visit(x) */
-        visit(initialNode);
+        try (Transaction tx = graph.beginTx()) {
 
-        ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
+            /* visit(x) */
+            visit(initialNode);
 
-        allNodes.forEach(node -> {
-            if (!visited.contains(node.getId())) {
-                visit(node);
-            }
-        });
+            ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
+
+            allNodes.forEach(node -> {
+                if (!visited.contains(node.getId())) {
+                    visit(node);
+                }
+            });
+            
+            tx.failure();
+        }
         return components;
 
     }

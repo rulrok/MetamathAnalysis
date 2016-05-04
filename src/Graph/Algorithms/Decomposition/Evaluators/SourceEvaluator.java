@@ -1,4 +1,4 @@
-package Graph.Algorithms.Evaluators;
+package Graph.Algorithms.Decomposition.Evaluators;
 
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
