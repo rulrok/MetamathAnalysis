@@ -1,4 +1,4 @@
-package Tests;
+package Plot;
 
 import java.util.Collection;
 import java.util.Map;

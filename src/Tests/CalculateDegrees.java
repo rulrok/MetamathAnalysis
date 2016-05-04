@@ -1,10 +1,10 @@
 package Tests;
 
+import Plot.PlotDataSet;
 import Graph.Algorithms.DegreeDistribution;
 import Graph.GraphFactory;
+import Plot.Gnuplot;
 import java.util.Map;
-import org.leores.plot.JGnuplot;
-import org.leores.util.data.DataTableSet;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
@@ -27,12 +27,8 @@ public class CalculateDegrees {
         Map<Integer, Integer> allDegrees = distribution.getAllDegrees();
 
         /*
-         * Prepare GNUPlot
+         * Prepare data
          */
-        String plot2dpng = "plot2d.png";
-        String xLabel = "Number of Links(k)";
-        String yLabel = "Number of nodes with k Links";
-
         PlotDataSet dataSet = new PlotDataSet("Degree distribution");
 
         double[] innerX = innerDegrees.keySet().stream().mapToDouble(i -> i).toArray();
@@ -47,33 +43,8 @@ public class CalculateDegrees {
         double[] allY = allDegrees.values().stream().mapToDouble(i -> i).toArray();
         dataSet.addData("All degrees", allX, allY);
 
-        plot(plot2dpng, xLabel, yLabel, dataSet);
-    }
-
-    private static void plot(String plot2dpng, String xLabel, String yLabel, PlotDataSet set) {
-        JGnuplot jg = new JGnuplot() {
-            {
-                terminal = "pngcairo enhanced dashed";
-                output = plot2dpng;
-                extra = "set xrange[0:500]; set yrange[0:1000];";
-            }
-        };
-        JGnuplot.Plot plot = new JGnuplot.Plot("") {
-            {
-                xlabel = xLabel;
-                ylabel = yLabel;
-            }
-        };
-
-        DataTableSet dts = plot.addNewDataTableSet(set.getTitle());
-        for (PlotData data : set.getValues()) {
-            dts.addNewDataTable(data.title, data.xAxis, data.yAxis);
-        }
-
-        /*
-        * Plot graphics
-         */
-        jg.execute(plot, jg.plot2d);
-        jg.compile(plot, jg.plot2d, "degree.plt");
+        String xLabel = "Number of Links(k)";
+        String yLabel = "Number of nodes with k Links";
+        Gnuplot.plot("plot2d.png", xLabel, yLabel, dataSet);
     }
 }
