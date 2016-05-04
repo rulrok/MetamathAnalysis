@@ -19,7 +19,7 @@ public class StrongConnectedComponents {
 
     public static void main(String[] args) {
 
-        GraphDatabaseService graphDb = GraphFactory.makeGraph("db/metamath");
+        GraphDatabaseService graphDb = GraphFactory.makeDefaultMetamathGraph();
 
         Node helperNode;
 

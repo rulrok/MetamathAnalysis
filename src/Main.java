@@ -9,7 +9,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 public class Main {
 
     public static void main(String[] args) {
-        GraphDatabaseService graphDb = GraphFactory.makeGraph("db/metamath");
+        GraphDatabaseService graphDb = GraphFactory.makeDefaultMetamathGraph();
 
         //Make sure we don't change the graph
         graphDb.shutdown();

@@ -21,7 +21,7 @@ public class DecomposeIntoSources {
 
     public static void main(String[] args) {
 
-        GraphDatabaseService graphDb = GraphFactory.makeGraph("db/metamath");
+        GraphDatabaseService graphDb = GraphFactory.makeDefaultMetamathGraph();
 
         /*
          * Decompose the graph into sources

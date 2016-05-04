@@ -15,7 +15,7 @@ public class CalculateDegrees {
 
     public static void main(String[] args) {
 
-        GraphDatabaseService graphDb = GraphFactory.makeGraph("db/metamath");
+        GraphDatabaseService graphDb = GraphFactory.makeDefaultMetamathGraph();
 
         /*
          * Calculate the distributions

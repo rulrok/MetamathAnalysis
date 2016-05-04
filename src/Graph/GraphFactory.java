@@ -1,6 +1,5 @@
 package Graph;
 
-
 import java.io.File;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
@@ -16,7 +15,11 @@ import org.neo4j.graphdb.factory.GraphDatabaseSettings;
  * @author Reuel
  */
 public class GraphFactory {
-
+    
+    public static GraphDatabaseService makeDefaultMetamathGraph() {
+        return makeGraph("db/metamath");
+    }
+    
     public static GraphDatabaseService makeGraph(String path) {
         File dbPath = new File("db/metamath");
         GraphDatabaseService graphDb = new GraphDatabaseFactory()
@@ -28,7 +31,7 @@ public class GraphFactory {
         registerShutdownHook(graphDb);
         return graphDb;
     }
-
+    
     private static void registerShutdownHook(final GraphDatabaseService graphDb) {
         // Registers a shutdown hook for the Neo4j instance so that it
         // shuts down nicely when the VM exits (even if you "Ctrl-C" the

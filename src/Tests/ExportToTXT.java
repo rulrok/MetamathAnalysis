@@ -12,7 +12,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 public class ExportToTXT {
 
     public static void main(String[] args) {
-        GraphDatabaseService graphDb = GraphFactory.makeGraph("db/metamath");
+        GraphDatabaseService graphDb = GraphFactory.makeDefaultMetamathGraph();
 
         /*
          * Export to txt
