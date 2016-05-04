@@ -8,6 +8,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterable;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.tooling.GlobalGraphOperations;
 
 /**
@@ -35,19 +36,24 @@ public class DegreeDistribution {
         innerDegrees.clear();
         allDegrees.clear();
 
-        ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
+        try (Transaction tx = graph.beginTx()) {
 
-        //TODO: Improve this!!!
-        allNodes.forEach((Node node) -> {
-            int allDegree = node.getDegree();
-            allDegrees.put(allDegree, allDegrees.getOrDefault(allDegree, 0) + 1);
+            ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
 
-            int innerDegree = node.getDegree(Direction.INCOMING);
-            innerDegrees.put(innerDegree, innerDegrees.getOrDefault(innerDegree, 0) + 1);
+            //TODO: Improve this!!!
+            allNodes.forEach((Node node) -> {
+                int allDegree = node.getDegree();
+                allDegrees.put(allDegree, allDegrees.getOrDefault(allDegree, 0) + 1);
 
-            int outterDegree = node.getDegree(Direction.OUTGOING);
-            outterDegrees.put(outterDegree, outterDegrees.getOrDefault(outterDegree, 0) + 1);
-        });
+                int innerDegree = node.getDegree(Direction.INCOMING);
+                innerDegrees.put(innerDegree, innerDegrees.getOrDefault(innerDegree, 0) + 1);
+
+                int outterDegree = node.getDegree(Direction.OUTGOING);
+                outterDegrees.put(outterDegree, outterDegrees.getOrDefault(outterDegree, 0) + 1);
+            });
+            
+            tx.failure();
+        }
     }
 
     public Map<Integer, Integer> getOutterDegrees() {

@@ -47,9 +47,10 @@ public class Main {
 
 
         /*
-             * Calculate the distributions
+         * Calculate the distributions
          */
-        //calculateDegrees(graphDb);
+        calculateDegrees(graphDb);
+        
         //Make sure we don't change the graph
         graphDb.shutdown();
     }
