@@ -21,7 +21,7 @@ public class GraphFactory {
     }
     
     public static GraphDatabaseService makeGraph(String path) {
-        File dbPath = new File("db/metamath");
+        File dbPath = new File(path);
         GraphDatabaseService graphDb = new GraphDatabaseFactory()
                 .newEmbeddedDatabaseBuilder(dbPath)
                 .setConfig(GraphDatabaseSettings.pagecache_memory, "512M")
