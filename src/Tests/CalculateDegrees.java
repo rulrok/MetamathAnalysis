@@ -5,6 +5,7 @@ import Graph.Algorithms.DegreeDistribution;
 import Graph.GraphFactory;
 import Plot.Gnuplot;
 import java.util.Map;
+import java.util.stream.IntStream;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
@@ -49,6 +50,8 @@ public class CalculateDegrees {
                 .setFilename("plot2d.png")
                 .setxLabel(xLabel)
                 .setyLabel(yLabel)
+                .setyRange(0, 1000)
+                .setxRange(0, 1000)
                 .plot();
     }
 }

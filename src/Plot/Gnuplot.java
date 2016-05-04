@@ -1,5 +1,6 @@
 package Plot;
 
+import java.util.stream.IntStream;
 import org.leores.plot.JGnuplot;
 import org.leores.util.data.DataTableSet;
 
@@ -9,22 +10,42 @@ import org.leores.util.data.DataTableSet;
  */
 public class Gnuplot {
 
-    private String filename;
-    private String xLabel;
-    private String yLabel;
     private final PlotDataSet dataSet;
 
-    public Gnuplot(PlotDataSet set) {
-        dataSet = set;
+    private String filename = "plot";
+    private String xLabel = "X axis";
+    private String yLabel = "Y axis";
+    private int minxRange = 0;
+    private int maxxRange = 100;
+    private int minyRange = 0;
+    private int maxyRange = 100;
+
+    public Gnuplot(PlotDataSet dataSet) {
+        this.dataSet = dataSet;
+
+        filename = dataSet.getTitle();
 
     }
 
+    private String configureExtras() {
+        StringBuilder extraBuilder = new StringBuilder();
+
+        //RANGES
+        extraBuilder.append(String.format("set xrange[%d:%d]; ", minxRange, maxxRange));
+        extraBuilder.append(String.format("set yrange[%d:%d]; ", minyRange, maxyRange));
+        
+        return extraBuilder.toString();
+    }
+
     public void plot() {
+
+        String extraParams = configureExtras();
+
         JGnuplot jg = new JGnuplot() {
             {
                 terminal = "pngcairo enhanced dashed";
                 output = filename;
-                extra = "set xrange[0:500]; set yrange[0:1000];";
+                extra = extraParams;
             }
         };
         JGnuplot.Plot plot = new JGnuplot.Plot("") {
@@ -51,14 +72,26 @@ public class Gnuplot {
         this.filename = filename;
         return this;
     }
-    
+
     public Gnuplot setxLabel(String xLabel) {
         this.xLabel = xLabel;
         return this;
     }
-    
+
     public Gnuplot setyLabel(String yLabel) {
         this.yLabel = yLabel;
+        return this;
+    }
+
+    public Gnuplot setxRange(int min, int max) {
+        this.minxRange = min;
+        this.maxxRange = max;
+        return this;
+    }
+
+    public Gnuplot setyRange(int min, int max) {
+        this.minyRange = min;
+        this.maxyRange = max;
         return this;
     }
 //</editor-fold>
