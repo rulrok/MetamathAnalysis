@@ -13,6 +13,12 @@ public class PlotDataSet {
     private String title;
     private final Map<String, PlotData> sets;
 
+    public PlotDataSet(String title) {
+        this.title = title;
+        sets = new TreeMap<>();
+    }
+
+//<editor-fold defaultstate="collapsed" desc="getters and setters">
     public String getTitle() {
         return title;
     }
@@ -20,30 +26,28 @@ public class PlotDataSet {
     public void setTitle(String title) {
         this.title = title;
     }
+//</editor-fold>
 
-    public PlotDataSet(String title) {
-        this.title = title;
-        sets = new TreeMap<>();
-    }
-
+//<editor-fold defaultstate="collapsed" desc="Add and remove data">
     public void addData(String title, double[] xAxis, double[] yAxis) {
         addData(new PlotData(title, xAxis, yAxis));
     }
-
-    public Collection<PlotData> getValues() {
-        return sets.values();
-    }
-
+    
     public void addData(PlotData data) {
         sets.put(data.title, data);
     }
-
-    public void removeData(PlotData data) {
-        sets.remove(data.title);
+    
+    public PlotData removeData(PlotData data) {
+        return sets.remove(data.title);
     }
+    
+    public PlotData removeData(String title) {
+        return sets.remove(title);
+    }
+//</editor-fold>
 
-    public void removeData(String title) {
-        sets.remove(title);
+    public Collection<PlotData> getValues() {
+        return sets.values();
     }
 
 }
