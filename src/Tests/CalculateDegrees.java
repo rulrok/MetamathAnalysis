@@ -45,6 +45,10 @@ public class CalculateDegrees {
 
         String xLabel = "Number of Links(k)";
         String yLabel = "Number of nodes with k Links";
-        Gnuplot.plot("plot2d.png", xLabel, yLabel, dataSet);
+        new Gnuplot(dataSet)
+                .setFilename("plot2d.png")
+                .setxLabel(xLabel)
+                .setyLabel(yLabel)
+                .plot();
     }
 }
