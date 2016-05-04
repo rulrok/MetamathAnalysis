@@ -50,8 +50,9 @@ public class CalculateDegrees {
                 .setFilename("plot2d.png")
                 .setxLabel(xLabel)
                 .setyLabel(yLabel)
-                .setyRange(0, 1000)
+                .setyRange(1, 1000)
                 .setxRange(0, 1000)
+                .setyLogScale()
                 .plot();
     }
 }

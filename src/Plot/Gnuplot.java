@@ -19,6 +19,8 @@ public class Gnuplot {
     private int maxxRange = 100;
     private int minyRange = 0;
     private int maxyRange = 100;
+    private boolean xLogScale = false;
+    private boolean yLogScale = false;
 
     public Gnuplot(PlotDataSet dataSet) {
         this.dataSet = dataSet;
@@ -31,9 +33,23 @@ public class Gnuplot {
         StringBuilder extraBuilder = new StringBuilder();
 
         //RANGES
+        if (xLogScale && minxRange <= 0) {
+            minxRange = 1;
+        }
+        if (yLogScale && minyRange <= 0) {
+            minyRange = 1;
+        }
         extraBuilder.append(String.format("set xrange[%d:%d]; ", minxRange, maxxRange));
         extraBuilder.append(String.format("set yrange[%d:%d]; ", minyRange, maxyRange));
-        
+
+        //LOG SCALE
+        if (xLogScale) {
+            extraBuilder.append("set log x; ");
+        }
+        if (yLogScale) {
+            extraBuilder.append("set log y; ");
+        }
+
         return extraBuilder.toString();
     }
 
@@ -92,6 +108,24 @@ public class Gnuplot {
     public Gnuplot setyRange(int min, int max) {
         this.minyRange = min;
         this.maxyRange = max;
+        return this;
+    }
+
+    public Gnuplot setxLogScale() {
+        return setxLogScale(true);
+    }
+
+    public Gnuplot setxLogScale(boolean value) {
+        this.xLogScale = value;
+        return this;
+    }
+
+    public Gnuplot setyLogScale() {
+        return setyLogScale(true);
+    }
+
+    public Gnuplot setyLogScale(boolean value) {
+        this.yLogScale = value;
         return this;
     }
 //</editor-fold>
