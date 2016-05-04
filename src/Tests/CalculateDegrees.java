@@ -5,7 +5,6 @@ import Graph.Algorithms.DegreeDistribution;
 import Graph.GraphFactory;
 import Plot.Gnuplot;
 import java.util.Map;
-import java.util.stream.IntStream;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
