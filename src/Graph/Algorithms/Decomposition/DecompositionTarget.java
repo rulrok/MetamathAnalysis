@@ -1,4 +1,4 @@
-package Graph.Algorithms;
+package Graph.Algorithms.Decomposition;
 
 /**
  *

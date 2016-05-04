@@ -1,4 +1,6 @@
 
+import Graph.Algorithms.Decomposition.DecompositionTarget;
+import Graph.Algorithms.Decomposition.SimpleGraphDecomposition;
 import Graph.Algorithms.*;
 import Graph.Algorithms.Contracts.GraphDecomposition;
 import Graph.Label;

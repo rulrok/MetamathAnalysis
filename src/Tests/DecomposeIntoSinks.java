@@ -6,8 +6,8 @@
 package Tests;
 
 import Graph.Algorithms.Contracts.GraphDecomposition;
-import Graph.Algorithms.DecompositionTarget;
-import Graph.Algorithms.SimpleGraphDecomposition;
+import Graph.Algorithms.Decomposition.DecompositionTarget;
+import Graph.Algorithms.Decomposition.SimpleGraphDecomposition;
 import Graph.GraphFactory;
 import java.util.List;
 import org.neo4j.graphdb.GraphDatabaseService;

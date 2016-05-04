@@ -1,4 +1,4 @@
-package Graph.Algorithms;
+package Graph.Algorithms.SCC;
 
 import Graph.Algorithms.Contracts.StrongConnectedComponents;
 import java.util.List;

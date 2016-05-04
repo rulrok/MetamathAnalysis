@@ -1,6 +1,6 @@
 package Tests;
 
-import Graph.Algorithms.TarjanSCC;
+import Graph.Algorithms.SCC.TarjanSCC;
 import Graph.GraphFactory;
 import Graph.Label;
 import Graph.RelTypes;

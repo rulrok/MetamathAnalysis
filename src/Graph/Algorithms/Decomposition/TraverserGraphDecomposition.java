@@ -1,7 +1,7 @@
-package Graph.Algorithms;
+package Graph.Algorithms.Decomposition;
 
 import Graph.Algorithms.Contracts.GraphDecomposition;
-import Graph.Algorithms.Evaluators.SinkEvaluator;
+import Graph.Algorithms.Decomposition.Evaluators.SinkEvaluator;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;

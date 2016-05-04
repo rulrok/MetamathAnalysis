@@ -1,4 +1,4 @@
-package Graph.Algorithms;
+package Graph.Algorithms.SCC;
 
 import java.util.*;
 import org.neo4j.graphdb.Direction;

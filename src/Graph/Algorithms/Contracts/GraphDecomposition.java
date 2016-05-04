@@ -1,6 +1,6 @@
 package Graph.Algorithms.Contracts;
 
-import Graph.Algorithms.DecompositionTarget;
+import Graph.Algorithms.Decomposition.DecompositionTarget;
 import java.util.List;
 import org.neo4j.graphdb.Node;
 

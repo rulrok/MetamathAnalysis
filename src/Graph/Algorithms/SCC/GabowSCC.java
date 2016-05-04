@@ -1,4 +1,4 @@
-package Graph.Algorithms;
+package Graph.Algorithms.SCC;
 
 import java.util.HashMap;
 import java.util.*;
