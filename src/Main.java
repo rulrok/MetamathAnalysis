@@ -5,8 +5,10 @@ import Graph.Algorithms.TarjanSCC;
 import Graph.Algorithms.Contracts.StrongConnectedComponents;
 import Graph.Algorithms.DecompositionTarget;
 import Graph.Algorithms.DegreeDistribution;
+import Graph.Algorithms.GabowSCC;
 import Graph.Algorithms.TraverserGraphDecomposition;
 import Graph.Algorithms.GraphToTxt;
+import Graph.Algorithms.KosarajuSCC;
 import Graph.Algorithms.SimpleGraphDecomposition;
 import Graph.Label;
 import Graph.Neo4jBatchGraph;
@@ -41,10 +43,11 @@ public class Main {
          * Begin graph analisys
          */
         List<Node> axiomNodes;
+        Node helperNode;
         try (Transaction tx = graphDb.beginTx()) {
 
             /* make a new vertex x with edges x->v for all v */
-            Node helperNode = graphDb.createNode();
+            helperNode = graphDb.createNode();
 
 //            ResourceIterator<Node> allNodes = GlobalGraphOperations.at(graphDb).getAllNodes().iterator();
             ResourceIterator<Node> allAxioms = graphDb.findNodes(Label.AXIOM);
@@ -55,13 +58,13 @@ public class Main {
                 axiomNodes.add(node);
             }
 
+        /*
+         * Calculate SCC
+         */
+        calculateSCC(graphDb, helperNode);
             tx.failure();
         }
         
-        /*
-             * Calculate SCC
-         */
-        //calculateSCC(graphDb, helperNode);
 
         /*
              * Calculate the distributions
@@ -77,6 +80,7 @@ public class Main {
         StrongConnectedComponents scc = new TarjanSCC(graphDb, helperNode, RelTypes.SUPPORTS);
         List<List<Node>> components = scc.execute();
 
+        System.out.println("Total components found: " + components.size() );
         components.stream()
                 .filter((component) -> (component.size() > 1))
                 .forEach((component) -> {

@@ -6,10 +6,13 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.ResourceIterable;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.tooling.GlobalGraphOperations;
 
 /**
- * Adapted from here https://sites.google.com/site/indy256/algo/strongly_connected_components
+ * Adapted from here
+ * https://sites.google.com/site/indy256/algo/strongly_connected_components
+ *
  * @author Reuel
  */
 public class KosarajuSCC extends AbstractStrongConnectedComponentsAlgorithm {
@@ -34,26 +37,30 @@ public class KosarajuSCC extends AbstractStrongConnectedComponentsAlgorithm {
 
     @Override
     public List<List<Node>> execute() {
-        ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
-        Map<Long, List<Long>> adjacencyList = new HashMap<>();
-        allNodes.forEach(node -> {
-            adjacencyList.put(node.getId(), new LinkedList<>());
-            node.getRelationships(Direction.OUTGOING).forEach(relationship -> {
-                adjacencyList.get(relationship.getStartNode().getId())
-                        .add(relationship.getEndNode().getId());
+        try (Transaction tx = graph.beginTx()) {
+
+            ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
+            Map<Long, List<Long>> adjacencyList = new HashMap<>();
+            allNodes.forEach(node -> {
+                adjacencyList.put(node.getId(), new LinkedList<>());
+                node.getRelationships(Direction.OUTGOING).forEach(relationship -> {
+                    adjacencyList.get(relationship.getStartNode().getId())
+                            .add(relationship.getEndNode().getId());
+                });
             });
-        });
 
-        List<List<Long>> scc = scc(adjacencyList);
+            List<List<Long>> scc = scc(adjacencyList);
 
-        scc.forEach((List<Long> component) -> {
-            List<Node> componentList = new LinkedList<>();
-            component.forEach((Long nodeId) -> {
-                componentList.add(graph.getNodeById(nodeId));
+            scc.forEach((List<Long> component) -> {
+                List<Node> componentList = new LinkedList<>();
+                component.forEach((Long nodeId) -> {
+                    componentList.add(graph.getNodeById(nodeId));
+                });
+                components.add(componentList);
             });
-            components.add(componentList);
-        });
 
+            tx.failure();
+        }
         return components;
     }
 
