@@ -15,4 +15,5 @@
 *.plt
 *.png
 /grafo.txt
+/grafo_nomes.txt
 /jgnuplot.xml

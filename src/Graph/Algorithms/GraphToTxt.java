@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,17 +31,20 @@ public class GraphToTxt {
     }
 
     public boolean execute(RelationshipType relationshipType) {
-        File outputFile = new File(outputFilePath);
+        File outputGraph = new File(outputFilePath);
+        Path outputDir = outputGraph.toPath().toAbsolutePath().getParent();
+        File outputNodes = new File(outputDir.toString() + File.separator + "grafo_nomes.txt");
 
         try {
-            outputFile.createNewFile();
+            outputGraph.createNewFile();
+            outputNodes.createNewFile();
         } catch (IOException ex) {
             Logger.getLogger(GraphToTxt.class.getName()).log(Level.SEVERE, null, ex);
             System.err.println("Cannot create file");
             return false;
         }
 
-        if (!outputFile.canWrite()) {
+        if (!outputGraph.canWrite()) {
             System.err.println("Cannot write into the file");
             return false;
         }
@@ -53,8 +57,18 @@ public class GraphToTxt {
              * Count nodes
              */
             ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
-            for (Node node : allNodes) {
-                nodesCount++;
+            try (PrintWriter printWriter = new PrintWriter(outputNodes)) {
+                for (Node node : allNodes) {
+                    long id = node.getId();
+                    Object name = node.getProperty("name", "NO_NAME");
+                    printWriter.printf("%d\t%s\n", id, name);
+                    nodesCount++;
+                }
+
+                printWriter.flush();
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(GraphToTxt.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             }
 
             /*
@@ -86,11 +100,11 @@ public class GraphToTxt {
             Logger.getLogger(Exception.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
-        
+
         /*
          * Print elements to a file
          */
-        try (PrintWriter printWriter = new PrintWriter(outputFile)) {
+        try (PrintWriter printWriter = new PrintWriter(outputGraph)) {
             printWriter.println(nodesCount);
             relationships.forEach((Long sourceNode, Set<Long> hashset) -> {
                 hashset.forEach((Long destNode) -> {
