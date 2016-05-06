@@ -14,10 +14,10 @@ public abstract class Plotter {
     protected String yLabel = "Y axis";
 
     //ints
-    protected int minxRange = 0;
-    protected int maxxRange = 100;
-    protected int minyRange = 0;
-    protected int maxyRange = 100;
+    protected int minxRange = Integer.MIN_VALUE;
+    protected int maxxRange = Integer.MAX_VALUE;
+    protected int minyRange = Integer.MIN_VALUE;
+    protected int maxyRange = Integer.MAX_VALUE;
 
     //booleans
     protected boolean xLogScale = false;

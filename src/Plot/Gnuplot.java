@@ -1,5 +1,6 @@
 package Plot;
 
+import java.io.File;
 import org.leores.plot.JGnuplot;
 import org.leores.util.data.DataTableSet;
 
@@ -23,8 +24,20 @@ public class Gnuplot extends Plotter {
         if (yLogScale && minyRange <= 0) {
             minyRange = 1;
         }
-        extraBuilder.append(String.format("set xrange[%d:%d]; ", minxRange, maxxRange));
-        extraBuilder.append(String.format("set yrange[%d:%d]; ", minyRange, maxyRange));
+
+        //UPPER AND LOWER BOUNDARIES FOR AXES
+        String xlb;
+        String xub;
+        xlb = (minxRange == Integer.MIN_VALUE) ? "*" : Integer.toString(minxRange);
+        xub = (maxxRange == Integer.MAX_VALUE) ? "*" : Integer.toString(maxxRange);
+
+        String ylb;
+        String yub;
+        ylb = (minyRange == Integer.MIN_VALUE) ? "*" : Integer.toString(minyRange);
+        yub = (maxyRange == Integer.MAX_VALUE) ? "*" : Integer.toString(maxyRange);
+
+        extraBuilder.append(String.format("set xrange[%s:%s]; ", xlb, xub));
+        extraBuilder.append(String.format("set yrange[%s:%s]; ", ylb, yub));
 
         //LOG SCALE
         if (xLogScale) {
@@ -62,9 +75,18 @@ public class Gnuplot extends Plotter {
         });
 
         /*
+         * Remove any previous .plt file
+         * jg.compile will append to the existing file rather than overwriting it
+         */
+        File file = new File(filename + ".plt");
+        if (file.exists()) {
+            file.delete();
+        }
+
+        /*
         * Plot graphics
          */
         jg.execute(plot, jg.plot2d);
-        jg.compile(plot, jg.plot2d, "degree.plt");
+        jg.compile(plot, jg.plot2d, filename + ".plt");
     }
 }

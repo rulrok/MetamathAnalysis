@@ -46,12 +46,12 @@ public class CalculateDegrees {
         String xLabel = "Number of Links(k)";
         String yLabel = "Number of nodes with k Links";
         new Gnuplot(dataSet)
-                .setFilename("plot2d.png")
+                .setFilename("grafo_degrees.png")
                 .setxLabel(xLabel)
                 .setyLabel(yLabel)
-                .setyRange(1, 1000)
+                .setyRange(0, 1000)
                 .setxRange(0, 1000)
-                .setyLogScale()
+//                .setyLogScale()
                 .plot();
     }
 }
