@@ -1,4 +1,4 @@
-package Tests;
+package Calculations;
 
 import Plot.PlotDataSet;
 import Graph.Algorithms.DegreeDistribution;

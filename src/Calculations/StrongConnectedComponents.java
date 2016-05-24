@@ -1,10 +1,9 @@
-package Tests;
+package Calculations;
 
 import Graph.Algorithms.SCC.TarjanSCC;
 import Graph.GraphFactory;
 import Graph.Label;
 import Graph.RelTypes;
-import java.util.ArrayList;
 import java.util.List;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;

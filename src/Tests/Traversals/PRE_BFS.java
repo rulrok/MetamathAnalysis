@@ -1,18 +1,11 @@
 package Tests.Traversals;
 
-import Graph.Algorithms.Decomposition.Evaluators.SourceEvaluator;
 import Graph.GraphFactory;
-import java.util.Iterator;
-import java.util.function.Consumer;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Path;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.ResourceIterable;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.traversal.BranchOrderingPolicies;
 import org.neo4j.graphdb.traversal.TraversalDescription;
-import org.neo4j.graphdb.traversal.Traverser;
 
 /**
  *

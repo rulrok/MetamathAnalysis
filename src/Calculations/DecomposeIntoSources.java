@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Tests;
+package Calculations;
 
 import Graph.Algorithms.Contracts.GraphDecomposition;
 import Graph.Algorithms.Decomposition.DecompositionTarget;
