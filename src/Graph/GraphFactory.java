@@ -54,25 +54,25 @@ public class GraphFactory {
 
         try (Transaction tx = graphTest.beginTx()) {
             Node a = graphTest.createNode();
-            a.setProperty("Name", "A");
+            a.setProperty("name", "A");
             Node b = graphTest.createNode();
-            b.setProperty("Name", "B");
+            b.setProperty("name", "B");
             Node c = graphTest.createNode();
-            c.setProperty("Name", "C");
+            c.setProperty("name", "C");
             Node d = graphTest.createNode();
-            d.setProperty("Name", "D");
+            d.setProperty("name", "D");
             Node e = graphTest.createNode();
-            e.setProperty("Name", "E");
+            e.setProperty("name", "E");
             Node f = graphTest.createNode();
-            f.setProperty("Name", "F");
+            f.setProperty("name", "F");
             Node g = graphTest.createNode();
-            g.setProperty("Name", "G");
+            g.setProperty("name", "G");
             Node h = graphTest.createNode();
-            h.setProperty("Name", "H");
+            h.setProperty("name", "H");
             Node i = graphTest.createNode();
-            i.setProperty("Name", "I");
+            i.setProperty("name", "I");
             Node j = graphTest.createNode();
-            j.setProperty("Name", "J");
+            j.setProperty("name", "J");
 
             e.createRelationshipTo(d, RelTypes.SUPPORTS);
             d.createRelationshipTo(b, RelTypes.SUPPORTS);
