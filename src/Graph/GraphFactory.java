@@ -45,6 +45,7 @@ public class GraphFactory {
      *  / \      / \
      * A(0)C(2) H(7)J(9)
      * </pre>
+     * All edges go downward and use RelTypes.SUPPORT
      *
      * @return GraphDatabaseService
      */
