@@ -1,9 +1,9 @@
 package Calculations;
 
-import Plot.PlotDataSet;
 import Graph.Algorithms.DegreeDistribution;
 import Graph.GraphFactory;
 import Plot.Gnuplot;
+import Plot.PlotDataSet;
 import java.util.Map;
 import org.neo4j.graphdb.GraphDatabaseService;
 

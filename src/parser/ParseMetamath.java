@@ -7,7 +7,6 @@ package parser;
 
 import Graph.IGraph;
 import Graph.Neo4jBatchGraph;
-import Graph.Neo4jGraph;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
