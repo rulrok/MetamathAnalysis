@@ -1,6 +1,5 @@
 package Calculations.Distribution.Reachability;
 
-import Graph.Algorithms.Decomposition.Evaluators.AxiomEvaluator;
 import Graph.Algorithms.ReachabilityFromNode;
 import Graph.GraphFactory;
 import Graph.RelTypes;
@@ -16,7 +15,7 @@ import org.neo4j.tooling.GlobalGraphOperations;
  *
  * @author Reuel
  */
-public class ReachabilityFromEverybodyToAxiomsReverse {
+public class ReverseReachabilityFromEverybodyToEveryone {
 
     public static void main(String[] args) {
         GraphDatabaseService graph = GraphFactory.makeDefaultMetamathGraph();
@@ -26,14 +25,13 @@ public class ReachabilityFromEverybodyToAxiomsReverse {
 
             ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
             Map<String, Integer> calculate = reachabilityFromSource
-                    .evaluator(new AxiomEvaluator())
                     .reverseGraph()
                     .calculate(allNodes.iterator(), RelTypes.SUPPORTS);
 //        calculate.forEach((key, value) -> {
 //            System.out.println(key + "\t" + value);
 //        });
 
-            ExportMapToTXT.export("reach_distribution_everyone_to_axioms_reverse", calculate, new String[]{"id", "name", "count"});
+            ExportMapToTXT.export("reach_distribution_everyone_to_everybody_reverse", calculate, new String[]{"id", "name", "count"});
         }
 
     }
