@@ -25,9 +25,8 @@ import org.neo4j.graphdb.traversal.Uniqueness;
 public class ReachabilityFromSource {
 
     private final GraphDatabaseService graph;
-    private final Map<String, List<Integer>> calculations;
+    private final Map<String, Integer> calculations;
     private boolean reverseGraph;
-    private RelationshipType relationshipType;
 
     public ReachabilityFromSource(GraphDatabaseService graph) {
         this.graph = graph;
@@ -40,7 +39,7 @@ public class ReachabilityFromSource {
         return this;
     }
 
-    public Map<String, List<Integer>> calculate(Label startNodeType, RelationshipType relationshipType) {
+    public Map<String, Integer> calculate(Label startNodeType, RelationshipType relationshipType) {
 
         try (Transaction tx = graph.beginTx()) {
 
@@ -50,35 +49,37 @@ public class ReachabilityFromSource {
         }
     }
 
-    public Map<String, List<Integer>> calculate(Node startNode, RelationshipType relationshipType) {
+    public Map<String, Integer> calculate(Node startNode, RelationshipType relationshipType) {
         try (Transaction tx = graph.beginTx()) {
             TraversalDescription traverser = prepareTraverser(relationshipType);
             traverse(traverser, startNode);
+
+            tx.failure();
         }
 
         return calculations;
     }
 
-    public Map<String, List<Integer>> calculate(Node[] nodes, RelationshipType relationshipType) {
+    public Map<String, Integer> calculate(Node[] nodes, RelationshipType relationshipType) {
         try (Transaction tx = graph.beginTx()) {
             TraversalDescription traverser = prepareTraverser(relationshipType);
             for (Node node : nodes) {
                 traverse(traverser, node);
             }
+
+            tx.failure();
         }
 
         return calculations;
     }
 
-    public Map<String, List<Integer>> calculate(Iterator<Node> nodes, RelationshipType relationshipType) {
+    public Map<String, Integer> calculate(Iterator<Node> nodes, RelationshipType relationshipType) {
         try (Transaction tx = graph.beginTx()) {
 
             TraversalDescription traverser = prepareTraverser(relationshipType);
 
             for (; nodes.hasNext();) {
                 Node node = nodes.next();
-
-                System.out.println("Going from node: " + node.getProperty("Name"));
                 traverse(traverser, node);
 
             }
@@ -88,11 +89,20 @@ public class ReachabilityFromSource {
         return calculations;
     }
 
-    private void traverse(TraversalDescription traverser, Node node) {
-        Traverser traverse = traverser.traverse(node);
-        traverse.nodes().forEach(n -> {
-            System.out.println("\t" + n.getProperty("Name") + "\t" + n.getLabels().toString());
-        });
+    private void traverse(TraversalDescription traverser, Node startNode) {
+        Traverser traverse = traverser.traverse(startNode);
+
+//        System.out.println("Going from node: " + startNode.getProperty("name"));
+        ResourceIterator<Node> iterator = traverse.nodes().iterator();
+        int counter = 0;
+        for (; iterator.hasNext();) {
+            Node node = iterator.next();
+//            System.out.println("\t" + node.getProperty("name") + "\t" + n.getLabels().toString());
+            ++counter;
+        }
+
+        Object nodeName = startNode.getProperty("name");
+        calculations.put((String) nodeName, counter);
     }
 
     private TraversalDescription prepareTraverser(RelationshipType relationshipType) {
@@ -110,14 +120,16 @@ public class ReachabilityFromSource {
     }
 
     public static void main(String[] args) {
-        GraphDatabaseService graph = GraphFactory.makeTestGraphJ();
+        GraphDatabaseService graph = GraphFactory.makeDefaultMetamathGraph();
         ReachabilityFromSource reachabilityFromSource = new ReachabilityFromSource(graph);
 
         try (Transaction tx = graph.beginTx()) {
 
-            Node gNode = graph.getNodeById(6);
+            Map<String, Integer> calculate = reachabilityFromSource.calculate(Label.AXIOM, RelTypes.SUPPORTS);
+            calculate.forEach((string, integer) -> {
+                System.out.println(string + ":\t" + integer);
+            });
 
-            Map<String, List<Integer>> calculate = reachabilityFromSource.calculate(gNode, RelTypes.SUPPORTS);
         }
     }
 
