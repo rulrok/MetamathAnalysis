@@ -11,6 +11,8 @@ import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.traversal.BranchOrderingPolicies;
+import org.neo4j.graphdb.traversal.Evaluator;
+import org.neo4j.graphdb.traversal.Evaluators;
 import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.graphdb.traversal.Uniqueness;
 
@@ -24,14 +26,22 @@ public class ReachabilityFromNode {
     private final GraphDatabaseService graph;
     private final Map<String, Integer> calculations;
     private boolean reverseGraph;
+    private Evaluator evaluator;
 
     public ReachabilityFromNode(GraphDatabaseService graph) {
         this.graph = graph;
         this.calculations = new TreeMap<>();
+        this.evaluator = Evaluators.all();
     }
 
     public ReachabilityFromNode reverseGraph() {
         this.reverseGraph = true;
+
+        return this;
+    }
+
+    public ReachabilityFromNode evaluator(Evaluator evaluator) {
+        this.evaluator = evaluator;
 
         return this;
     }
@@ -105,6 +115,7 @@ public class ReachabilityFromNode {
                 .depthFirst()
                 .order(BranchOrderingPolicies.PREORDER_DEPTH_FIRST)
                 .uniqueness(Uniqueness.NODE_GLOBAL)
+                .evaluator(evaluator)
                 .relationships(relationshipType, Direction.OUTGOING);
 
         if (reverseGraph) {
