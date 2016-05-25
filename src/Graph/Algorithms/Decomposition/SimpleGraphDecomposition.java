@@ -1,6 +1,7 @@
 package Graph.Algorithms.Decomposition;
 
 import Graph.Algorithms.Contracts.GraphDecomposition;
+import Graph.GraphFactory;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,11 +14,10 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.tooling.GlobalGraphOperations;
 
 /**
- * Simple algorithm that do the job in the stupidest way.
- * For each time it scans for a layer of nodes, it runs all over the graph to
- * check which node is a sink or source, depending on the chosen operation.
- * Thus, it is slow!
- * 
+ * Simple algorithm that do the job in the stupidest way. For each time it scans
+ * for a layer of nodes, it runs all over the graph to check which node is a
+ * sink or source, depending on the chosen operation. Thus, it is slow!
+ *
  * @author Reuel
  */
 public class SimpleGraphDecomposition implements GraphDecomposition {
@@ -35,6 +35,7 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
     }
 
     @Override
+    @Deprecated
     public List<List<Node>> execute(DecompositionTarget decompositionTarget, List<Node> initialNodes) {
 
         if (decompositionTarget == DecompositionTarget.SINK) {
@@ -116,6 +117,57 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
         }
 
         return components;
+    }
+
+    @Override
+    public List<Node> getSinks() {
+        ArrayList<Node> sinks = new ArrayList<>();
+        try (Transaction tx = graph.beginTx()) {
+
+            ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
+            allNodes.forEach((Node node) -> {
+                if (node.getDegree(Direction.INCOMING) > 0 && node.getDegree(Direction.OUTGOING) == 0) {
+                    sinks.add(node);
+                }
+            });
+            tx.failure();
+        }
+
+        return sinks;
+    }
+
+    @Override
+    public List<Node> getSources() {
+        ArrayList<Node> sources = new ArrayList<>();
+        try (Transaction tx = graph.beginTx()) {
+            ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
+            allNodes.forEach((Node node) -> {
+                if (node.getDegree(Direction.INCOMING) == 0 && node.getDegree(Direction.OUTGOING) > 0) {
+                    sources.add(node);
+                }
+            });
+            tx.failure();
+        }
+
+        return sources;
+    }
+
+    public static void main(String[] args) {
+        GraphDatabaseService graph = GraphFactory.makeDefaultMetamathGraph();
+        SimpleGraphDecomposition sgd = new SimpleGraphDecomposition(graph);
+
+        try (Transaction tx = graph.beginTx()) {
+
+            System.out.println("Sinks:");
+            sgd.getSinks().forEach(sink -> {
+                System.out.println("\t" + sink.getProperty("name"));
+            });
+
+            System.out.println("Sources:");
+            sgd.getSources().forEach(sink -> {
+                System.out.println("\t" + sink.getProperty("name"));
+            });
+        }
     }
 
 }
