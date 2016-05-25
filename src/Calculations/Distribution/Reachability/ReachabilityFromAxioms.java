@@ -1,4 +1,4 @@
-package Calculations.Distribution;
+package Calculations.Distribution.Reachability;
 
 import Graph.Algorithms.ReachabilityFromNode;
 import Graph.GraphFactory;
