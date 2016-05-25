@@ -12,7 +12,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
  *
  * @author Reuel
  */
-public class ReachabilityFromAxioms {
+public class ReachabilityFromAxiomsToEverybody {
 
     public static void main(String[] args) {
         GraphDatabaseService graph = GraphFactory.makeDefaultMetamathGraph();

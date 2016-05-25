@@ -26,7 +26,7 @@ public class ReachabilityFromAxiomsToSinks {
 //            System.out.println(key + "\t" + value);
 //        });
 
-        ExportMapToTXT.export("reach_distribution_axioms_to_sink", calculate, new String[]{"id", "axiom name", "count"});
+        ExportMapToTXT.export("reach_distribution_axioms_to_sinks", calculate, new String[]{"id", "axiom name", "count"});
 
     }
 }
