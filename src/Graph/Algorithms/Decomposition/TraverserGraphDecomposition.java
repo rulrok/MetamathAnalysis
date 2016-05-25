@@ -16,6 +16,7 @@ import org.neo4j.graphdb.traversal.TraversalDescription;
 /**
  *
  * @author Reuel
+ * @deprecated It is all buggy for now
  */
 public class TraverserGraphDecomposition implements GraphDecomposition {
 
