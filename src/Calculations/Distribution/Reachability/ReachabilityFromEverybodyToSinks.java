@@ -32,7 +32,7 @@ public class ReachabilityFromEverybodyToSinks {
 //            System.out.println(key + "\t" + value);
 //        });
 
-            ExportMapToTXT.export("reach_distribution_everyone_to_sinks", calculate, new String[]{"id", "axiom name", "count"});
+            ExportMapToTXT.export("reach_distribution_everyone_to_sinks", calculate, new String[]{"id", "name", "count"});
         }
 
     }

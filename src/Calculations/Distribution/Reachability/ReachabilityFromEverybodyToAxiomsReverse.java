@@ -33,7 +33,7 @@ public class ReachabilityFromEverybodyToAxiomsReverse {
 //            System.out.println(key + "\t" + value);
 //        });
 
-            ExportMapToTXT.export("reach_distribution_everyone_to_axioms_reverse", calculate, new String[]{"id", "axiom name", "count"});
+            ExportMapToTXT.export("reach_distribution_everyone_to_axioms_reverse", calculate, new String[]{"id", "name", "count"});
         }
 
     }
