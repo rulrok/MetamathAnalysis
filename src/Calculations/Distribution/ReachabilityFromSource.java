@@ -3,6 +3,7 @@ package Calculations.Distribution;
 import Graph.GraphFactory;
 import Graph.Label;
 import Graph.RelTypes;
+import Utils.ExportMapToTXT;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -101,8 +102,10 @@ public class ReachabilityFromSource {
             ++counter;
         }
 
+        Object nodeId = startNode.getId();
         Object nodeName = startNode.getProperty("name");
-        calculations.put((String) nodeName, counter);
+        String key = String.join("\t", String.valueOf(nodeId), String.valueOf(nodeName));
+        calculations.put(key, counter);
     }
 
     private TraversalDescription prepareTraverser(RelationshipType relationshipType) {
@@ -126,10 +129,11 @@ public class ReachabilityFromSource {
         try (Transaction tx = graph.beginTx()) {
 
             Map<String, Integer> calculate = reachabilityFromSource.calculate(Label.AXIOM, RelTypes.SUPPORTS);
-            calculate.forEach((string, integer) -> {
-                System.out.println(string + ":\t" + integer);
+            calculate.forEach((key, value) -> {
+                System.out.println(key + "\t" + value);
             });
 
+            ExportMapToTXT.export("test_output", calculate, new String[]{"id", "axiom name", "count"});
         }
     }
 
