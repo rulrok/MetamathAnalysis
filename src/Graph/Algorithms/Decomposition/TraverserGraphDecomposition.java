@@ -120,4 +120,14 @@ public class TraverserGraphDecomposition implements GraphDecomposition {
         return components;
     }
 
+    @Override
+    public List<List<Node>> decomposeIntoSinks() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<List<Node>> decomposeIntoSources() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

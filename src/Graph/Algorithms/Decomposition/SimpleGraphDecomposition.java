@@ -13,7 +13,11 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.tooling.GlobalGraphOperations;
 
 /**
- *
+ * Simple algorithm that do the job in the stupidest way.
+ * For each time it scans for a layer of nodes, it runs all over the graph to
+ * check which node is a sink or source, depending on the chosen operation.
+ * Thus, it is slow!
+ * 
  * @author Reuel
  */
 public class SimpleGraphDecomposition implements GraphDecomposition {
@@ -44,7 +48,8 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
         return components;
     }
 
-    private void decomposeIntoSinks() {
+    @Override
+    public List<List<Node>> decomposeIntoSinks() {
         try (Transaction tx = graph.beginTx()) {
             List<Node> component;
             do {
@@ -73,9 +78,12 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
 
             tx.failure();
         }
+
+        return components;
     }
 
-    private void decomposeIntoSources() {
+    @Override
+    public List<List<Node>> decomposeIntoSources() {
         try (Transaction tx = graph.beginTx()) {
 
             ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
@@ -106,6 +114,8 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
             } while (true);
             tx.failure();
         }
+
+        return components;
     }
 
 }

@@ -10,6 +10,12 @@ import org.neo4j.graphdb.Node;
  */
 public interface GraphDecomposition {
 
+    @Deprecated
     List<List<Node>> execute(DecompositionTarget decompositionTarget, List<Node> initialNodes);
+    
+    List<List<Node>> decomposeIntoSinks();
+    
+    List<List<Node>> decomposeIntoSources();
+    
     
 }
