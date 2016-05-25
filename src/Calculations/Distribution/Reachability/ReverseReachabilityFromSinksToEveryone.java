@@ -30,7 +30,7 @@ public class ReverseReachabilityFromSinksToEveryone {
 //            System.out.println(key + "\t" + value);
 //        });
 
-        ExportMapToTXT.export("reach_distribution_sinks_to_everyone_reverse", calculate, new String[]{"id", "name", "count"});
+        ExportMapToTXT.export("reverse_reach_distribution_sinks_to_everyone", calculate, new String[]{"id", "name", "count"});
 
     }
 

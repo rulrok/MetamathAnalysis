@@ -32,7 +32,7 @@ public class ReverseReachabilityFromSinksToAxioms {
 //            System.out.println(key + "\t" + value);
 //        });
 
-        ExportMapToTXT.export("reach_distribution_sinks_to_axioms_reverse", calculate, new String[]{"id", "name", "count"});
+        ExportMapToTXT.export("reverse_reach_distribution_sinks_to_axioms", calculate, new String[]{"id", "name", "count"});
 
     }
 
