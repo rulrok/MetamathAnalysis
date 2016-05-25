@@ -5,7 +5,6 @@ import Graph.Label;
 import Graph.RelTypes;
 import Utils.ExportMapToTXT;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import org.neo4j.graphdb.Direction;
@@ -16,25 +15,25 @@ import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.traversal.BranchOrderingPolicies;
 import org.neo4j.graphdb.traversal.TraversalDescription;
-import org.neo4j.graphdb.traversal.Traverser;
 import org.neo4j.graphdb.traversal.Uniqueness;
 
 /**
- *
+ * Calculate the reachability distribution
+ * 
  * @author Reuel
  */
-public class ReachabilityFromSource {
+public class ReachabilityFromNode {
 
     private final GraphDatabaseService graph;
     private final Map<String, Integer> calculations;
     private boolean reverseGraph;
 
-    public ReachabilityFromSource(GraphDatabaseService graph) {
+    public ReachabilityFromNode(GraphDatabaseService graph) {
         this.graph = graph;
         this.calculations = new TreeMap<>();
     }
 
-    public ReachabilityFromSource reverseGraph() {
+    public ReachabilityFromNode reverseGraph() {
         this.reverseGraph = true;
 
         return this;
@@ -52,8 +51,7 @@ public class ReachabilityFromSource {
 
     public Map<String, Integer> calculate(Node startNode, RelationshipType relationshipType) {
         try (Transaction tx = graph.beginTx()) {
-            TraversalDescription traverser = prepareTraverser(relationshipType);
-            traverse(traverser, startNode);
+            traverse(startNode, relationshipType);
 
             tx.failure();
         }
@@ -63,9 +61,9 @@ public class ReachabilityFromSource {
 
     public Map<String, Integer> calculate(Node[] nodes, RelationshipType relationshipType) {
         try (Transaction tx = graph.beginTx()) {
-            TraversalDescription traverser = prepareTraverser(relationshipType);
+
             for (Node node : nodes) {
-                traverse(traverser, node);
+                traverse(node, relationshipType);
             }
 
             tx.failure();
@@ -77,12 +75,9 @@ public class ReachabilityFromSource {
     public Map<String, Integer> calculate(Iterator<Node> nodes, RelationshipType relationshipType) {
         try (Transaction tx = graph.beginTx()) {
 
-            TraversalDescription traverser = prepareTraverser(relationshipType);
-
             for (; nodes.hasNext();) {
                 Node node = nodes.next();
-                traverse(traverser, node);
-
+                traverse(node, relationshipType);
             }
             tx.failure();
         }
@@ -90,11 +85,11 @@ public class ReachabilityFromSource {
         return calculations;
     }
 
-    private void traverse(TraversalDescription traverser, Node startNode) {
-        Traverser traverse = traverser.traverse(startNode);
+    private void traverse(Node startNode, RelationshipType relationshipType) {
+        TraversalDescription traverser = prepareTraverser(relationshipType);
 
 //        System.out.println("Going from node: " + startNode.getProperty("name"));
-        ResourceIterator<Node> iterator = traverse.nodes().iterator();
+        ResourceIterator<Node> iterator = traverser.traverse(startNode).nodes().iterator();
         int counter = 0;
         for (; iterator.hasNext();) {
             Node node = iterator.next();
@@ -124,17 +119,15 @@ public class ReachabilityFromSource {
 
     public static void main(String[] args) {
         GraphDatabaseService graph = GraphFactory.makeDefaultMetamathGraph();
-        ReachabilityFromSource reachabilityFromSource = new ReachabilityFromSource(graph);
+        ReachabilityFromNode reachabilityFromSource = new ReachabilityFromNode(graph);
 
-        try (Transaction tx = graph.beginTx()) {
+        Map<String, Integer> calculate = reachabilityFromSource.calculate(Label.AXIOM, RelTypes.SUPPORTS);
+//        calculate.forEach((key, value) -> {
+//            System.out.println(key + "\t" + value);
+//        });
 
-            Map<String, Integer> calculate = reachabilityFromSource.calculate(Label.AXIOM, RelTypes.SUPPORTS);
-            calculate.forEach((key, value) -> {
-                System.out.println(key + "\t" + value);
-            });
+        ExportMapToTXT.export("reach_distribution_sources_everybody", calculate, new String[]{"id", "axiom name", "count"});
 
-            ExportMapToTXT.export("test_output", calculate, new String[]{"id", "axiom name", "count"});
-        }
     }
 
 }
