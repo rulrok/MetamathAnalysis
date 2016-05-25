@@ -1,11 +1,15 @@
 package Graph;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
+import org.neo4j.io.fs.FileUtils;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -44,12 +48,16 @@ public class GraphFactory {
      *   B(1)F(5) I(8)
      *  / \      / \
      * A(0)C(2) H(7)J(9)
-     * </pre>
-     * All edges go downward and use RelTypes.SUPPORT
+     * </pre> All edges go downward and use RelTypes.SUPPORT
      *
      * @return GraphDatabaseService
      */
     public static GraphDatabaseService makeTestGraphJ() {
+        try {
+            FileUtils.deleteRecursively(new File("db/test"));
+        } catch (IOException ex) {
+            Logger.getLogger(GraphFactory.class.getName()).log(Level.SEVERE, null, ex);
+        }
         GraphDatabaseService graphTest = makeGraph("db/test");
 
         try (Transaction tx = graphTest.beginTx()) {
