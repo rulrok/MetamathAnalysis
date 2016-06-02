@@ -16,6 +16,7 @@ import org.neo4j.graphdb.traversal.TraversalDescription;
 /**
  *
  * @author Reuel
+ * @deprecated It is all buggy for now
  */
 public class TraverserGraphDecomposition implements GraphDecomposition {
 
@@ -117,6 +118,26 @@ public class TraverserGraphDecomposition implements GraphDecomposition {
         }
 
         return components;
+    }
+
+    @Override
+    public List<List<Node>> decomposeIntoSinks() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<List<Node>> decomposeIntoSources() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<Node> getSinks() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<Node> getSources() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

@@ -1,6 +1,5 @@
 package Graph.Algorithms.SCC;
 
-import java.util.HashMap;
 import java.util.*;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
