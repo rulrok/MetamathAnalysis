@@ -39,12 +39,27 @@ public class SmallerInducedSubgraph {
                 }
             }
 
+            ArrayList<Node> newNodes = new ArrayList<>(nodes.size());
             //Second, construct the graph based on the nodes and relationships
             try (Transaction txOutputGraph = outputGraph.beginTx()) {
 
                 for (Node node : nodes) {
-                    Node newNode = outputGraph.createNode();
-                    newNode.setProperty("name", node.getProperty("name"));
+
+                    //Verify if the node was already inserted in the new graph
+                    Node foundNode;
+                    foundNode = newNodes.stream()
+                            .filter(n -> n.getProperty("name").equals(node.getProperty("name")))
+                            .findFirst()
+                            .orElse(null);
+
+                    Node newNode;
+                    if (foundNode == null) {
+                        newNode = outputGraph.createNode();
+                        newNode.setProperty("name", node.getProperty("name"));
+                        newNodes.add(newNode);
+                    } else {
+                        newNode = foundNode;
+                    }
 
                     //Verify the incoming relationships from other nodes
                     for (Relationship inRels : node.getRelationships(Direction.INCOMING)) {
@@ -57,8 +72,20 @@ public class SmallerInducedSubgraph {
                             continue;
                         }
 
-                        Node newStartNode = outputGraph.createNode();
-                        newStartNode.setProperty("name", startNode.getProperty("name"));
+                        //Verify if the node was already inserted in the new graph
+                        foundNode = newNodes.stream()
+                                .filter(n -> n.getProperty("name").equals(startNode.getProperty("name")))
+                                .findFirst()
+                                .orElse(null);
+
+                        Node newStartNode;
+                        if (foundNode == null) {
+                            newStartNode = outputGraph.createNode();
+                            newStartNode.setProperty("name", startNode.getProperty("name"));
+                            newNodes.add(newStartNode);
+                        } else {
+                            newStartNode = foundNode;
+                        }
                         newStartNode.createRelationshipTo(newNode, inRels.getType());
 
                     }
@@ -73,8 +100,20 @@ public class SmallerInducedSubgraph {
                             continue;
                         }
 
-                        Node newEndNode = outputGraph.createNode();
-                        newEndNode.setProperty("name", endNode.getProperty("name"));
+                        //Verify if the node was already inserted in the new graph
+                        foundNode = newNodes.stream()
+                                .filter(n -> n.getProperty("name").equals(endNode.getProperty("name")))
+                                .findFirst()
+                                .orElse(null);
+
+                        Node newEndNode;
+                        if (foundNode == null) {
+                            newEndNode = outputGraph.createNode();
+                            newEndNode.setProperty("name", endNode.getProperty("name"));
+                            newNodes.add(newEndNode);
+                        } else {
+                            newEndNode = foundNode;
+                        }
                         newNode.createRelationshipTo(newEndNode, outRels.getType());
                     }
                 }
