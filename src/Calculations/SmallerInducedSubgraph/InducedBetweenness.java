@@ -8,7 +8,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
  *
  * @author Reuel
  */
-public class InducedBetweeness {
+public class InducedBetweenness {
 
     public static void main(String[] args) {
 
