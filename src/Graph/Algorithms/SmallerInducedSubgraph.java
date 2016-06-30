@@ -56,6 +56,7 @@ public class SmallerInducedSubgraph {
                     if (foundNode == null) {
                         newNode = outputGraph.createNode();
                         newNode.setProperty("name", node.getProperty("name"));
+                        newNode.addLabel(node.getLabels().iterator().next());
                         newNodes.add(newNode);
                     } else {
                         newNode = foundNode;
@@ -82,6 +83,7 @@ public class SmallerInducedSubgraph {
                         if (foundNode == null) {
                             newStartNode = outputGraph.createNode();
                             newStartNode.setProperty("name", startNode.getProperty("name"));
+                            newStartNode.addLabel(startNode.getLabels().iterator().next());
                             newNodes.add(newStartNode);
                         } else {
                             newStartNode = foundNode;
@@ -122,6 +124,7 @@ public class SmallerInducedSubgraph {
                         if (foundNode == null) {
                             newEndNode = outputGraph.createNode();
                             newEndNode.setProperty("name", endNode.getProperty("name"));
+                            newEndNode.addLabel(endNode.getLabels().iterator().next());
                             newNodes.add(newEndNode);
                         } else {
                             newEndNode = foundNode;
