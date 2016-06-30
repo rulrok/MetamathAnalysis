@@ -149,28 +149,4 @@ public class SmallerInducedSubgraph {
         }
     }
 
-    public static void main(String[] args) {
-
-        //Prepare databases
-        GraphDatabaseService graph = GraphFactory.makeDefaultMetamathGraph();
-        GraphDatabaseService outputGraph = GraphFactory.makeGraph("db/Betweenness", true);
-
-        //Prepare algorithm object
-        SmallerInducedSubgraph msgi = new SmallerInducedSubgraph(graph, outputGraph);
-
-        //Execute it
-        msgi.execute(
-                "fmpt",
-                "dvhlvec",
-                "dvhlveclem",
-                "frfnom",
-                "pwuninel",
-                "occllem",
-                "ltxrlt",
-                "occl",
-                "1nn",
-                "fvex"
-        );
-    }
-
 }
