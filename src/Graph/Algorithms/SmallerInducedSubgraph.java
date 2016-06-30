@@ -129,7 +129,7 @@ public class SmallerInducedSubgraph {
 
         //Prepare databases
         GraphDatabaseService graph = GraphFactory.makeDefaultMetamathGraph();
-        GraphDatabaseService outputGraph = GraphFactory.makeGraph("db/Betweenness");
+        GraphDatabaseService outputGraph = GraphFactory.makeGraph("db/Betweenness", true);
 
         //Prepare algorithm object
         SmallerInducedSubgraph msgi = new SmallerInducedSubgraph(graph, outputGraph);

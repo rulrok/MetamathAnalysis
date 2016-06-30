@@ -27,6 +27,19 @@ public class GraphFactory {
     }
 
     public static GraphDatabaseService makeGraph(String path) {
+        return makeGraph(path, false);
+    }
+
+    public static GraphDatabaseService makeGraph(String path, boolean deleteExisting) {
+
+        if (deleteExisting) {
+            try {
+                FileUtils.deleteRecursively(new File(path));
+            } catch (IOException ex) {
+                Logger.getLogger(GraphFactory.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
         File dbPath = new File(path);
         GraphDatabaseService graphDb = new GraphDatabaseFactory()
                 .newEmbeddedDatabaseBuilder(dbPath)
@@ -53,12 +66,8 @@ public class GraphFactory {
      * @return GraphDatabaseService
      */
     public static GraphDatabaseService makeTestGraphJ() {
-        try {
-            FileUtils.deleteRecursively(new File("db/test"));
-        } catch (IOException ex) {
-            Logger.getLogger(GraphFactory.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        GraphDatabaseService graphTest = makeGraph("db/test");
+
+        GraphDatabaseService graphTest = makeGraph("db/test", true);
 
         try (Transaction tx = graphTest.beginTx()) {
             Node a = graphTest.createNode();
