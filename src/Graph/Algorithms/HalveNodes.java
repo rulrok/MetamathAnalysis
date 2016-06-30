@@ -1,7 +1,16 @@
 package Graph.Algorithms;
 
 import Graph.GraphFactory;
+import Graph.RelTypes;
+import java.util.ArrayList;
+import java.util.List;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.ResourceIterable;
+import org.neo4j.graphdb.Transaction;
+import org.neo4j.tooling.GlobalGraphOperations;
 
 /**
  *
@@ -16,7 +25,44 @@ public class HalveNodes {
     }
 
     public void execute() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        try (Transaction tx = graph.beginTx()) {
+
+            //Get all nodes
+            ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
+
+            //Colletion to hold the relationship that will be deleted
+            List<Relationship> toDeleteRels = new ArrayList<>(20);
+            allNodes.forEach(node -> {
+
+                //Create the node clone
+                //TODO get all labels if necessary on future implementations
+                Node newNode = graph.createNode(node.getLabels().iterator().next());
+                newNode.setProperty("name", node.getProperty("name") + "'");
+
+                //Link the original node with the clone
+                node.createRelationshipTo(newNode, RelTypes.SUPPORTS);
+
+                //All outgoing relationships
+                Iterable<Relationship> outRels = node.getRelationships(Direction.OUTGOING);
+                outRels.forEach(outRel -> {
+                    //Add rel to be deleted
+                    toDeleteRels.add(outRel);
+
+                    //Link the newNode with the end node of the relationship
+                    Node otherNode = outRel.getOtherNode(node);
+                    newNode.createRelationshipTo(otherNode, outRel.getType());
+                });
+
+                //Delete all the original relationships
+                toDeleteRels.forEach((Relationship rel) -> rel.delete());
+                toDeleteRels.clear();
+
+            });
+
+            //Save graph
+            tx.success();
+        }
     }
 
     public static void main(String[] args) {
