@@ -86,7 +86,19 @@ public class SmallerInducedSubgraph {
                         } else {
                             newStartNode = foundNode;
                         }
-                        newStartNode.createRelationshipTo(newNode, inRels.getType());
+
+                        //Verify if the relationship has already been added
+                        boolean relExists = false;
+                        for (Relationship rel : newStartNode.getRelationships(Direction.OUTGOING)) {
+                            if (rel.getEndNode().equals(newNode)) {
+                                relExists = true;
+                                break;
+                            }
+                        }
+
+                        if (!relExists) {
+                            newStartNode.createRelationshipTo(newNode, inRels.getType());
+                        }
 
                     }
 
@@ -114,7 +126,19 @@ public class SmallerInducedSubgraph {
                         } else {
                             newEndNode = foundNode;
                         }
-                        newNode.createRelationshipTo(newEndNode, outRels.getType());
+
+                        //Verify if the relationship has already been added
+                        boolean relExists = false;
+                        for (Relationship rel : newNode.getRelationships(Direction.OUTGOING)) {
+                            if (rel.getEndNode().equals(newEndNode)) {
+                                relExists = true;
+                                break;
+                            }
+                        }
+
+                        if (!relExists) {
+                            newNode.createRelationshipTo(newEndNode, outRels.getType());
+                        }
                     }
                 }
 
