@@ -119,4 +119,19 @@ public class GraphFactory {
             }
         });
     }
+
+    public static GraphDatabaseService copyGraph(String inputGraphPath, String outputGraphPath) {
+
+        File outputFile = new File(outputGraphPath);
+        File inputFile = new File(inputGraphPath);
+
+        try {
+            FileUtils.deleteRecursively(outputFile);
+            FileUtils.copyRecursively(inputFile, outputFile);
+        } catch (IOException ex) {
+            Logger.getLogger(GraphFactory.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return makeGraph(outputGraphPath, false);
+    }
 }
