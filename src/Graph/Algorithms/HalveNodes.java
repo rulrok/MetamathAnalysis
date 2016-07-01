@@ -57,13 +57,4 @@ public class HalveNodes {
             tx.success();
         }
     }
-
-    public static void main(String[] args) {
-        GraphDatabaseService graphCopy = GraphFactory.copyGraph("db/metamath", "db/halved_graph");
-
-        HalveNodes halveNodes = new HalveNodes(graphCopy);
-
-        halveNodes.execute();
-    }
-
 }
