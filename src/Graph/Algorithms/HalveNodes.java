@@ -30,9 +30,6 @@ public class HalveNodes {
 
             //Get all nodes
             ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
-
-            //Colletion to hold the relationship that will be deleted
-            List<Relationship> toDeleteRels = new ArrayList<>(20);
             allNodes.forEach(node -> {
 
                 //Create the node clone
@@ -46,17 +43,13 @@ public class HalveNodes {
                 //All outgoing relationships
                 Iterable<Relationship> outRels = node.getRelationships(Direction.OUTGOING);
                 outRels.forEach(outRel -> {
-                    //Add rel to be deleted
-                    toDeleteRels.add(outRel);
 
                     //Link the newNode with the end node of the relationship
                     Node otherNode = outRel.getOtherNode(node);
                     newNode.createRelationshipTo(otherNode, outRel.getType());
+                    
+                    outRel.delete();
                 });
-
-                //Delete all the original relationships
-                toDeleteRels.forEach((Relationship rel) -> rel.delete());
-                toDeleteRels.clear();
 
             });
 
