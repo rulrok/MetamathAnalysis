@@ -2,10 +2,9 @@ package Graph.Algorithms;
 
 import Graph.GraphFactory;
 import Graph.RelTypes;
-import java.util.ArrayList;
-import java.util.List;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterable;
@@ -33,8 +32,10 @@ public class HalveNodes {
             allNodes.forEach(node -> {
 
                 //Create the node clone
-                //TODO get all labels if necessary on future implementations
-                Node newNode = graph.createNode(node.getLabels().iterator().next());
+                Node newNode = graph.createNode();
+                for (Label l : node.getLabels()) {
+                    newNode.addLabel(l);
+                }
                 newNode.setProperty("name", node.getProperty("name") + "'");
 
                 //Link the original node with the clone
@@ -47,7 +48,7 @@ public class HalveNodes {
                     //Link the newNode with the end node of the relationship
                     Node otherNode = outRel.getOtherNode(node);
                     newNode.createRelationshipTo(otherNode, outRel.getType());
-                    
+
                     outRel.delete();
                 });
 
