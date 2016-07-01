@@ -38,9 +38,6 @@ public class HalveNodes {
                 }
                 newNode.setProperty("name", node.getProperty("name") + "'");
 
-                //Link the original node with the clone
-                node.createRelationshipTo(newNode, RelTypes.SUPPORTS);
-
                 //All outgoing relationships
                 Iterable<Relationship> outRels = node.getRelationships(Direction.OUTGOING);
                 outRels.forEach(outRel -> {
@@ -52,6 +49,8 @@ public class HalveNodes {
                     outRel.delete();
                 });
 
+                //Link the original node with the clone
+                node.createRelationshipTo(newNode, RelTypes.SUPPORTS);
             });
 
             //Save graph
