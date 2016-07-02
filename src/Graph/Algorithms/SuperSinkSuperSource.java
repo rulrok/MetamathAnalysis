@@ -56,11 +56,4 @@ public class SuperSinkSuperSource {
             tx.success();
         }
     }
-
-    public static void main(String[] args) {
-        GraphDatabaseService graph = GraphFactory.copyGraph("db/metamath", "db/super_metamath");
-
-        SuperSinkSuperSource ssss = new SuperSinkSuperSource(graph);
-        ssss.execute();
-    }
 }
