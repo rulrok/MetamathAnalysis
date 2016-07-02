@@ -95,15 +95,4 @@ public class GraphToHIPRtxt {
 
         return true;
     }
-
-    public static void main(String[] args) {
-        GraphDatabaseService graph = GraphFactory.copyGraph("db/metamath", "db/super_metamath");
-
-        SuperSinkSuperSource ssss = new SuperSinkSuperSource(graph);
-        ssss.execute();
-
-        GraphToHIPRtxt gthipr = new GraphToHIPRtxt(graph);
-
-        gthipr.execute("grafo_HIPR.txt");
-    }
 }
