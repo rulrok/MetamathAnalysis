@@ -4,6 +4,7 @@ import Graph.Algorithms.GraphToHIPRtxt;
 import Graph.Algorithms.HalveNodes;
 import Graph.Algorithms.SuperSinkSuperSource;
 import Graph.GraphFactory;
+import Graph.Label;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
@@ -17,7 +18,10 @@ public class MaxFlowHalvedGraphSupersinkSupersource {
         GraphDatabaseService superGraph = GraphFactory.copyGraph("db/metamath", "db/super_metamath");
 
         HalveNodes halveNodes = new HalveNodes(superGraph);
-        halveNodes.execute();
+        halveNodes
+                .addFilterLabel(Label.AXIOM)
+                .addFilterLabel(Label.THEOREM)
+                .execute();
 
         SuperSinkSuperSource sinkSuperSource = new SuperSinkSuperSource(superGraph);
         sinkSuperSource.execute();
