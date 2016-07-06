@@ -24,10 +24,12 @@ public class MaxFlowHalvedGraphSupersinkSupersource {
                 .execute();
 
         SuperSinkSuperSource sinkSuperSource = new SuperSinkSuperSource(superGraph);
-        sinkSuperSource.execute();
+        sinkSuperSource
+                .addFilterLabel(Label.AXIOM)
+                .addFilterLabel(Label.THEOREM)
+                .execute();
 
         GraphToHIPRtxt gthipr = new GraphToHIPRtxt(superGraph);
-
         gthipr.execute("grafo_HIPR.txt");
     }
 }
