@@ -51,13 +51,13 @@ public class SuperSinkSuperSource implements LabelFiltered {
                 sourceTraverser = sourceTraverser.evaluator(new LabelEvaluator(false, labelFilters.toArray(labels)));
             }
 
-            Node S = graph.createNode(Label.UNKNOWN);
+            Node S = graph.createNode(Label.AXIOM);
             S.setProperty("name", "S");
             sourceTraverser.traverse(graph.getNodeById(0)).nodes().forEach(source -> {
                 S.createRelationshipTo(source, RelTypes.UNKNOWN);
             });
 
-            Node T = graph.createNode(Label.UNKNOWN);
+            Node T = graph.createNode(Label.THEOREM);
             T.setProperty("name", "T");
             TraversalDescription sinkTraverser = graph.traversalDescription()
                     .breadthFirst()

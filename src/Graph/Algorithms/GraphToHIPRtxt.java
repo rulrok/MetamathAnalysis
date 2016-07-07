@@ -116,8 +116,10 @@ public class GraphToHIPRtxt implements LabelFiltered {
                 }
             }
 
-            Node S = graph.findNode(Label.UNKNOWN, "name", "S");
-            Node T = graph.findNode(Label.UNKNOWN, "name", "T");
+            //TODO Remove dependency with the SUperSinkSUperSource algorithm.
+            //We must know that S is artificially labeled as Axiom, and T as a THEOREM
+            Node S = graph.findNode(Label.AXIOM, "name", "S");
+            Node T = graph.findNode(Label.THEOREM, "name", "T");
 
             try (PrintWriter printWriter = new PrintWriter(outputGraph)) {
                 printWriter.printf("p max %d %d\n", nodesCount, arcsCount);
