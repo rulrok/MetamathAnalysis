@@ -67,9 +67,6 @@ public class GraphToHIPRtxt implements LabelFiltered {
              * Count the nodes
              */
             int nodesCount = 0;
-            for (Node n : GlobalGraphOperations.at(graph).getAllNodes()) {
-                nodesCount++;
-            }
 
             /*
              * Count the arcs and prepare the output string
@@ -78,6 +75,10 @@ public class GraphToHIPRtxt implements LabelFiltered {
 
             //The if is outsite for performance reasons
             if (labelFilters.isEmpty()) {
+                for (Node n : GlobalGraphOperations.at(graph).getAllNodes()) {
+                    nodesCount++;
+                }
+                
                 for (Relationship r : GlobalGraphOperations.at(graph).getAllRelationships()) {
                     arcsCount++;
 
@@ -126,6 +127,8 @@ public class GraphToHIPRtxt implements LabelFiltered {
                     arcsInfo.append("a ").append(startNodeId).append(' ').append(endNodeId).append(" 1 ")
                             .append("(").append(startNodeName).append(" -> ").append(endNodeName).append(")\r\n");
                 }
+
+                nodesCount = (int) guid;
             }
 
             //TODO Remove dependency with the SUperSinkSUperSource algorithm.
@@ -151,7 +154,7 @@ public class GraphToHIPRtxt implements LabelFiltered {
         return true;
     }
 
-    private long guid = -1;
+    private long guid = 0;
     private final Map<Long, Long> inputs = new HashMap<>();
 
     /**
