@@ -1,11 +1,14 @@
 package Graph.Algorithms;
 
+import Graph.Algorithms.Contracts.LabelFiltered;
 import Graph.GraphFactory;
 import Graph.Label;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -18,12 +21,19 @@ import org.neo4j.tooling.GlobalGraphOperations;
  *
  * @author Reuel
  */
-public class GraphToHIPRtxt {
+public class GraphToHIPRtxt implements LabelFiltered {
 
+    private final List<Label> labelFilters = new ArrayList<>();
     GraphDatabaseService graph;
 
     public GraphToHIPRtxt(GraphDatabaseService graph) {
         this.graph = graph;
+    }
+
+    @Override
+    public GraphToHIPRtxt addFilterLabel(Label label) {
+        labelFilters.add(label);
+        return this;
     }
 
     public boolean execute(String outputFilePath) {
@@ -61,18 +71,49 @@ public class GraphToHIPRtxt {
              * Count the arcs and prepare the output string
              */
             int arcsCount = 0;
-            for (Relationship r : GlobalGraphOperations.at(graph).getAllRelationships()) {
-                arcsCount++;
 
-                Node startNode = r.getStartNode();
-                Node endNode = r.getEndNode();
+            //The if is outsite for performance reasons
+            if (labelFilters.isEmpty()) {
+                for (Relationship r : GlobalGraphOperations.at(graph).getAllRelationships()) {
+                    arcsCount++;
 
-                //Nodes ids start at 0 at least
-                long startNodeId = startNode.getId();
-                long endNodeId = endNode.getId();
+                    Node startNode = r.getStartNode();
+                    Node endNode = r.getEndNode();
 
-                //e.g., a 1 2 5
-                arcsInfo.append("a ").append(startNodeId).append(' ').append(endNodeId).append(" 1\n");
+                    //Nodes ids start at 0 at least
+                    long startNodeId = startNode.getId();
+                    long endNodeId = endNode.getId();
+
+                    //e.g., a 1 2 5
+                    arcsInfo.append("a ").append(startNodeId).append(' ').append(endNodeId).append(" 1\n");
+                }
+            } else {
+                for (Relationship r : GlobalGraphOperations.at(graph).getAllRelationships()) {
+
+                    Node startNode = r.getStartNode();
+                    Node endNode = r.getEndNode();
+
+                    //Verify if both the ends are the intended nodes
+                    boolean startMatch = false, endMatch = false;
+                    for (Label l : labelFilters) {
+                        startMatch |= startNode.hasLabel(l);
+                        endMatch |= endNode.hasLabel(l);
+                    }
+                    if (!startMatch || !endMatch) {
+                        continue;
+                    }
+
+                    //At this point, we are sure that both startNode and endNode
+                    //have one of the desired labels
+                    arcsCount++;
+
+                    //Nodes ids start at 0 at least
+                    long startNodeId = startNode.getId();
+                    long endNodeId = endNode.getId();
+
+                    //e.g., a 1 2 5                    
+                    arcsInfo.append("a ").append(startNodeId).append(' ').append(endNodeId).append(" 1\n");
+                }
             }
 
             Node S = graph.findNode(Label.UNKNOWN, "name", "S");

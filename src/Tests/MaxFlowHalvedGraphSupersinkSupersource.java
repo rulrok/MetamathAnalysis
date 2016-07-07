@@ -30,6 +30,9 @@ public class MaxFlowHalvedGraphSupersinkSupersource {
                 .execute();
 
         GraphToHIPRtxt gthipr = new GraphToHIPRtxt(superGraph);
-        gthipr.execute("grafo_HIPR.txt");
+        gthipr
+                .addFilterLabel(Label.AXIOM)
+                .addFilterLabel(Label.THEOREM)
+                .execute("grafo_HIPR.txt");
     }
 }
