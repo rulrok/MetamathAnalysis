@@ -15,7 +15,7 @@ public class MaxFlowHalvedGraphSupersinkSupersource {
 
     public static void main(String[] args) {
 
-        GraphDatabaseService superGraph = GraphFactory.copyGraph("db/metamath", "db/super_metamath");
+        GraphDatabaseService superGraph = GraphFactory.copyGraph("db/metamath", "db/super_halved_metamath");
 
         HalveNodes halveNodes = new HalveNodes(superGraph);
         halveNodes
@@ -29,8 +29,8 @@ public class MaxFlowHalvedGraphSupersinkSupersource {
                 .addFilterLabel(Label.THEOREM)
                 .execute();
 
-        GraphToHIPRtxt gthipr = new GraphToHIPRtxt(superGraph);
-        gthipr
+        GraphToHIPRtxt gtHIPR = new GraphToHIPRtxt(superGraph);
+        gtHIPR
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
                 .execute("grafo_HIPR.txt");
