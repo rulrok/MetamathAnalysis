@@ -8,7 +8,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -84,8 +88,12 @@ public class GraphToHIPRtxt implements LabelFiltered {
                     long startNodeId = startNode.getId();
                     long endNodeId = endNode.getId();
 
+                    Object startNodeName = startNode.getProperty("name");
+                    Object endNodeName = endNode.getProperty("name");
+
                     //e.g., a 1 2 5
-                    arcsInfo.append("a ").append(startNodeId).append(' ').append(endNodeId).append(" 1\n");
+                    arcsInfo.append("a ").append(startNodeId).append(' ').append(endNodeId).append(" 1 ")
+                            .append("(").append(startNodeName).append(" -> ").append(endNodeName).append(")\r\n");
                 }
             } else {
                 for (Relationship r : GlobalGraphOperations.at(graph).getAllRelationships()) {
@@ -108,11 +116,15 @@ public class GraphToHIPRtxt implements LabelFiltered {
                     arcsCount++;
 
                     //Nodes ids start at 0 at least
-                    long startNodeId = startNode.getId();
-                    long endNodeId = endNode.getId();
+                    long startNodeId = uniqueSequencialId(startNode.getId());
+                    long endNodeId = uniqueSequencialId(endNode.getId());
+
+                    Object startNodeName = startNode.getProperty("name");
+                    Object endNodeName = endNode.getProperty("name");
 
                     //e.g., a 1 2 5                    
-                    arcsInfo.append("a ").append(startNodeId).append(' ').append(endNodeId).append(" 1\n");
+                    arcsInfo.append("a ").append(startNodeId).append(' ').append(endNodeId).append(" 1 ")
+                            .append("(").append(startNodeName).append(" -> ").append(endNodeName).append(")\r\n");
                 }
             }
 
@@ -123,8 +135,8 @@ public class GraphToHIPRtxt implements LabelFiltered {
 
             try (PrintWriter printWriter = new PrintWriter(outputGraph)) {
                 printWriter.printf("p max %d %d\n", nodesCount, arcsCount);
-                printWriter.printf("n %d s\n", S.getId());
-                printWriter.printf("n %d t\n", T.getId());
+                printWriter.printf("n %d s\n", uniqueSequencialId(S.getId()));
+                printWriter.printf("n %d t\n", uniqueSequencialId(T.getId()));
 
                 printWriter.append(arcsInfo);
 
@@ -137,5 +149,26 @@ public class GraphToHIPRtxt implements LabelFiltered {
         }
 
         return true;
+    }
+
+    private long guid = -1;
+    private final Map<Long, Long> inputs = new HashMap<>();
+
+    /**
+     * For the HIPR library, the index of node numbers needs to be sequencial.
+     * This function associates a unique sequencial value for a given
+     * non-sequencial number.
+     *
+     * @param input
+     * @return
+     */
+    private long uniqueSequencialId(long input) {
+
+        if (inputs.containsKey(input)) {
+            return inputs.get(input);
+        } else {
+            inputs.put(input, ++guid);
+            return guid;
+        }
     }
 }
