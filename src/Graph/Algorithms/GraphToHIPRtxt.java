@@ -137,9 +137,9 @@ public class GraphToHIPRtxt implements LabelFiltered {
             Node T = graph.findNode(Label.THEOREM, "name", "T");
 
             try (PrintWriter printWriter = new PrintWriter(outputGraph)) {
-                printWriter.printf("p max %d %d\n", nodesCount, arcsCount);
-                printWriter.printf("n %d s\n", uniqueSequencialId(S.getId()));
-                printWriter.printf("n %d t\n", uniqueSequencialId(T.getId()));
+                printWriter.printf("p max %d %d\r\n", nodesCount, arcsCount);
+                printWriter.printf("n %d s\r\n", uniqueSequencialId(S.getId()));
+                printWriter.printf("n %d t\r\n", uniqueSequencialId(T.getId()));
 
                 printWriter.append(arcsInfo);
 
