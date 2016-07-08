@@ -1,5 +1,7 @@
 package Graph.Algorithms;
 
+import Graph.Algorithms.Contracts.LabelFiltered;
+import Graph.Label;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,14 +22,21 @@ import org.neo4j.tooling.GlobalGraphOperations;
  *
  * @author Reuel
  */
-public class GraphToTxt {
+public class GraphToTxt implements LabelFiltered {
 
     GraphDatabaseService graph;
     String outputFilePath;
+    private final List<Label> labelFilters = new ArrayList<>();
 
     public GraphToTxt(GraphDatabaseService graph, String outputFilePath) {
         this.graph = graph;
         this.outputFilePath = outputFilePath;
+    }
+
+    @Override
+    public GraphToTxt addFilterLabel(Label label) {
+        labelFilters.add(label);
+        return this;
     }
 
     public boolean execute(RelationshipType relationshipType) {
@@ -50,7 +59,7 @@ public class GraphToTxt {
         }
 
         int nodesCount = 0;
-        Map<Long, Set<Long>> relationships = new HashMap<>();
+        Map<Long, Set<Long>> relationshipsToPrint = new HashMap<>();
         try (Transaction tx = graph.beginTx()) {
 
             /*
@@ -59,10 +68,21 @@ public class GraphToTxt {
             ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
             try (PrintWriter printWriter = new PrintWriter(outputNodes)) {
                 for (Node node : allNodes) {
-                    long id = node.getId();
+
+                    if (!labelFilters.isEmpty()) {
+                        boolean labelFound = false;
+                        for (Label l : labelFilters) {
+                            labelFound |= node.hasLabel(l);
+                        }
+                        if (!labelFound) {
+                            continue;
+                        }
+                    }
+
+                    long id = uniqueSequencialId(node.getId());
                     Object name = node.getProperty("name", "NO_NAME");
                     printWriter.printf("%d\t%s\n", id, name);
-                    nodesCount++;
+//                    nodesCount++;
                 }
 
                 printWriter.flush();
@@ -75,24 +95,38 @@ public class GraphToTxt {
              * Get relationships
              */
             Iterable<Relationship> allRelationships = GlobalGraphOperations.at(graph).getAllRelationships();
-            allRelationships.forEach((Relationship relationship) -> {
+            for (Relationship relationship : allRelationships) {
 
-                if (relationship.isType(relationshipType)) {
+                //Filter relationships
+                if (!relationship.isType(relationshipType)) {
+                    continue;
+                }
+                Node startNode = relationship.getStartNode();
+                Node endNode = relationship.getEndNode();
 
-                    Node startNode = relationship.getStartNode();
-                    Node endNode = relationship.getEndNode();
-                    long k = startNode.getId();
-                    long v = endNode.getId();
+                //Filter nodes
+                if (!labelFilters.isEmpty()) {
 
-                    if (!relationships.containsKey(k)) {
-                        relationships.put(k, new LinkedHashSet<>());
+                    boolean startMatch = false, endMatch = false;
+                    for (Label l : labelFilters) {
+                        startMatch |= startNode.hasLabel(l);
+                        endMatch |= endNode.hasLabel(l);
                     }
-
-                    relationships.get(k).add(v);
-
+                    if (!startMatch || !endMatch) {
+                        continue;
+                    }
                 }
 
-            });
+                long k = uniqueSequencialId(startNode.getId());
+                long v = uniqueSequencialId(endNode.getId());
+
+                if (!relationshipsToPrint.containsKey(k)) {
+                    relationshipsToPrint.put(k, new LinkedHashSet<>());
+                }
+
+                relationshipsToPrint.get(k).add(v);
+
+            }
 
             //Make sure we don't modify the original graph
             tx.failure();
@@ -104,9 +138,10 @@ public class GraphToTxt {
         /*
          * Print elements to a file
          */
+        nodesCount = (int) guid;
         try (PrintWriter printWriter = new PrintWriter(outputGraph)) {
             printWriter.println(nodesCount);
-            relationships.forEach((Long sourceNode, Set<Long> hashset) -> {
+            relationshipsToPrint.forEach((Long sourceNode, Set<Long> hashset) -> {
                 hashset.forEach((Long destNode) -> {
                     printWriter.println(sourceNode + "\t" + destNode);
                 });
@@ -120,6 +155,27 @@ public class GraphToTxt {
 
         return true;
 
+    }
+
+    private long guid = 0;
+    private final Map<Long, Long> inputs = new HashMap<>();
+
+    /**
+     * For the HIPR library, the index of node numbers needs to be sequencial.
+     * This function associates a unique sequencial value for a given
+     * non-sequencial number.
+     *
+     * @param input
+     * @return
+     */
+    private long uniqueSequencialId(long input) {
+
+        if (inputs.containsKey(input)) {
+            return inputs.get(input);
+        } else {
+            inputs.put(input, ++guid);
+            return guid;
+        }
     }
 
 }
