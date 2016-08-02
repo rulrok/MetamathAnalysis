@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -28,10 +29,28 @@ import org.neo4j.tooling.GlobalGraphOperations;
 public class GraphToHIPRtxt implements LabelFiltered {
 
     private final List<Label> labelFilters = new ArrayList<>();
+    private boolean superSinkSourceCustomWeight = false;
     GraphDatabaseService graph;
 
     public GraphToHIPRtxt(GraphDatabaseService graph) {
         this.graph = graph;
+    }
+
+    /**
+     * If set to false, ALL arcs will have an unitary weight. Otherwise, the
+     * arcs coming out of a SuperSource will have the weight set as the number
+     * of the outter degree of the nodes that they each reache. The same occurs
+     * for the SuperSink, but the weight of the arcs being defined based on the
+     * inner degree of the nodes which reach the SuperSink. It is assumed that
+     * the SuperSouce and SuperSink are named 'S' and 'T', respectively.
+     *
+     * @param value
+     * @return
+     */
+    public GraphToHIPRtxt customWeightForSuperSinkAndSource(boolean value) {
+        superSinkSourceCustomWeight = value;
+
+        return this;
     }
 
     @Override
@@ -78,7 +97,8 @@ public class GraphToHIPRtxt implements LabelFiltered {
                 for (Node n : GlobalGraphOperations.at(graph).getAllNodes()) {
                     nodesCount++;
                 }
-                
+
+                int weight = 1;
                 for (Relationship r : GlobalGraphOperations.at(graph).getAllRelationships()) {
                     arcsCount++;
 
@@ -92,11 +112,24 @@ public class GraphToHIPRtxt implements LabelFiltered {
                     Object startNodeName = startNode.getProperty("name");
                     Object endNodeName = endNode.getProperty("name");
 
-                    //e.g., a 1 2 5
-                    arcsInfo.append("a ").append(startNodeId).append(' ').append(endNodeId).append(" 1 ")
-                            .append("(").append(startNodeName).append(" -> ").append(endNodeName).append(")\r\n");
+                    if (superSinkSourceCustomWeight) {
+                        if (startNodeName.equals("S")) {
+                            //SuperSource
+                            weight = endNode.getDegree(Direction.OUTGOING);
+                        }
+
+                        if (endNodeName.equals("T")) {
+                            //SuperSink
+                            weight = startNode.getDegree(Direction.INCOMING);
+                        }
+                    }
+
+                    print_line(arcsInfo, startNodeId, endNodeId, startNodeName, endNodeName, weight);
+                    weight = 1;
                 }
             } else {
+
+                int weight = 1;
                 for (Relationship r : GlobalGraphOperations.at(graph).getAllRelationships()) {
 
                     Node startNode = r.getStartNode();
@@ -123,9 +156,20 @@ public class GraphToHIPRtxt implements LabelFiltered {
                     Object startNodeName = startNode.getProperty("name");
                     Object endNodeName = endNode.getProperty("name");
 
-                    //e.g., a 1 2 5                    
-                    arcsInfo.append("a ").append(startNodeId).append(' ').append(endNodeId).append(" 1 ")
-                            .append("(").append(startNodeName).append(" -> ").append(endNodeName).append(")\r\n");
+                    if (superSinkSourceCustomWeight) {
+                        if (startNodeName.equals("S")) {
+                            //SuperSource
+                            weight = endNode.getDegree(Direction.OUTGOING);
+                        }
+
+                        if (endNodeName.equals("T")) {
+                            //SuperSink
+                            weight = startNode.getDegree(Direction.INCOMING);
+                        }
+                    }
+
+                    print_line(arcsInfo, startNodeId, endNodeId, startNodeName, endNodeName, weight);
+                    weight = 1;
                 }
 
                 nodesCount = (int) guid;
@@ -152,6 +196,14 @@ public class GraphToHIPRtxt implements LabelFiltered {
         }
 
         return true;
+    }
+
+    private void print_line(StringBuilder arcsInfo, long startNodeId, long endNodeId, Object startNodeName, Object endNodeName, int weight) {
+        //e.g., a 1 2 5
+        //a = means 'arc', source, destination, weight of the arc
+        arcsInfo.append("a ").append(startNodeId).append(' ').append(endNodeId).append(" ").append(weight).append(" ")
+                //The below line is an extra only to make it easier to interpret the output
+                .append("(").append(startNodeName).append(" -> ").append(endNodeName).append(")\r\n");
     }
 
     private long guid = 0;

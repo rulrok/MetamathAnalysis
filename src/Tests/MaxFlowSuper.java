@@ -20,11 +20,18 @@ public class MaxFlowSuper {
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
                 .execute();
-        
+
         GraphToHIPRtxt gtHIPR = new GraphToHIPRtxt(superGraph);
         gtHIPR
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
                 .execute("grafo_HIPR-axiom-theorem.txt");
+
+
+        gtHIPR
+                .addFilterLabel(Label.AXIOM)
+                .addFilterLabel(Label.THEOREM)
+                .customWeightForSuperSinkAndSource(true)
+                .execute("grafo_HIPR_custom_weights-axiom-theorem.txt");
     }
 }
