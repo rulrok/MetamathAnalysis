@@ -203,7 +203,7 @@ public class GraphToHIPRtxt implements LabelFiltered {
         //a = means 'arc', source, destination, weight of the arc
         arcsInfo.append("a ").append(startNodeId).append(' ').append(endNodeId).append(" ").append(weight).append(" ")
                 //The below line is an extra only to make it easier to interpret the output
-                .append("(").append(startNodeName).append(" -> ").append(endNodeName).append(")\r\n");
+                .append("( ").append(startNodeName).append(" -> ").append(endNodeName).append(" )\r\n");
     }
 
     private long guid = 0;
