@@ -2,6 +2,7 @@ package Utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
@@ -25,6 +26,14 @@ public class ParseHIPROutput {
     public ParseHIPROutput(File file) {
         this.file = file;
         this.nodesSinkSide = new HashSet<>(5000);
+    }
+
+    public Set<String> getNodesOnSinkSide() {
+        return Collections.unmodifiableSet(nodesSinkSide);
+    }
+
+    public boolean isNodeOnSinkSide(String name) {
+        return nodesSinkSide.contains(name);
     }
 
     public void parse() throws FileNotFoundException {

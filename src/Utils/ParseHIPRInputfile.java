@@ -2,9 +2,12 @@ package Utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  *
@@ -51,6 +54,10 @@ public class ParseHIPRInputfile {
             }
         }
 
+    }
+
+    public Set<String> getAllNodeIDs() {
+        return new HashSet<>(nodes.keySet());
     }
 
     public String getNodeName(Integer id) {
