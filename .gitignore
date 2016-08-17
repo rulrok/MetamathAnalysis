@@ -17,6 +17,7 @@
 *.txt
 *.exe
 *.exe.dumpstack
+*.exe.stackdump
 /grafo.txt
 /grafo_nomes.txt
 /jgnuplot.xml
