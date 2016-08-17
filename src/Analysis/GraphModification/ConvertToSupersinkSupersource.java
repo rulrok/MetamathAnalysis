@@ -1,4 +1,4 @@
-package Analysis;
+package Analysis.GraphModification;
 
 import Graph.Algorithms.SuperSinkSuperSource;
 import Graph.GraphFactory;

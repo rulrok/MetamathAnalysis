@@ -1,4 +1,4 @@
-package Analysis.Traversals;
+package Tests.Traversals;
 
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;

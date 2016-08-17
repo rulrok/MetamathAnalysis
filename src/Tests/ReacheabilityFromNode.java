@@ -1,4 +1,4 @@
-package Analysis;
+package Tests;
 
 import Graph.Algorithms.ReachabilityFromNode;
 import Graph.GraphFactory;

@@ -1,4 +1,4 @@
-package Analysis.Traversals;
+package Tests.Traversals;
 
 import Graph.GraphFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
