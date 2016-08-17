@@ -1,4 +1,4 @@
-package Tests;
+package Analysis;
 
 import Graph.Algorithms.GraphToTxt;
 import Graph.GraphFactory;

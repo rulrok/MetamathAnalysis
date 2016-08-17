@@ -1,4 +1,4 @@
-package Tests;
+package Analysis;
 
 import Utils.ParseHIPRInputfile;
 import Utils.ParseHIPROutput;
