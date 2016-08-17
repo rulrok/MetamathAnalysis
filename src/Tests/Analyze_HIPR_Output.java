@@ -23,10 +23,10 @@ public class Analyze_HIPR_Output {
          * Prepare files
          */
         File HIPR_FILE
-                = new File("grafo_HIPR_custom_weights-axiom-theorem.txt");
+                = new File("grafo_HIPR.txt");
 
         File HIPR_RESULTS
-                = new File("grafo_HIPR_custom_weights-axiom-theorem_results.txt");
+                = new File("grafo_HIPR_results.txt");
 
         /**
          * Parse both files
@@ -61,7 +61,7 @@ public class Analyze_HIPR_Output {
         /**
          * Output nodes
          */
-        final File outputFile = new File("grafo_HIPR_custom_weights-axiom-theorem_sides.txt");
+        final File outputFile = new File("grafo_HIPR_sides.txt");
         try (FileWriter fileWriter = new FileWriter(outputFile)) {
             outputFile.createNewFile();
             String lineBreak = System.lineSeparator();
@@ -89,12 +89,9 @@ public class Analyze_HIPR_Output {
             for (String nodeOnSink : nodeNamesSinkSide.stream().sorted().collect(Collectors.toList())) {
                 fileWriter.append(nodeOnSink).append(lineBreak);
             }
-            fileWriter.close();
             fileWriter.flush();
         } catch (IOException ex) {
             Logger.getLogger(Analyze_HIPR_Output.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        System.out.println("");
     }
 }
