@@ -11,6 +11,9 @@
 #include "parser.c"         /* parser */
 #include "timer.c"          /* timing routine */
 
+#define PRINT_CUT 1
+#define PRINT_FLOW 1
+#define PRINT_STAT 1
 
 /*
 #define GLOB_UPDT_FREQ 0.5
@@ -839,6 +842,7 @@ int main (argc, argv)
     printf("c\n");
 #endif
 
+//Nodes que ficaram do lado do supersink
 #ifdef PRINT_CUT
   globalUpdate();
   printf ("c nodes on the sink side\n");
