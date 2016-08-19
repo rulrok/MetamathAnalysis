@@ -9,11 +9,11 @@ import java.util.Map;
  */
 public class UniqueSequenceGenerator {
 
-    private long guid;
+    private long nextId;
     private final Map<Long, Long> inputs;
 
     public UniqueSequenceGenerator() {
-        this.guid = 0;
+        this.nextId = 1;
         this.inputs = new HashMap<>();
     }
 
@@ -29,8 +29,9 @@ public class UniqueSequenceGenerator {
         if (inputs.containsKey(input)) {
             return inputs.get(input);
         } else {
-            inputs.put(input, ++guid);
-            return guid;
+            inputs.put(input, nextId);
+            nextId++;
+            return nextId;
         }
     }
 }
