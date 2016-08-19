@@ -1,6 +1,6 @@
 package Utils;
 
-import Graph.Algorithms.GraphToTxt;
+import Graph.Algorithms.Export.GraphToTxt;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;

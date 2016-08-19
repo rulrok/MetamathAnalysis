@@ -1,5 +1,6 @@
 package Graph.Algorithms;
 
+import Graph.Algorithms.Export.GraphToTxt;
 import Graph.Algorithms.Contracts.LabelFiltered;
 import Graph.GraphFactory;
 import Graph.Label;

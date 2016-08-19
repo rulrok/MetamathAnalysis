@@ -1,6 +1,7 @@
 package Analysis;
 
-import Graph.Algorithms.GraphToTxt;
+import Graph.Algorithms.Export.EGraphFormatter;
+import Graph.Algorithms.Export.GraphToTxt;
 import Graph.GraphFactory;
 import Graph.Label;
 import Graph.RelTypes;
@@ -18,11 +19,11 @@ public class ExportToTXT {
         /*
          * Export to txt
          */
-        GraphToTxt graphToTxt = new GraphToTxt(graphDb, "grafo.txt");
+        GraphToTxt graphToTxt = new GraphToTxt(graphDb, "grafo_test.txt");
         graphToTxt
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
-                .execute(RelTypes.SUPPORTS);
+                .execute(RelTypes.SUPPORTS, EGraphFormatter.NAMES);
     }
 
 }
