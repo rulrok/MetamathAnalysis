@@ -18,9 +18,20 @@ import org.neo4j.graphdb.Transaction;
 public class SimpleFormatter implements IGraphFormatter {
 
     private final UniqueSequenceGenerator idGenerator;
+    private boolean withNames;
 
     public SimpleFormatter() {
         this.idGenerator = new UniqueSequenceGenerator();
+    }
+
+    public SimpleFormatter withNames() {
+        withNames = true;
+        return this;
+    }
+
+    public SimpleFormatter withoutNames() {
+        withNames = false;
+        return this;
     }
 
     @Override
@@ -43,11 +54,26 @@ public class SimpleFormatter implements IGraphFormatter {
             });
 
             output.append(nodesToPrint.size()).append(System.lineSeparator());
-            orderedRelsToPrint.forEach((Long s, Set<Long> nodes) -> {
-                nodes.forEach((Long e) -> {
-                    output.append(s).append("\t").append(e).append(System.lineSeparator());
+            if (withNames) {
+                orderedRelsToPrint.forEach((Long s, Set<Long> nodes) -> {
+                    nodes.forEach((Long e) -> {
+                        Node startNode = graph.getNodeById(s);
+                        Node endNode = graph.getNodeById(e);
+                        output.append(s).append("\t").append(e).append("\t")
+                                .append("[ ")
+                                .append(startNode.getProperty("name")).append(" -> ").append(endNode.getProperty("name"))
+                                .append(" ]")
+                                .append(System.lineSeparator());
+                    });
                 });
-            });
+            } else {
+
+                orderedRelsToPrint.forEach((Long s, Set<Long> nodes) -> {
+                    nodes.forEach((Long e) -> {
+                        output.append(s).append("\t").append(e).append(System.lineSeparator());
+                    });
+                });
+            }
             tx.failure();
         }
 

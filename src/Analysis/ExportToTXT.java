@@ -1,6 +1,7 @@
 package Analysis;
 
 import Graph.Algorithms.Export.Formatters.HiprFormatter;
+import Graph.Algorithms.Export.Formatters.SimpleFormatter;
 import Graph.Algorithms.Export.GraphToTxt;
 import Graph.GraphFactory;
 import Graph.Label;
@@ -23,7 +24,7 @@ public class ExportToTXT {
         graphToTxt
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
-                .execute(new HiprFormatter());
+                .execute(new SimpleFormatter().withNames());
     }
 
 }
