@@ -1,6 +1,7 @@
 package Graph.Algorithms.Export;
 
 import Graph.Algorithms.Contracts.LabelFiltered;
+import Graph.Algorithms.Contracts.RelationshipFiltered;
 import Graph.Algorithms.Export.Formatters.IGraphFormatter;
 import Graph.Label;
 import java.io.File;
@@ -22,23 +23,31 @@ import org.neo4j.tooling.GlobalGraphOperations;
  *
  * @author Reuel
  */
-public class GraphToTxt implements LabelFiltered {
+public class GraphToTxt implements LabelFiltered, RelationshipFiltered {
 
     private final GraphDatabaseService graph;
     private final String outputFilePath;
+
     private final List<Label> labelFilters;
+    private final List<RelationshipType> relFilters;
+
     private IGraphFormatter formatter;
 
     private final List<Node> nodesToPrint;
     private final List<Relationship> relsToPrint;
 
     public GraphToTxt(GraphDatabaseService graph, String outputFilePath) {
-        this.labelFilters = new ArrayList<>();
-        this.relsToPrint = new ArrayList<>();
-        this.nodesToPrint = new ArrayList<>();
+        //Basic stuff
         this.graph = graph;
         this.outputFilePath = outputFilePath;
+        //Formatter
         this.formatter = EGraphFormatter.SIMPLE.getFormatter();
+        //Filters
+        this.labelFilters = new ArrayList<>();
+        this.relFilters = new ArrayList<>();
+        //Things to print
+        this.nodesToPrint = new ArrayList<>();
+        this.relsToPrint = new ArrayList<>();
     }
 
     @Override
@@ -47,7 +56,25 @@ public class GraphToTxt implements LabelFiltered {
         return this;
     }
 
+    @Override
+    public GraphToTxt addFilterRelationship(RelationshipType label) {
+        relFilters.add(label);
+        return this;
+    }
+
+    
+    /**
+     * @param relationshipType
+     * @param formatter
+     * @return 
+     * @deprecated Use the 'addFilterRelationship' method instead to filter by relationship.
+     */
     public boolean execute(RelationshipType relationshipType, EGraphFormatter formatter) {
+        this.addFilterRelationship(relationshipType);
+        return this.execute(formatter);
+    }
+
+    public boolean execute(EGraphFormatter formatter) {
         this.formatter = formatter.getFormatter();
         File outputGraph = new File(outputFilePath);
 
@@ -64,7 +91,7 @@ public class GraphToTxt implements LabelFiltered {
             return false;
         }
 
-        if (!processNodesAndRelationships(relationshipType)) {
+        if (!processNodesAndRelationships()) {
             return false;
         }
 
@@ -88,7 +115,7 @@ public class GraphToTxt implements LabelFiltered {
         return true;
     }
 
-    private boolean processNodesAndRelationships(RelationshipType relationshipType) {
+    private boolean processNodesAndRelationships() {
         try (final Transaction tx = graph.beginTx()) {
             /*
             * Get nodes
@@ -112,12 +139,17 @@ public class GraphToTxt implements LabelFiltered {
             * Get relationships
              */
             Iterable<Relationship> allRelationships = GlobalGraphOperations.at(graph).getAllRelationships();
+            relIterator:
             for (Relationship relationship : allRelationships) {
 
                 //Filter relationships
-                if (!relationship.isType(relationshipType)) {
-                    continue;
+                relTypeIterator:
+                for (RelationshipType r : relFilters) {
+                    if (!relationship.isType(r)) {
+                        continue relIterator;
+                    }
                 }
+
                 Node startNode = relationship.getStartNode();
                 Node endNode = relationship.getEndNode();
 
