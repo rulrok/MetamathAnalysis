@@ -60,18 +60,6 @@ public class GraphToTxt implements LabelFiltered, RelationshipFiltered {
         return this;
     }
 
-    /**
-     * @param relationshipType
-     * @param formatter
-     * @return
-     * @deprecated Use the 'addFilterRelationship' method instead to filter by
-     * relationship.
-     */
-    public boolean execute(RelationshipType relationshipType, IGraphFormatter formatter) {
-        this.addFilterRelationship(relationshipType);
-        return this.execute(formatter);
-    }
-
     public boolean execute(IGraphFormatter formatter) {
         this.formatter = formatter;
         File outputGraph = new File(outputFilePath);
