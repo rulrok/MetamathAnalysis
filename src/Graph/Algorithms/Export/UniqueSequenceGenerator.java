@@ -13,7 +13,7 @@ public class UniqueSequenceGenerator {
     private final Map<Long, Long> inputs;
 
     public UniqueSequenceGenerator() {
-        this.nextId = 1;
+        this.nextId = 0;
         this.inputs = new HashMap<>();
     }
 
@@ -29,8 +29,7 @@ public class UniqueSequenceGenerator {
         if (inputs.containsKey(input)) {
             return inputs.get(input);
         } else {
-            inputs.put(input, nextId);
-            nextId++;
+            inputs.put(input, ++nextId);
             return nextId;
         }
     }
