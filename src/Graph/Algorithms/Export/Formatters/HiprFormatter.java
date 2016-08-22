@@ -13,11 +13,11 @@ import org.neo4j.graphdb.Transaction;
  *
  * @author Reuel
  */
-public class HIPR implements IGraphFormatter {
+public class HiprFormatter implements IGraphFormatter {
 
     UniqueSequenceGenerator usg;
 
-    public HIPR() {
+    public HiprFormatter() {
         usg = new UniqueSequenceGenerator();
     }
 

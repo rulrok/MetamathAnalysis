@@ -8,7 +8,7 @@ import Graph.Algorithms.Export.Formatters.*;
  */
 public enum EGraphFormatter {
 
-    SIMPLE(Simple.class), NAMES(GraphNames.class), HIPR(HIPR.class);
+    SIMPLE(SimpleFormatter.class), NAMES(SimpleWithNamesFormatter.class), HIPR(HiprFormatter.class);
 
     private EGraphFormatter(Class<? extends IGraphFormatter> formatter) {
         this.formatter = formatter;

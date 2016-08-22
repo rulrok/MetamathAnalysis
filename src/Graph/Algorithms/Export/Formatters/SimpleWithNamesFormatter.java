@@ -13,13 +13,15 @@ import org.neo4j.graphdb.Transaction;
 
 /**
  *
+ * This formatter outputs graph nodes in the format: Id Name
+ *
  * @author Reuel
  */
-public class Simple implements IGraphFormatter {
+public class SimpleWithNamesFormatter implements IGraphFormatter {
 
     private final UniqueSequenceGenerator idGenerator;
 
-    public Simple() {
+    public SimpleWithNamesFormatter() {
         this.idGenerator = new UniqueSequenceGenerator();
     }
 
@@ -45,7 +47,13 @@ public class Simple implements IGraphFormatter {
             output.append(nodesToPrint.size()).append(System.lineSeparator());
             orderedRelsToPrint.forEach((Long s, Set<Long> nodes) -> {
                 nodes.forEach((Long e) -> {
-                    output.append(s).append("\t").append(e).append(System.lineSeparator());
+                    Node startNode = graph.getNodeById(s);
+                    Node endNode = graph.getNodeById(e);
+                    output.append(s).append("\t").append(e).append("\t")
+                            .append("[ ")
+                            .append(startNode.getProperty("name")).append(" -> ").append(endNode.getProperty("name"))
+                            .append(" ]")
+                            .append(System.lineSeparator());
                 });
             });
             tx.failure();
@@ -53,5 +61,4 @@ public class Simple implements IGraphFormatter {
 
         return output;
     }
-
 }
