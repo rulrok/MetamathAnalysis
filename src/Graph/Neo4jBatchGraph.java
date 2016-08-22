@@ -94,7 +94,7 @@ public class Neo4jBatchGraph implements IGraph {
 
     @Override
     public Relationship createRelationship(String nodeNameSrc, String nodeNameDest) {
-        return this.createRelationship(nodeNameSrc, nodeNameDest, RelTypes.UNKNOWN.toString());
+        return this.createRelationship(nodeNameSrc, nodeNameDest, RelType.UNKNOWN.toString());
     }
 
     @Override
@@ -104,7 +104,7 @@ public class Neo4jBatchGraph implements IGraph {
 
     @Override
     public Relationship createRelationship(String nodeNameSrc, String nodeNameDest, String labelName, Map<String, String> properties) {
-        RelTypes label = RelTypes.valueOf(labelName);
+        RelType label = RelType.valueOf(labelName);
         println("Added new relationship (" + nodeNameSrc + ")-[" + label + "]->(" + nodeNameDest + ") with the following properties:");
 
         Long srcNodeId = nodesIds.getOrDefault(nodeNameSrc, 2L);  //) 2 happens to be the dummylink $p assertion

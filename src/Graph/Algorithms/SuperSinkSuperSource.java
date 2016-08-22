@@ -5,7 +5,7 @@ import Graph.Algorithms.Decomposition.Evaluators.LabelEvaluator;
 import Graph.Algorithms.Decomposition.Evaluators.SinkEvaluator;
 import Graph.Algorithms.Decomposition.Evaluators.SourceEvaluator;
 import Graph.Label;
-import Graph.RelTypes;
+import Graph.RelType;
 import java.util.ArrayList;
 import java.util.List;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -54,7 +54,7 @@ public class SuperSinkSuperSource implements LabelFiltered {
             Node S = graph.createNode(Label.AXIOM);
             S.setProperty("name", "S");
             sourceTraverser.traverse(graph.getNodeById(0)).nodes().forEach(source -> {
-                S.createRelationshipTo(source, RelTypes.UNKNOWN);
+                S.createRelationshipTo(source, RelType.UNKNOWN);
             });
 
             Node T = graph.createNode(Label.THEOREM);
@@ -71,7 +71,7 @@ public class SuperSinkSuperSource implements LabelFiltered {
             }
 
             sinkTraverser.traverse(graph.getNodeById(0)).nodes().forEach(sink -> {
-                sink.createRelationshipTo(T, RelTypes.UNKNOWN);
+                sink.createRelationshipTo(T, RelType.UNKNOWN);
             });
 
             tx.success();

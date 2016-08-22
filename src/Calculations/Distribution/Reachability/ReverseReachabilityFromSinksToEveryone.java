@@ -3,7 +3,7 @@ package Calculations.Distribution.Reachability;
 import Graph.Algorithms.Decomposition.SimpleGraphDecomposition;
 import Graph.Algorithms.ReachabilityFromNode;
 import Graph.GraphFactory;
-import Graph.RelTypes;
+import Graph.RelType;
 import Utils.ExportMapToTXT;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +25,7 @@ public class ReverseReachabilityFromSinksToEveryone {
 
         Map<String, Integer> calculate = reachabilityFromSource
                 .reverseGraph()
-                .calculate(originalSinks.iterator(), RelTypes.SUPPORTS);
+                .calculate(originalSinks.iterator(), RelType.SUPPORTS);
 //        calculate.forEach((key, value) -> {
 //            System.out.println(key + "\t" + value);
 //        });

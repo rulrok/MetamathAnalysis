@@ -3,7 +3,7 @@ package Tests;
 import Graph.Algorithms.ReachabilityFromNode;
 import Graph.GraphFactory;
 import Graph.Label;
-import Graph.RelTypes;
+import Graph.RelType;
 import java.util.Map;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -23,7 +23,7 @@ public class ReacheabilityFromNode {
 
             Node eNode = graph.getNodeById(4);
 
-            Map<String, Integer> calculate = reachabilityFromSource.calculate(eNode, RelTypes.SUPPORTS);
+            Map<String, Integer> calculate = reachabilityFromSource.calculate(eNode, RelType.SUPPORTS);
             //Should yeld 10 of reachability
             calculate.forEach((key, value) -> {
                 System.out.println(key + "\t" + value);

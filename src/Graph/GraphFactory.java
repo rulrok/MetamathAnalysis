@@ -61,7 +61,7 @@ public class GraphFactory {
      *   B(1)F(5) I(8)
      *  / \      / \
      * A(0)C(2) H(7)J(9)
-     * </pre> All edges go downward and use RelTypes.SUPPORT
+     * </pre> All edges go downward and use RelType.SUPPORT
      *
      * @return GraphDatabaseService
      */
@@ -91,15 +91,15 @@ public class GraphFactory {
             Node j = graphTest.createNode();
             j.setProperty("name", "J");
 
-            e.createRelationshipTo(d, RelTypes.SUPPORTS);
-            d.createRelationshipTo(b, RelTypes.SUPPORTS);
-            b.createRelationshipTo(a, RelTypes.SUPPORTS);
-            b.createRelationshipTo(c, RelTypes.SUPPORTS);
-            e.createRelationshipTo(g, RelTypes.SUPPORTS);
-            g.createRelationshipTo(f, RelTypes.SUPPORTS);
-            g.createRelationshipTo(i, RelTypes.SUPPORTS);
-            i.createRelationshipTo(h, RelTypes.SUPPORTS);
-            i.createRelationshipTo(j, RelTypes.SUPPORTS);
+            e.createRelationshipTo(d, RelType.SUPPORTS);
+            d.createRelationshipTo(b, RelType.SUPPORTS);
+            b.createRelationshipTo(a, RelType.SUPPORTS);
+            b.createRelationshipTo(c, RelType.SUPPORTS);
+            e.createRelationshipTo(g, RelType.SUPPORTS);
+            g.createRelationshipTo(f, RelType.SUPPORTS);
+            g.createRelationshipTo(i, RelType.SUPPORTS);
+            i.createRelationshipTo(h, RelType.SUPPORTS);
+            i.createRelationshipTo(j, RelType.SUPPORTS);
 
             tx.success();
 

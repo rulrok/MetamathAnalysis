@@ -4,7 +4,7 @@ import Graph.Algorithms.Export.EGraphFormatter;
 import Graph.Algorithms.Export.GraphToTxt;
 import Graph.GraphFactory;
 import Graph.Label;
-import Graph.RelTypes;
+import Graph.RelType;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
@@ -14,16 +14,16 @@ import org.neo4j.graphdb.GraphDatabaseService;
 public class ExportToTXT {
 
     public static void main(String[] args) {
-        GraphDatabaseService graphDb = GraphFactory.makeDefaultMetamathGraph();
+        GraphDatabaseService graphDb = GraphFactory.makeGraph("db/super_halved_metamath");
 
         /*
          * Export to txt
          */
-        GraphToTxt graphToTxt = new GraphToTxt(graphDb, "grafo_test.txt");
+        GraphToTxt graphToTxt = new GraphToTxt(graphDb, "grafo_HIPR_test.txt");
         graphToTxt
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
-                .execute(RelTypes.SUPPORTS, EGraphFormatter.NAMES);
+                .execute(RelType.SUPPORTS, EGraphFormatter.HIPR);
     }
 
 }

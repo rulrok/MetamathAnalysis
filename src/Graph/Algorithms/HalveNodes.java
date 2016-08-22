@@ -1,7 +1,7 @@
 package Graph.Algorithms;
 
 import Graph.Algorithms.Contracts.LabelFiltered;
-import Graph.RelTypes;
+import Graph.RelType;
 import Utils.ResourceIteratorAggregator;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +73,7 @@ public class HalveNodes implements LabelFiltered {
                 });
 
                 //Link the original node with the clone
-                node.createRelationshipTo(newNode, RelTypes.SUPPORTS);
+                node.createRelationshipTo(newNode, RelType.SUPPORTS);
             }
 
             //Save graph

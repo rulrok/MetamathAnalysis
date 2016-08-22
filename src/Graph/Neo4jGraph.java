@@ -79,14 +79,14 @@ public class Neo4jGraph implements IGraph {
 
     @Override
     public Relationship createRelationship(String nodeNameSrc, String nodeNameDest, String labelName) {
-        RelTypes label = RelTypes.valueOf(labelName);
+        RelType label = RelType.valueOf(labelName);
         println("'Added' new relationship (" + nodeNameSrc + ")-[" + label + "]->(" + nodeNameDest + ").");
         return new FakeRelationship();
     }
 
     @Override
     public Relationship createRelationship(String nodeNameSrc, String nodeNameDest, String labelName, Map<String, String> properties) {
-        RelTypes label = RelTypes.valueOf(labelName);
+        RelType label = RelType.valueOf(labelName);
         println("'Added' new relationship (" + nodeNameSrc + ")-[" + label + "]->(" + nodeNameDest + ") with the following properties:");
         for (Map.Entry<String, String> entry : properties.entrySet()) {
             String key = entry.getKey();

@@ -3,7 +3,7 @@ package Calculations.Distribution.Reachability;
 import Graph.Algorithms.ReachabilityFromNode;
 import Graph.GraphFactory;
 import Graph.Label;
-import Graph.RelTypes;
+import Graph.RelType;
 import Utils.ExportMapToTXT;
 import java.util.Map;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -18,7 +18,7 @@ public class ReachabilityFromAxiomsToEverybody {
         GraphDatabaseService graph = GraphFactory.makeDefaultMetamathGraph();
         ReachabilityFromNode reachabilityFromSource = new ReachabilityFromNode(graph);
 
-        Map<String, Integer> calculate = reachabilityFromSource.calculate(Label.AXIOM, RelTypes.SUPPORTS);
+        Map<String, Integer> calculate = reachabilityFromSource.calculate(Label.AXIOM, RelType.SUPPORTS);
 //        calculate.forEach((key, value) -> {
 //            System.out.println(key + "\t" + value);
 //        });

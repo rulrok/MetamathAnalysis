@@ -4,7 +4,7 @@ import Graph.Algorithms.Decomposition.Evaluators.SinkEvaluator;
 import Graph.Algorithms.ReachabilityFromNode;
 import Graph.GraphFactory;
 import Graph.Label;
-import Graph.RelTypes;
+import Graph.RelType;
 import Utils.ExportMapToTXT;
 import java.util.Map;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -21,7 +21,7 @@ public class ReachabilityFromAxiomsToSinks {
 
         Map<String, Integer> calculate = reachabilityFromSource
                 .evaluator(new SinkEvaluator())
-                .calculate(Label.AXIOM, RelTypes.SUPPORTS);
+                .calculate(Label.AXIOM, RelType.SUPPORTS);
 //        calculate.forEach((key, value) -> {
 //            System.out.println(key + "\t" + value);
 //        });

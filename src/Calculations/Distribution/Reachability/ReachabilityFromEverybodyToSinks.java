@@ -3,7 +3,7 @@ package Calculations.Distribution.Reachability;
 import Graph.Algorithms.Decomposition.Evaluators.SinkEvaluator;
 import Graph.Algorithms.ReachabilityFromNode;
 import Graph.GraphFactory;
-import Graph.RelTypes;
+import Graph.RelType;
 import Utils.ExportMapToTXT;
 import java.util.Map;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -27,7 +27,7 @@ public class ReachabilityFromEverybodyToSinks {
             ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
             Map<String, Integer> calculate = reachabilityFromSource
                     .evaluator(new SinkEvaluator())
-                    .calculate(allNodes.iterator(), RelTypes.SUPPORTS);
+                    .calculate(allNodes.iterator(), RelType.SUPPORTS);
 //        calculate.forEach((key, value) -> {
 //            System.out.println(key + "\t" + value);
 //        });

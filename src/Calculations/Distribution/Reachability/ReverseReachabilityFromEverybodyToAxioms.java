@@ -3,7 +3,7 @@ package Calculations.Distribution.Reachability;
 import Graph.Algorithms.Decomposition.Evaluators.AxiomEvaluator;
 import Graph.Algorithms.ReachabilityFromNode;
 import Graph.GraphFactory;
-import Graph.RelTypes;
+import Graph.RelType;
 import Utils.ExportMapToTXT;
 import java.util.Map;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -28,7 +28,7 @@ public class ReverseReachabilityFromEverybodyToAxioms {
             Map<String, Integer> calculate = reachabilityFromSource
                     .evaluator(new AxiomEvaluator())
                     .reverseGraph()
-                    .calculate(allNodes.iterator(), RelTypes.SUPPORTS);
+                    .calculate(allNodes.iterator(), RelType.SUPPORTS);
 //        calculate.forEach((key, value) -> {
 //            System.out.println(key + "\t" + value);
 //        });

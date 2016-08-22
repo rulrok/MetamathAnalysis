@@ -3,7 +3,7 @@ package Calculations;
 import Graph.Algorithms.SCC.TarjanSCC;
 import Graph.GraphFactory;
 import Graph.Label;
-import Graph.RelTypes;
+import Graph.RelType;
 import java.util.List;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -31,13 +31,13 @@ public class StrongConnectedComponents {
 
             for (; allAxioms.hasNext();) {
                 Node node = allAxioms.next();
-                helperNode.createRelationshipTo(node, RelTypes.SUPPORTS);
+                helperNode.createRelationshipTo(node, RelType.SUPPORTS);
             }
 
             /*
              * Calculate SCC
              */
-            Graph.Algorithms.Contracts.StrongConnectedComponents scc = new TarjanSCC(graphDb, helperNode, RelTypes.SUPPORTS);
+            Graph.Algorithms.Contracts.StrongConnectedComponents scc = new TarjanSCC(graphDb, helperNode, RelType.SUPPORTS);
             List<List<Node>> components = scc.execute();
 
             /*
