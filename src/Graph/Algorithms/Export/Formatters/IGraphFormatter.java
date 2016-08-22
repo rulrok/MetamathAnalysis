@@ -1,6 +1,6 @@
 package Graph.Algorithms.Export.Formatters;
 
-import java.util.Set;
+import java.util.List;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -11,5 +11,5 @@ import org.neo4j.graphdb.Relationship;
  */
 public interface IGraphFormatter {
 
-    CharSequence format(GraphDatabaseService graph, Set<Node> nodesToPrint, Set<Relationship> relsToPrint);
+    CharSequence format(GraphDatabaseService graph, List<Node> nodesToPrint, List<Relationship> relsToPrint);
 }

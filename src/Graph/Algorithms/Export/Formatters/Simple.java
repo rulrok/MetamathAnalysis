@@ -3,6 +3,7 @@ package Graph.Algorithms.Export.Formatters;
 import Graph.Algorithms.Export.UniqueSequenceGenerator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -23,7 +24,7 @@ public class Simple implements IGraphFormatter {
     }
 
     @Override
-    public CharSequence format(GraphDatabaseService graph, Set<Node> nodesToPrint, Set<Relationship> relsToPrint) {
+    public CharSequence format(GraphDatabaseService graph, List<Node> nodesToPrint, List<Relationship> relsToPrint) {
         StringBuilder output = new StringBuilder();
         Map<Long, Set<Long>> orderedRelsToPrint = new HashMap<>();
         try (final Transaction tx = graph.beginTx()) {

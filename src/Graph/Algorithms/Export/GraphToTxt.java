@@ -29,13 +29,13 @@ public class GraphToTxt implements LabelFiltered {
     private final List<Label> labelFilters;
     private IGraphFormatter formatter;
 
-    private final Set<Node> nodesToPrint;
-    private final Set<Relationship> relsToPrint;
+    private final List<Node> nodesToPrint;
+    private final List<Relationship> relsToPrint;
 
     public GraphToTxt(GraphDatabaseService graph, String outputFilePath) {
         this.labelFilters = new ArrayList<>();
-        this.relsToPrint = new HashSet<>();
-        this.nodesToPrint = new HashSet<>();
+        this.relsToPrint = new ArrayList<>();
+        this.nodesToPrint = new ArrayList<>();
         this.graph = graph;
         this.outputFilePath = outputFilePath;
         this.formatter = EGraphFormatter.SIMPLE.getFormatter();
