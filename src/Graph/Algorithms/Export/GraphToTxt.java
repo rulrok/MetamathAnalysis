@@ -102,25 +102,10 @@ public class GraphToTxt implements LabelFiltered, RelationshipFiltered {
     }
 
     private boolean processNodesAndRelationships() {
+        Set<Node> nodesFromRels = new HashSet<>();
+
         try (final Transaction tx = graph.beginTx()) {
-            /*
-            * Get nodes
-             */
-            ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
-            for (Node node : allNodes) {
 
-                if (!labelFilters.isEmpty()) {
-                    boolean labelFound = false;
-                    for (Label l : labelFilters) {
-                        labelFound |= node.hasLabel(l);
-                    }
-                    if (!labelFound) {
-                        continue;
-                    }
-                }
-
-                nodesToPrint.add(node);
-            }
             /*
             * Get relationships
              */
@@ -153,8 +138,18 @@ public class GraphToTxt implements LabelFiltered, RelationshipFiltered {
                 }
 
                 relsToPrint.add(relationship);
+                /**
+                 * Get nodes without repetition
+                 */
+                nodesFromRels.add(relationship.getStartNode());
+                nodesFromRels.add(relationship.getEndNode());
 
             }
+            /**
+             * Finally, add the found unique nodes
+             */
+            nodesToPrint.addAll(nodesFromRels);
+
             //Make sure we don't modify the original graph
             tx.failure();
         } catch (Exception ex) {
