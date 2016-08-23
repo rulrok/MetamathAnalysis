@@ -2,7 +2,6 @@ package Graph.Algorithms;
 
 import Graph.Algorithms.Export.GraphToTxt;
 import Graph.Algorithms.Contracts.LabelFiltered;
-import Graph.GraphFactory;
 import Graph.Label;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,10 +9,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.neo4j.graphdb.Direction;
@@ -25,6 +22,7 @@ import org.neo4j.tooling.GlobalGraphOperations;
 
 /**
  *
+ * @deprecated Use the GraphToTxt with the HiprFormatter rather.
  * @author Reuel
  */
 public class GraphToHIPRtxt implements LabelFiltered {

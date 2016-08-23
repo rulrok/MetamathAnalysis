@@ -1,6 +1,7 @@
 package Analysis;
 
-import Graph.Algorithms.GraphToHIPRtxt;
+import Graph.Algorithms.Export.Formatters.HiprFormatter;
+import Graph.Algorithms.Export.GraphToTxt;
 import Graph.Algorithms.HalveNodes;
 import Graph.Algorithms.SuperSinkSuperSource;
 import Graph.GraphFactory;
@@ -22,17 +23,23 @@ public class MaxFlowHalvedGraphSupersinkSupersource {
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
                 .execute();
-
+        
         SuperSinkSuperSource sinkSuperSource = new SuperSinkSuperSource(superGraph);
         sinkSuperSource
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
                 .execute();
 
-        GraphToHIPRtxt gtHIPR = new GraphToHIPRtxt(superGraph);
-        gtHIPR
+        GraphToTxt graphToTxt = new GraphToTxt(superGraph, "grafo_HIPR.txt");
+        graphToTxt
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
-                .execute("grafo_HIPR.txt");
+                .execute(new HiprFormatter("S", "T").withCustomWeightForSuperSinkAndSource());
+
+//        GraphToHIPRtxt gtHIPR = new GraphToHIPRtxt(superGraph);
+//        gtHIPR
+//                .addFilterLabel(Label.AXIOM)
+//                .addFilterLabel(Label.THEOREM)
+//                .execute("grafo_HIPR_test.txt");
     }
 }
