@@ -37,7 +37,7 @@ public class InnerUnitaryEdgeSplittedGraph implements IEdgeWeigher {
 
         //If the startName is equal to endName when we append it with an apostrophe,
         //then we have an inner edge.
-        boolean isInnerEdge = startName.equals(endName.concat("'"));
+        boolean isInnerEdge = startName.concat("'").equals(endName);
 
         if (isInnerEdge) {
             return innerWeight;
