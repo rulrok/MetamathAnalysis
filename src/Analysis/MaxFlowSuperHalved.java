@@ -37,11 +37,11 @@ public class MaxFlowSuperHalved {
 
         System.out.println("Exporting to TXT...");
         String graphTxtOutput = "grafo_HIPR_super_halved-axiom-theorem.txt";
-        GraphToTxt graphToTxt = new GraphToTxt(superGraph, graphTxtOutput);
+        GraphToTxt graphToTxt = new GraphToTxt(superGraph);
         graphToTxt
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
-                .execute(new HiprFormatter("S", "T", new SuperSinkSourceCustomWeigher()));
+                .export(graphTxtOutput, new HiprFormatter("S", "T", new SuperSinkSourceCustomWeigher()));
 
         System.out.println("Analyzing maxflow with HIPR...");
         HIPR hipr = new HIPR();

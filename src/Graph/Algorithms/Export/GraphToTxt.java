@@ -26,7 +26,6 @@ import org.neo4j.tooling.GlobalGraphOperations;
 public class GraphToTxt implements LabelFiltered, RelationshipFiltered {
 
     private final GraphDatabaseService graph;
-    private final String outputFilePath;
 
     private final List<Label> labelFilters;
     private final List<RelationshipType> relFilters;
@@ -36,10 +35,9 @@ public class GraphToTxt implements LabelFiltered, RelationshipFiltered {
     private final List<Node> nodesToPrint;
     private final List<Relationship> relsToPrint;
 
-    public GraphToTxt(GraphDatabaseService graph, String outputFilePath) {
+    public GraphToTxt(GraphDatabaseService graph) {
         //Basic stuff
         this.graph = graph;
-        this.outputFilePath = outputFilePath;
         //Filters
         this.labelFilters = new ArrayList<>();
         this.relFilters = new ArrayList<>();
@@ -60,7 +58,7 @@ public class GraphToTxt implements LabelFiltered, RelationshipFiltered {
         return this;
     }
 
-    public boolean execute(IGraphFormatter formatter) {
+    public boolean export(String outputFilePath, IGraphFormatter formatter) {
         this.formatter = formatter;
         File outputGraph = new File(outputFilePath);
 

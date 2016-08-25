@@ -19,11 +19,11 @@ public class ExportToTXT {
         /*
          * Export to txt
          */
-        GraphToTxt graphToTxt = new GraphToTxt(graphDb, "grafo_HIPR_test.txt");
+        GraphToTxt graphToTxt = new GraphToTxt(graphDb);
         graphToTxt
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
-                .execute(new HiprFormatter("S", "T", new SuperSinkSourceCustomWeigher()));
+                .export("grafo_HIPR_super_metamath-axiom-theorem.txt", new HiprFormatter("S", "T", new SuperSinkSourceCustomWeigher()));
     }
 
 }
