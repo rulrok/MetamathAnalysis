@@ -1,10 +1,9 @@
 package Graph.Algorithms.Export.Formatters;
 
+import Graph.Algorithms.Export.EdgeWeigher.IEdgeWeigher;
 import Graph.Algorithms.Export.UniqueSequenceGenerator;
-import Graph.Algorithms.GraphToHIPRtxt;
 import Graph.Label;
 import java.util.List;
-import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -17,32 +16,18 @@ import org.neo4j.graphdb.Transaction;
  */
 public class HiprFormatter implements IGraphFormatter {
 
-    UniqueSequenceGenerator usg;
+    private final UniqueSequenceGenerator usg;
+    private final IEdgeWeigher weigher;
 
     private final String SourceNodeName;
     private final String SinkNodeName;
 
-    private boolean superSinkSourceCustomWeight;
-
-    public HiprFormatter(String sourceNodeName, String sinkNodeName) {
+    public HiprFormatter(String sourceNodeName, String sinkNodeName, IEdgeWeigher weigher) {
         SourceNodeName = sourceNodeName;
         SinkNodeName = sinkNodeName;
 
         usg = new UniqueSequenceGenerator();
-    }
-
-    /**
-     * The arcs coming out of a SuperSource will have the weight set as the
-     * number of the outter degree of the nodes that they each reach. The same
-     * occurs for the SuperSink, but the weight of the arcs are being defined
-     * based on the inner degree of the nodes that reach the SuperSink.
-     *
-     * @return
-     */
-    public HiprFormatter withCustomWeightForSuperSinkAndSource() {
-        superSinkSourceCustomWeight = true;
-
-        return this;
+        this.weigher = weigher;
     }
 
     @Override
@@ -69,18 +54,7 @@ public class HiprFormatter implements IGraphFormatter {
                 Object startNodeName = startNode.getProperty("name");
                 Object endNodeName = endNode.getProperty("name");
 
-                weight = 1;
-                if (superSinkSourceCustomWeight) {
-                    if (startNodeName.equals("S")) {
-                        //SuperSource
-                        weight = endNode.getDegree(Direction.OUTGOING);
-                    }
-
-                    if (endNodeName.equals("T")) {
-                        //SuperSink
-                        weight = startNode.getDegree(Direction.INCOMING);
-                    }
-                }
+                weight = weigher.weigh(rel);
 
                 output.append("a ").append(startNodeId).append(' ').append(endNodeId).append(" ").append(weight)
                         //The below line is an extra only to make it easier to read the output

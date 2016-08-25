@@ -1,5 +1,6 @@
 package Analysis;
 
+import Graph.Algorithms.Export.EdgeWeigher.SuperSinkSourceCustomWeigher;
 import Graph.Algorithms.Export.Formatters.HiprFormatter;
 import Graph.Algorithms.Export.GraphToTxt;
 import Graph.Algorithms.HalveNodes;
@@ -23,7 +24,7 @@ public class MaxFlowHalvedGraphSupersinkSupersource {
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
                 .execute();
-        
+
         SuperSinkSuperSource sinkSuperSource = new SuperSinkSuperSource(superGraph);
         sinkSuperSource
                 .addFilterLabel(Label.AXIOM)
@@ -34,7 +35,7 @@ public class MaxFlowHalvedGraphSupersinkSupersource {
         graphToTxt
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
-                .execute(new HiprFormatter("S", "T").withCustomWeightForSuperSinkAndSource());
+                .execute(new HiprFormatter("S", "T", new SuperSinkSourceCustomWeigher()));
 
 //        GraphToHIPRtxt gtHIPR = new GraphToHIPRtxt(superGraph);
 //        gtHIPR

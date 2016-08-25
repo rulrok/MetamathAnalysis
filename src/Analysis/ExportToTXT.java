@@ -1,11 +1,10 @@
 package Analysis;
 
+import Graph.Algorithms.Export.EdgeWeigher.SuperSinkSourceCustomWeigher;
 import Graph.Algorithms.Export.Formatters.HiprFormatter;
-import Graph.Algorithms.Export.Formatters.SimpleFormatter;
 import Graph.Algorithms.Export.GraphToTxt;
 import Graph.GraphFactory;
 import Graph.Label;
-import Graph.RelType;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
@@ -15,7 +14,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 public class ExportToTXT {
 
     public static void main(String[] args) {
-        GraphDatabaseService graphDb = GraphFactory.makeGraph("db/super_halved_metamath");
+        GraphDatabaseService graphDb = GraphFactory.makeGraph("db/super_metamath");
 
         /*
          * Export to txt
@@ -24,7 +23,7 @@ public class ExportToTXT {
         graphToTxt
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
-                .execute(new SimpleFormatter().withNames());
+                .execute(new HiprFormatter("S", "T", new SuperSinkSourceCustomWeigher()));
     }
 
 }
