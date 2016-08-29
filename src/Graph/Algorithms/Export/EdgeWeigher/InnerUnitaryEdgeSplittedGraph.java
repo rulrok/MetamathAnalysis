@@ -20,11 +20,11 @@ import org.neo4j.graphdb.Relationship;
 public class InnerUnitaryEdgeSplittedGraph implements IEdgeWeigher {
 
     private final int innerWeight;
-    private final int outterWeight;
+    private final int outerWeight;
 
-    public InnerUnitaryEdgeSplittedGraph(int innerWeight, int outterWeight) {
+    public InnerUnitaryEdgeSplittedGraph(int innerWeight, int outerWeight) {
         this.innerWeight = innerWeight;
-        this.outterWeight = outterWeight;
+        this.outerWeight = outerWeight;
     }
 
     @Override
@@ -43,7 +43,7 @@ public class InnerUnitaryEdgeSplittedGraph implements IEdgeWeigher {
             return innerWeight;
         }
 
-        return outterWeight;
+        return outerWeight;
     }
 
 }
