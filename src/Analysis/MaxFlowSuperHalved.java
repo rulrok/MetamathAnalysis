@@ -1,6 +1,6 @@
 package Analysis;
 
-import Graph.Algorithms.Export.EdgeWeigher.SuperSinkSourceCustomWeigher;
+import Graph.Algorithms.Export.EdgeWeigher.InnerUnitaryEdgeSplittedGraph;
 import Graph.Algorithms.Export.Formatters.HiprFormatter;
 import Graph.Algorithms.Export.GraphToTxt;
 import Graph.Algorithms.HalveNodes;
@@ -36,12 +36,12 @@ public class MaxFlowSuperHalved {
                 .execute();
 
         System.out.println("Exporting to TXT...");
-        String graphTxtOutput = "grafo_HIPR_super_halved-axiom-theorem.txt";
+        String graphTxtOutput = "grafo_HIPR_super_halved_inner1_outer2-axiom-theorem.txt";
         GraphToTxt graphToTxt = new GraphToTxt(superGraph);
         graphToTxt
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
-                .export(graphTxtOutput, new HiprFormatter("S", "T", new SuperSinkSourceCustomWeigher()));
+                .export(graphTxtOutput, new HiprFormatter("S", "T", new InnerUnitaryEdgeSplittedGraph(1, 2)));
 
         System.out.println("Analyzing maxflow with HIPR...");
         HIPR hipr = new HIPR();
