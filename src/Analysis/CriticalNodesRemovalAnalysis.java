@@ -1,6 +1,6 @@
 package Analysis;
 
-import Graph.Algorithms.Export.EdgeWeigher.InnerUnitaryEdgeSplittedGraph;
+import Graph.Algorithms.Export.EdgeWeigher.InnerOuterEdgeSplittedGraph;
 import Graph.Algorithms.Export.Formatters.HiprFormatter;
 import Graph.Algorithms.Export.GraphToTxt;
 import Graph.Label;
@@ -151,7 +151,7 @@ public class CriticalNodesRemovalAnalysis {
         graphToTxt
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
-                .export(graphTxtOutput, new HiprFormatter("S", "T", new InnerUnitaryEdgeSplittedGraph(1, 2)));
+                .export(graphTxtOutput, new HiprFormatter("S", "T", new InnerOuterEdgeSplittedGraph(1, 2)));
 
         System.out.println("Analyzing maxflow with HIPR...");
         HIPR hipr = new HIPR();

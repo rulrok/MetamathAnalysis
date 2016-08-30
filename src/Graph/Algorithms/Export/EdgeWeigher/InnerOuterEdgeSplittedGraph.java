@@ -9,7 +9,7 @@ import org.neo4j.graphdb.Relationship;
  *
  * Example:
  *
- * The edge node --> node2 is considered an outter egde because it connects two
+ * The edge node --> node2 is considered an outer egde because it connects two
  * different nodes.
  *
  * The edge node2 --> node2' is considered an inner edge because it connects two
@@ -17,12 +17,12 @@ import org.neo4j.graphdb.Relationship;
  *
  * @author Reuel
  */
-public class InnerUnitaryEdgeSplittedGraph implements IEdgeWeigher {
+public class InnerOuterEdgeSplittedGraph implements IEdgeWeigher {
 
     private final int innerWeight;
     private final int outerWeight;
 
-    public InnerUnitaryEdgeSplittedGraph(int innerWeight, int outerWeight) {
+    public InnerOuterEdgeSplittedGraph(int innerWeight, int outerWeight) {
         this.innerWeight = innerWeight;
         this.outerWeight = outerWeight;
     }
