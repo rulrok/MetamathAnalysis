@@ -50,7 +50,7 @@ public class MaxFlowSuperHalved {
         graphToTxt
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
-                .export(graphOutput, new HiprFormatter("S", "T", new InnerOuterEdgeSplittedGraph(1, 2)));
+                .export(graphOutput, new HiprFormatter("S", "T", new InnerOuterEdgeSplittedGraphWeigher(1, 2)));
 
         System.out.println("Analyzing maxflow with HIPR...");
         HIPR hipr = new HIPR();

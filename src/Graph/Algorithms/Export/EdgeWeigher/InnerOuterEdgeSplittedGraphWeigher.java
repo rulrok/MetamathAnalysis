@@ -17,12 +17,12 @@ import org.neo4j.graphdb.Relationship;
  *
  * @author Reuel
  */
-public class InnerOuterEdgeSplittedGraph implements IEdgeWeigher {
+public class InnerOuterEdgeSplittedGraphWeigher implements IEdgeWeigher {
 
     private final int innerWeight;
     private final int outerWeight;
 
-    public InnerOuterEdgeSplittedGraph(int innerWeight, int outerWeight) {
+    public InnerOuterEdgeSplittedGraphWeigher(int innerWeight, int outerWeight) {
         this.innerWeight = innerWeight;
         this.outerWeight = outerWeight;
     }
