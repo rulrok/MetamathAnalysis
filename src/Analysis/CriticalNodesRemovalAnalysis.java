@@ -17,7 +17,7 @@ public class CriticalNodesRemovalAnalysis {
 
     public static void main(String[] args) {
 
-        GraphDatabaseService graph = Graph.GraphFactory.makeGraph("db/super_halved_metamath-nodes-removal");
+        GraphDatabaseService graph = Graph.GraphFactory.copyGraph("db/super_halved_metamath", "db/super_halved_metamath-nodes-removal");
 
         //<editor-fold defaultstate="collapsed" desc="Node names">
         String[] names = new String[]{
@@ -130,23 +130,23 @@ public class CriticalNodesRemovalAnalysis {
 
             }
 
-            for (String nodeName : names) {
-                Node theorem = graph.findNode(Label.THEOREM, "name", nodeName);
-                if (theorem == null) {
-                    continue;
-                }
-
-                theorem.getRelationships().forEach(r -> {
-                    r.delete();
-                });
-
-                theorem.delete();
-
-            }
+//            for (String nodeName : names) {
+//                Node theorem = graph.findNode(Label.THEOREM, "name", nodeName);
+//                if (theorem == null) {
+//                    continue;
+//                }
+//
+//                theorem.getRelationships().forEach(r -> {
+//                    r.delete();
+//                });
+//
+//                theorem.delete();
+//
+//            }
             tx.success();
         }
 
-        String graphTxtOutput = "grafo_HIPR_super_halved_inner1_outer2-axiom-theorem-critial-node-removal.txt";
+        String graphTxtOutput = "grafo_HIPR_super_halved_inner1_outer2-axiom-theorem-critial-axioms-removal.txt";
         GraphToTxt graphToTxt = new GraphToTxt(graph);
         graphToTxt
                 .addFilterLabel(Label.AXIOM)
