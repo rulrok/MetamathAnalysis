@@ -104,11 +104,4 @@ public class ParseHIPROutput {
         Matcher matcher = pattern.matcher(nextLine);
         return matcher.matches();
     }
-
-    public static void main(String[] args) throws FileNotFoundException {
-        File file = new File("grafo_HIPR-axiom-theorem_results.txt");
-        ParseHIPROutput phipro = new ParseHIPROutput(file);
-        phipro.parse();
-    }
-
 }

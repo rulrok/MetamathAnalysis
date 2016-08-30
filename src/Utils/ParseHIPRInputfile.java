@@ -67,15 +67,4 @@ public class ParseHIPRInputfile {
     public String getNodeName(String id) {
         return nodes.get(id);
     }
-
-    public static void main(String[] args) throws FileNotFoundException {
-        File input = new File("grafo_HIPR-axiom-theorem.txt");
-        ParseHIPRInputfile phipr = new ParseHIPRInputfile(input);
-        phipr.parse();
-
-        String nodeName = phipr.getNodeName(1);
-        System.out.println(nodeName);
-
-    }
-
 }
