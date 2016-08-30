@@ -24,7 +24,7 @@ public class MaxFlowSuperHalved {
     public static void main(String[] args) throws FileNotFoundException {
 
         System.out.println("Copying original graph...");
-        GraphDatabaseService superGraph = GraphFactory.copyGraph("db/metamath", "db/super_halved_metamath");
+        GraphDatabaseService superGraph = GraphFactory.copyGraph("db/metamath", "db/metamath_halved_super-axiom-theorem");
 
         System.out.println("Halving nodes...");
         HalveNodes halveNodes = new HalveNodes(superGraph);

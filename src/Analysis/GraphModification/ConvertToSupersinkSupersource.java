@@ -11,7 +11,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 public class ConvertToSupersinkSupersource {
 
     public static void main(String[] args) {
-        GraphDatabaseService graph = GraphFactory.copyGraph("db/metamath", "db/super_metamath");
+        GraphDatabaseService graph = GraphFactory.copyGraph("db/metamath", "db/metamath_super");
 
         SuperSinkSuperSource ssss = new SuperSinkSuperSource(graph);
         ssss.execute();

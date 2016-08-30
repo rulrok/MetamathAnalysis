@@ -14,7 +14,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 public class ExportToTXT {
 
     public static void main(String[] args) {
-        GraphDatabaseService graphDb = GraphFactory.makeGraph("db/super_metamath");
+        GraphDatabaseService graphDb = GraphFactory.makeDefaultMetamathGraph();
 
         /*
          * Export to txt
@@ -23,7 +23,7 @@ public class ExportToTXT {
         graphToTxt
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
-                .export("grafo_HIPR_super_metamath-axiom-theorem.txt", new HiprFormatter("S", "T", new SuperSinkSourceCustomWeigher()));
+                .export("grafo_HIPR_metamath-axiom-theorem.txt", new HiprFormatter("S", "T", new SuperSinkSourceCustomWeigher()));
     }
 
 }

@@ -3,9 +3,7 @@ package Analysis;
 import Graph.Algorithms.Export.EdgeWeigher.SuperSinkSourceCustomWeigher;
 import Graph.Algorithms.Export.EdgeWeigher.UnitaryWeigher;
 import Graph.Algorithms.Export.Formatters.HiprFormatter;
-import Graph.Algorithms.Export.Formatters.SimpleFormatter;
 import Graph.Algorithms.Export.GraphToTxt;
-import Graph.Algorithms.GraphToHIPRtxt;
 import Graph.Algorithms.SuperSinkSuperSource;
 import Graph.GraphFactory;
 import Graph.Label;
@@ -20,7 +18,7 @@ public class MaxFlowSuper {
 
     public static void main(String[] args) {
         System.out.println("Copying original graph...");
-        GraphDatabaseService superGraph = GraphFactory.copyGraph("db/metamath", "db/super_metamath-axiom-theorem");
+        GraphDatabaseService superGraph = GraphFactory.copyGraph("db/metamath", "db/metamath_super-axiom-theorem");
 
         System.out.println("Creating super sink and super source...");
         SuperSinkSuperSource ssss = new SuperSinkSuperSource(superGraph);
