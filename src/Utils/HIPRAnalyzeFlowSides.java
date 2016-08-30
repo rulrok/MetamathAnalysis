@@ -1,7 +1,5 @@
-package Analysis;
+package Utils;
 
-import Utils.ParseHIPRInputfile;
-import Utils.ParseHIPROutput;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -24,26 +22,14 @@ import org.neo4j.helpers.collection.MapUtil;
  *
  * @author Reuel
  */
-public class Analyze_HIPR_Output {
+public class HIPRAnalyzeFlowSides {
 
-    public static void main(String[] args) throws FileNotFoundException {
-        /**
-         * Prepare files
-         */
-        File HIPR_FILE
-                = new File("grafo_HIPR.txt");
+    public static void AnalyzeSides(final GraphDatabaseService graph, ParseHIPRInputfile hipr_parsed, ParseHIPROutput hipr_results_parsed, final File outputFile) throws FileNotFoundException {
 
-        File HIPR_RESULTS
-                = new File("grafo_HIPR_results.txt");
-
-        final File outputFile = new File("grafo_HIPR_sides.txt");
         /**
          * Parse both files
          */
-        ParseHIPRInputfile hipr_parsed = new ParseHIPRInputfile(HIPR_FILE);
         hipr_parsed.parse();
-
-        ParseHIPROutput hipr_results_parsed = new ParseHIPROutput(HIPR_RESULTS);
         hipr_results_parsed.parse();
 
         /**
@@ -51,22 +37,18 @@ public class Analyze_HIPR_Output {
          */
         Set<String> nodeIDsOnSinkSide = hipr_results_parsed.getNodesOnSinkSide();
         Set<String> nodeNamesSinkSide = new HashSet<>();
-
-        for (String nodeID : nodeIDsOnSinkSide) {
+        nodeIDsOnSinkSide.stream().forEach((nodeID) -> {
             nodeNamesSinkSide.add(hipr_parsed.getNodeName(nodeID));
-        }
-
+        });
         /**
          * Gather nodes on SOURCE side
          */
         Set<String> nodeNamesSourceSide = new HashSet<>();
         Set<String> nodeIDsOnSourceSide = hipr_parsed.getAllNodeIDs();
         nodeIDsOnSourceSide.removeAll(nodeIDsOnSinkSide);
-
-        for (String nodeID : nodeIDsOnSourceSide) {
+        nodeIDsOnSourceSide.stream().forEach((nodeID) -> {
             nodeNamesSourceSide.add(hipr_parsed.getNodeName(nodeID));
-        }
-
+        });
         /**
          * Output nodes
          */
@@ -83,7 +65,6 @@ public class Analyze_HIPR_Output {
                     .append("#####################")
                     .append(lineBreak).append(lineBreak);
 
-            GraphDatabaseService graph = Graph.GraphFactory.makeGraph("db/super_halved_metamath");
             try (Transaction tx = graph.beginTx()) {
                 //For each node on the source side
                 for (String sourceNodeName : nodeNamesSourceSide) {
@@ -136,7 +117,8 @@ public class Analyze_HIPR_Output {
             }
             fileWriter.flush();
         } catch (IOException ex) {
-            Logger.getLogger(Analyze_HIPR_Output.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HIPRAnalyzeFlowSides.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
 }
