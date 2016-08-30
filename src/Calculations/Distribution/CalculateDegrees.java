@@ -23,7 +23,7 @@ public class CalculateDegrees {
         DegreeDistribution distribution = new DegreeDistribution(graphDb);
         distribution.calculate();
         Map<Integer, Integer> innerDegrees = distribution.getInnerDegrees();
-        Map<Integer, Integer> outterDegrees = distribution.getOutterDegrees();
+        Map<Integer, Integer> outerDegrees = distribution.getOuterDegrees();
         Map<Integer, Integer> allDegrees = distribution.getAllDegrees();
 
         /*
@@ -35,9 +35,9 @@ public class CalculateDegrees {
         double[] innerY = innerDegrees.values().stream().mapToDouble(i -> i).toArray();
         dataSet.addData("Inner degrees", innerX, innerY);
 
-        double[] outterX = outterDegrees.keySet().stream().mapToDouble(i -> i).toArray();
-        double[] outterY = outterDegrees.values().stream().mapToDouble(i -> i).toArray();
-        dataSet.addData("Outter degrees", outterX, outterY);
+        double[] outerX = outerDegrees.keySet().stream().mapToDouble(i -> i).toArray();
+        double[] outerY = outerDegrees.values().stream().mapToDouble(i -> i).toArray();
+        dataSet.addData("Outer degrees", outerX, outerY);
 
         double[] allX = allDegrees.keySet().stream().mapToDouble(i -> i).toArray();
         double[] allY = allDegrees.values().stream().mapToDouble(i -> i).toArray();

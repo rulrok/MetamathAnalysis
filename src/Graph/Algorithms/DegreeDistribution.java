@@ -16,7 +16,7 @@ import org.neo4j.tooling.GlobalGraphOperations;
  */
 public class DegreeDistribution {
 
-    private final Map<Integer, Integer> outterDegrees;
+    private final Map<Integer, Integer> outerDegrees;
     private final Map<Integer, Integer> innerDegrees;
     private final Map<Integer, Integer> allDegrees;
     private final GraphDatabaseService graph;
@@ -24,14 +24,14 @@ public class DegreeDistribution {
     public DegreeDistribution(GraphDatabaseService graph) {
         this.graph = graph;
 
-        outterDegrees = new TreeMap<>();
+        outerDegrees = new TreeMap<>();
         innerDegrees = new TreeMap<>();
         allDegrees = new TreeMap<>();
     }
 
     public void calculate() {
 
-        outterDegrees.clear();
+        outerDegrees.clear();
         innerDegrees.clear();
         allDegrees.clear();
 
@@ -47,17 +47,17 @@ public class DegreeDistribution {
                 int innerDegree = node.getDegree(Direction.INCOMING);
                 innerDegrees.put(innerDegree, innerDegrees.getOrDefault(innerDegree, 0) + 1);
 
-                int outterDegree = node.getDegree(Direction.OUTGOING);
-                outterDegrees.put(outterDegree, outterDegrees.getOrDefault(outterDegree, 0) + 1);
+                int outerDegree = node.getDegree(Direction.OUTGOING);
+                outerDegrees.put(outerDegree, outerDegrees.getOrDefault(outerDegree, 0) + 1);
             });
             
             tx.failure();
         }
     }
 
-    public Map<Integer, Integer> getOutterDegrees() {
+    public Map<Integer, Integer> getOuterDegrees() {
 
-        return Collections.unmodifiableMap(outterDegrees);
+        return Collections.unmodifiableMap(outerDegrees);
     }
 
     public Map<Integer, Integer> getInnerDegrees() {

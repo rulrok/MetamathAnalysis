@@ -38,7 +38,7 @@ public class GraphToHIPRtxt implements LabelFiltered {
     /**
      * If set to false, ALL arcs will have an unitary weight. Otherwise, the
      * arcs coming out of a SuperSource will have the weight set as the number
-     * of the outter degree of the nodes that they each reache. The same occurs
+     * of the outer degree of the nodes that they each reache. The same occurs
      * for the SuperSink, but the weight of the arcs being defined based on the
      * inner degree of the nodes which reach the SuperSink. It is assumed that
      * the SuperSouce and SuperSink are named 'S' and 'T', respectively.

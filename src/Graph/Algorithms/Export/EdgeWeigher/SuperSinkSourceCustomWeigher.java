@@ -6,7 +6,7 @@ import org.neo4j.graphdb.Relationship;
 
 /**
  * The arcs coming out of a SuperSource will have the weight set as the number
- * of the outter degree of the nodes that they each reach. The same occurs for
+ * of the outer degree of the nodes that they each reach. The same occurs for
  * the SuperSink, but the weight of the arcs are being defined based on the
  * inner degree of the nodes that reach the SuperSink. For all other edges, it
  * returns 1.
