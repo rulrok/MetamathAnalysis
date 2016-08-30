@@ -5,6 +5,11 @@ import Graph.Algorithms.Export.Formatters.HiprFormatter;
 import Graph.Algorithms.Export.GraphToTxt;
 import Graph.Label;
 import Utils.HIPR;
+import Utils.HIPRAnalyzeFlowSides;
+import Utils.ParseHIPRInputfile;
+import Utils.ParseHIPROutput;
+import java.io.File;
+import java.io.FileNotFoundException;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
@@ -15,8 +20,9 @@ import org.neo4j.graphdb.Transaction;
  */
 public class CriticalNodesRemovalAnalysis {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
 
+        System.out.println("Copying original graph...");
         GraphDatabaseService graph = Graph.GraphFactory.copyGraph("db/super_halved_metamath", "db/super_halved_metamath-nodes-removal");
 
         //<editor-fold defaultstate="collapsed" desc="Node names">
@@ -116,6 +122,8 @@ public class CriticalNodesRemovalAnalysis {
 //</editor-fold>
 
         try (Transaction tx = graph.beginTx()) {
+            
+            System.out.println("Removing axiom nodes...");
             for (String nodeName : names) {
                 Node axiom = graph.findNode(Label.AXIOM, "name", nodeName);
                 if (axiom == null) {
@@ -130,6 +138,7 @@ public class CriticalNodesRemovalAnalysis {
 
             }
 
+//            System.out.println("Removing theorem nodes...");
 //            for (String nodeName : names) {
 //                Node theorem = graph.findNode(Label.THEOREM, "name", nodeName);
 //                if (theorem == null) {
@@ -146,17 +155,27 @@ public class CriticalNodesRemovalAnalysis {
             tx.success();
         }
 
-        String graphTxtOutput = "grafo_HIPR_super_halved_inner1_outer2-axiom-theorem-critial-axioms-removal.txt";
+        String graphHIPR = "grafo_HIPR_super_halved_inner1_outer2-axiom-theorem-critial-axioms-removal.txt";
+        String graphFlowOutput = graphHIPR.replace(".txt", "_maxflow.txt");
+        String graphFlowSidesOutput = graphHIPR.replace(".txt", "_sides.txt");
+
+        System.out.println("Exporting graph to TXT...");
         GraphToTxt graphToTxt = new GraphToTxt(graph);
         graphToTxt
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
-                .export(graphTxtOutput, new HiprFormatter("S", "T", new InnerOuterEdgeSplittedGraphWeigher(1, 2)));
+                .export(graphHIPR, new HiprFormatter("S", "T", new InnerOuterEdgeSplittedGraphWeigher(1, 2)));
 
         System.out.println("Analyzing maxflow with HIPR...");
         HIPR hipr = new HIPR();
-        hipr.execute(graphTxtOutput, graphTxtOutput.replace(".txt", "_maxflow.txt"));
+        hipr.execute(graphHIPR, graphFlowOutput);
 
+        System.out.println("Analyzing maxflow sides...");
+
+        ParseHIPRInputfile hipr_parsed = new ParseHIPRInputfile(new File(graphHIPR));
+        ParseHIPROutput hipr_results_parsed = new ParseHIPROutput(new File(graphFlowOutput));
+
+        HIPRAnalyzeFlowSides.AnalyzeSides(graph, hipr_parsed, hipr_results_parsed, new File(graphFlowSidesOutput));
     }
 
 }
