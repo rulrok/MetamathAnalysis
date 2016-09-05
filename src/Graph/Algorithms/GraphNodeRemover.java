@@ -51,17 +51,19 @@ public class GraphNodeRemover implements LabelFiltered {
         try (Transaction tx = graph.beginTx()) {
 
             GlobalGraphOperations.at(graph).getAllNodes().forEach(node -> {
+                //Try to match with a label filter
                 if (labelFilters.stream().anyMatch(l -> node.hasLabel(l))) {
                     nodesToDelete.add(node);
+                } else { //Try to match with a custom filter
+                    customFilters.forEach(func -> {
+                        if (func.apply(node)) {
+                            nodesToDelete.add(node);
+                        }
+                    });
                 }
-
-                customFilters.forEach(func -> {
-                    if (func.apply(node)) {
-                        nodesToDelete.add(node);
-                    }
-                });
             });
 
+            //Delete the matched nodes
             nodesToDelete.forEach(nodeToDelete -> {
                 nodeToDelete.getRelationships().forEach(Relationship::delete);
                 nodeToDelete.delete();
