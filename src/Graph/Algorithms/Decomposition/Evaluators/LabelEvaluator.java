@@ -32,17 +32,11 @@ public class LabelEvaluator implements Evaluator {
     public Evaluation evaluate(Path path) {
         Node lastNode = path.endNode();
         boolean include;
-        
+
         if (exclusive) {
-            include = true;
-            for (Label l : labels) {
-                include &= lastNode.hasLabel(l);
-            }
+            include = labels.stream().allMatch(l -> lastNode.hasLabel(l));
         } else {
-            include = false;
-            for (Label l : labels) {
-                include |= lastNode.hasLabel(l);
-            }
+            include = labels.stream().anyMatch(l -> lastNode.hasLabel(l));
         }
 
         if (include) {
