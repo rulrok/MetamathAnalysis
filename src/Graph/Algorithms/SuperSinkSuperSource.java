@@ -26,6 +26,9 @@ public class SuperSinkSuperSource implements LabelFiltered {
     private final GraphDatabaseService graph;
     private final List<Label> labelFilters = new ArrayList<>();
 
+    private Label SuperSourceLabel = Label.AXIOM;
+    private Label SuperSinkLabel = Label.THEOREM;
+
     public SuperSinkSuperSource(GraphDatabaseService graph) {
         this.graph = graph;
     }
@@ -33,6 +36,16 @@ public class SuperSinkSuperSource implements LabelFiltered {
     @Override
     public SuperSinkSuperSource addFilterLabel(Label label) {
         labelFilters.add(label);
+        return this;
+    }
+
+    public SuperSinkSuperSource setSuperSourceLabel(Label SuperSourceLabel) {
+        this.SuperSourceLabel = SuperSourceLabel;
+        return this;
+    }
+
+    public SuperSinkSuperSource setSuperSinkLabel(Label SuperSinkLabel) {
+        this.SuperSinkLabel = SuperSinkLabel;
         return this;
     }
 
@@ -51,13 +64,13 @@ public class SuperSinkSuperSource implements LabelFiltered {
                 sourceTraverser = sourceTraverser.evaluator(new LabelEvaluator(false, labelFilters.toArray(labels)));
             }
 
-            Node S = graph.createNode(Label.AXIOM);
+            Node S = graph.createNode(SuperSourceLabel);
             S.setProperty("name", "S");
             sourceTraverser.traverse(graph.getNodeById(0)).nodes().forEach(source -> {
                 S.createRelationshipTo(source, RelType.UNKNOWN);
             });
 
-            Node T = graph.createNode(Label.THEOREM);
+            Node T = graph.createNode(SuperSinkLabel);
             T.setProperty("name", "T");
             TraversalDescription sinkTraverser = graph.traversalDescription()
                     .breadthFirst()

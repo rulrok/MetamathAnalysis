@@ -20,7 +20,10 @@ public class HiprFormatter implements IGraphFormatter {
     private final IEdgeWeigher weigher;
 
     private final String SourceNodeName;
+    private Label SourceLabel = Label.AXIOM;
+
     private final String SinkNodeName;
+    private Label SinkLabel = Label.THEOREM;
 
     public HiprFormatter(String sourceNodeName, String sinkNodeName, IEdgeWeigher weigher) {
         SourceNodeName = sourceNodeName;
@@ -28,6 +31,16 @@ public class HiprFormatter implements IGraphFormatter {
 
         usg = new UniqueSequenceGenerator();
         this.weigher = weigher;
+    }
+
+    public HiprFormatter setSuperSourceLabel(Label SuperSourceLabel) {
+        this.SourceLabel = SuperSourceLabel;
+        return this;
+    }
+
+    public HiprFormatter setSuperSinkLabel(Label SuperSinkLabel) {
+        this.SinkLabel = SuperSinkLabel;
+        return this;
     }
 
     @Override
@@ -62,8 +75,8 @@ public class HiprFormatter implements IGraphFormatter {
                         .append(System.lineSeparator());
             }
 
-            Node S = graph.findNode(Label.AXIOM, "name", SourceNodeName);
-            Node T = graph.findNode(Label.THEOREM, "name", SinkNodeName);
+            Node S = graph.findNode(SourceLabel, "name", SourceNodeName);
+            Node T = graph.findNode(SinkLabel, "name", SinkNodeName);
             long S_id = usg.uniqueSequencialId(S.getId());
             long T_id = usg.uniqueSequencialId(T.getId());
 
