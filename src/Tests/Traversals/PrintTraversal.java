@@ -13,7 +13,7 @@ import org.neo4j.graphdb.traversal.Traverser;
  */
 public class PrintTraversal {
 
-    public static void printResults(TraversalDescription traversalDescription, Node initialNode) {
+    public static void printResults(TraversalDescription traversalDescription, Node... initialNode) {
 
         System.out.println("Order:");
         Traverser traverse = traversalDescription.traverse(initialNode);
