@@ -21,15 +21,15 @@ public class PrintTraversal {
         System.out.println("Nodes: ");
         ResourceIterable<Node> nodes = traverse.nodes();
         for (Node node : nodes) {
-            System.out.print(node.getProperty("Name") + " | ");
+            System.out.print(node.getProperty("name") + " | ");
         }
 
         System.out.println("\nRelationships: ");
         ResourceIterable<Relationship> relationships = traverse.relationships();
         for (Relationship r : relationships) {
-            System.out.print(r.getStartNode().getProperty("Name"));
+            System.out.print(r.getStartNode().getProperty("name"));
             System.out.print("->");
-            System.out.print(r.getEndNode().getProperty("Name"));
+            System.out.print(r.getEndNode().getProperty("name"));
             System.out.println("");
         }
 
@@ -42,7 +42,7 @@ public class PrintTraversal {
                 actualLevel = p.length();
                 System.out.println("");
             }
-            System.out.print(endNode.getProperty("Name") + " | ");
+            System.out.print(endNode.getProperty("name") + " | ");
         }
     }
 }
