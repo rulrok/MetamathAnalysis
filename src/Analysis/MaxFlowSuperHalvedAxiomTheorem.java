@@ -19,7 +19,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
  *
  * @author Reuel
  */
-public class MaxFlowSuperHalved {
+public class MaxFlowSuperHalvedAxiomTheorem {
 
     public static void main(String[] args) throws FileNotFoundException {
 
