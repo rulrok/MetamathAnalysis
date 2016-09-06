@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -67,10 +70,12 @@ public class HIPRAnalyzeFlowSides {
 
             try (Transaction tx = graph.beginTx()) {
                 //For each node on the source side
+                List<String> frontierNodesNames = new ArrayList<>();
                 for (String sourceNodeName : nodeNamesSourceSide) {
                     //Search it in the graph to analyse its neighbours
                     Map<String, Object> param = MapUtil.map("nodeName", sourceNodeName);
                     Result result = graph.execute("MATCH (n{name: {nodeName}}) RETURN n", param);
+
                     //If we find it
                     if (result.hasNext()) {
                         Node foundNode = (Node) result.next().get("n");
@@ -82,12 +87,21 @@ public class HIPRAnalyzeFlowSides {
 
                             //If the name is on the sink side, the source node is a frontier one
                             if (nodeNamesSinkSide.contains(neighbourName)) {
-                                fileWriter.append(sourceNodeName).append(lineBreak);
+                                frontierNodesNames.add(sourceNodeName);
                                 break;
                             }
                         }
                     }
                 }
+
+                Collections.sort(frontierNodesNames);
+                frontierNodesNames.forEach((String sourceNodeName) -> {
+                    try {
+                        fileWriter.append(sourceNodeName).append(lineBreak);
+                    } catch (IOException ex) {
+                        Logger.getLogger(HIPRAnalyzeFlowSides.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                });
             }
 
             /**
