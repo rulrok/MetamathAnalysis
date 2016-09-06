@@ -14,6 +14,7 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.traversal.BranchOrderingPolicies;
 import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.graphdb.traversal.Uniqueness;
+import org.neo4j.tooling.GlobalGraphOperations;
 
 /**
  * Adds a super sink (S) and super source (T) to a graph. It changes the graph
@@ -66,7 +67,7 @@ public class SuperSinkSuperSource implements LabelFiltered {
 
             Node S = graph.createNode(SuperSourceLabel);
             S.setProperty("name", "S");
-            sourceTraverser.traverse(graph.getNodeById(0)).nodes().forEach(source -> {
+            sourceTraverser.traverse(GlobalGraphOperations.at(graph).getAllNodes()).nodes().forEach(source -> {
                 S.createRelationshipTo(source, RelType.UNKNOWN);
             });
 
@@ -83,7 +84,7 @@ public class SuperSinkSuperSource implements LabelFiltered {
                 sinkTraverser = sinkTraverser.evaluator(new LabelEvaluator(false, labelFilters.toArray(labels)));
             }
 
-            sinkTraverser.traverse(graph.getNodeById(0)).nodes().forEach(sink -> {
+            sinkTraverser.traverse(GlobalGraphOperations.at(graph).getAllNodes()).nodes().forEach(sink -> {
                 sink.createRelationshipTo(T, RelType.UNKNOWN);
             });
 
