@@ -3,6 +3,7 @@ package Analysis;
 import Graph.Algorithms.Export.Formatters.HiprFormatter;
 import Graph.Algorithms.Export.EdgeWeigher.*;
 import Graph.Algorithms.Export.GraphToTxt;
+import Graph.Algorithms.GraphNodeRemover;
 import Graph.Algorithms.HalveNodes;
 import Graph.Algorithms.SuperSinkSuperSource;
 import Graph.GraphFactory;
@@ -25,6 +26,13 @@ public class MaxFlowSuperHalvedAxiomTheorem {
 
         System.out.println("Copying original graph...");
         GraphDatabaseService superGraph = GraphFactory.copyGraph("db/metamath", "db/metamath_halved_super-axiom-theorem");
+
+        System.out.println("Removing undesired nodes");
+        GraphNodeRemover gnr = new GraphNodeRemover(superGraph);
+        gnr = gnr
+                .addCustomFilter(n -> n.getProperty("name").toString().startsWith("dummy"))
+                .addCustomFilter(n -> n.getProperty("name").toString().matches("ax-7d|ax-8d|ax-9d1|ax-9d2|ax-10d|ax-11d"));
+        gnr.execute();
 
         System.out.println("Halving nodes...");
         HalveNodes halveNodes = new HalveNodes(superGraph);
