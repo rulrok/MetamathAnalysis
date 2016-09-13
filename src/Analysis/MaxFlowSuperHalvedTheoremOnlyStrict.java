@@ -20,12 +20,12 @@ import org.neo4j.graphdb.GraphDatabaseService;
  *
  * @author Reuel
  */
-public class MaxFlowSuperHalvedTheoremOnly {
+public class MaxFlowSuperHalvedTheoremOnlyStrict {
 
     public static void main(String[] args) throws FileNotFoundException {
 
         System.out.println("Copying original graph...");
-        GraphDatabaseService superGraph = GraphFactory.copyGraph("db/metamath", "db/metamath_halved_super-theorem");
+        GraphDatabaseService superGraph = GraphFactory.copyGraph("db/metamath", "db/metamath_halved_super-theorem-strict");
 
         System.out.println("Removing undesired nodes");
         GraphNodeRemover gnr = new GraphNodeRemover(superGraph);
@@ -35,6 +35,7 @@ public class MaxFlowSuperHalvedTheoremOnly {
                 .addFilterLabel(Label.HYPOTHESIS)
                 .addFilterLabel(Label.DEFINITION)
                 .addCustomFilter(n -> n.getProperty("name").toString().startsWith("dummy"))
+                .addCustomFilter(n -> n.getProperty("name").toString().startsWith("ax"))
                 .addCustomFilter(n -> n.getProperty("name").toString().matches("ax-7d|ax-8d|ax-9d1|ax-9d2|ax-10d|ax-11d"));
         gnr.execute();
 
@@ -54,7 +55,7 @@ public class MaxFlowSuperHalvedTheoremOnly {
 
         System.out.println("Exporting to TXT...");
 
-        String graphOutput = "grafo_HIPR_super_halved_inner1_outer2-theorem-only.txt";
+        String graphOutput = "grafo_HIPR_super_halved_inner1_outer2-theorem-only-strict.txt";
         String graphFlowOutput = graphOutput.replace(".txt", "_maxflow.txt");
         String graphFlowSidesOutput = graphOutput.replace(".txt", "_sides.txt");
 
