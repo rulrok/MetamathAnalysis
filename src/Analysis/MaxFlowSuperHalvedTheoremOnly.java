@@ -26,10 +26,10 @@ public class MaxFlowSuperHalvedTheoremOnly {
     public static void main(String[] args) throws FileNotFoundException {
 
         System.out.println("Copying original graph...");
-        GraphDatabaseService superGraph = GraphFactory.copyGraph("db/metamath", "db/metamath_halved_super-theorem-only");
+        GraphDatabaseService graph = GraphFactory.copyGraph("db/metamath", "db/metamath_halved_super-theorem-only");
 
         System.out.println("Removing all nodes but theorem ones...");
-        GraphNodeRemover gnr = new GraphNodeRemover(superGraph);
+        GraphNodeRemover gnr = new GraphNodeRemover(graph);
         gnr = gnr
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.CONSTANT)
@@ -41,17 +41,17 @@ public class MaxFlowSuperHalvedTheoremOnly {
         gnr.execute();
 
         System.out.println("Removing isolated nodes...");
-        RemoveIsolatedNodes isolatedNodes = new RemoveIsolatedNodes(superGraph);
+        RemoveIsolatedNodes isolatedNodes = new RemoveIsolatedNodes(graph);
         isolatedNodes.execute();
 
         System.out.println("Halving nodes...");
-        HalveNodes halveNodes = new HalveNodes(superGraph);
+        HalveNodes halveNodes = new HalveNodes(graph);
         halveNodes
                 .addFilterLabel(Label.THEOREM)
                 .execute();
 
         System.out.println("Creating super sink and super source...");
-        SuperSinkSuperSource sinkSuperSource = new SuperSinkSuperSource(superGraph);
+        SuperSinkSuperSource sinkSuperSource = new SuperSinkSuperSource(graph);
         sinkSuperSource
                 .addFilterLabel(Label.THEOREM)
                 .setSuperSourceLabel(Label.UNKNOWN)
@@ -64,7 +64,7 @@ public class MaxFlowSuperHalvedTheoremOnly {
         String graphFlowOutput = graphOutput.replace(".txt", "_maxflow.txt");
         String graphFlowSidesOutput = graphOutput.replace(".txt", "_sides.txt");
 
-        GraphToTxt graphToTxt = new GraphToTxt(superGraph);
+        GraphToTxt graphToTxt = new GraphToTxt(graph);
         HiprFormatter hiprFormatter = new HiprFormatter("S", "T", new InnerOuterEdgeSplittedGraphWeigher(1, 2));
         hiprFormatter = hiprFormatter.setSuperSourceLabel(Label.UNKNOWN).setSuperSinkLabel(Label.UNKNOWN);
 
@@ -81,6 +81,6 @@ public class MaxFlowSuperHalvedTheoremOnly {
 
         ParseHIPRInputfile hipr_parsed = new ParseHIPRInputfile(new File(graphOutput));
         ParseHIPROutput hipr_results_parsed = new ParseHIPROutput(new File(graphFlowOutput));
-        HIPRAnalyzeFlowSides.AnalyzeSides(superGraph, hipr_parsed, hipr_results_parsed, new File(graphFlowSidesOutput));
+        HIPRAnalyzeFlowSides.AnalyzeSides(graph, hipr_parsed, hipr_results_parsed, new File(graphFlowSidesOutput));
     }
 }
