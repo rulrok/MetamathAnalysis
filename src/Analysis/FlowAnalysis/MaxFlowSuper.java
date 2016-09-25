@@ -1,4 +1,4 @@
-package Analysis;
+package Analysis.FlowAnalysis;
 
 import Graph.Algorithms.Export.EdgeWeigher.SuperSinkSourceCustomWeigher;
 import Graph.Algorithms.Export.EdgeWeigher.UnitaryWeigher;

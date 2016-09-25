@@ -1,4 +1,4 @@
-package Analysis;
+package Analysis.FlowAnalysis;
 
 import Graph.Algorithms.Export.Formatters.HiprFormatter;
 import Graph.Algorithms.Export.EdgeWeigher.*;
