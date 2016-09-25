@@ -14,6 +14,7 @@
 #define PRINT_CUT 1
 #define PRINT_FLOW 1
 #define PRINT_STAT 1
+#define CHECK_SOLUTION 1
 
 /*
 #define GLOB_UPDT_FREQ 0.5
