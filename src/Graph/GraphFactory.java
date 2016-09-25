@@ -26,6 +26,10 @@ public class GraphFactory {
         return makeGraph("db/metamath");
     }
 
+    public static GraphDatabaseService makeNoUserboxesMetamathGraph() {
+        return makeGraph("db/metamath-nouserboxes");
+    }
+
     public static GraphDatabaseService makeGraph(String path) {
         return makeGraph(path, false);
     }
