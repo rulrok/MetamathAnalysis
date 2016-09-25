@@ -21,3 +21,7 @@
 /grafo.txt
 /grafo_nomes.txt
 /jgnuplot.xml
+
+*.cys
+*.sif
+*.csv
