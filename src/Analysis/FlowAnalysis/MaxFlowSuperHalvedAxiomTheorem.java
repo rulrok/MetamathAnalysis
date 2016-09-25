@@ -5,6 +5,7 @@ import Graph.Algorithms.Export.EdgeWeigher.*;
 import Graph.Algorithms.Export.GraphToTxt;
 import Graph.Algorithms.GraphNodeRemover;
 import Graph.Algorithms.HalveNodes;
+import Graph.Algorithms.RemoveIsolatedNodes;
 import Graph.Algorithms.SuperSinkSuperSource;
 import Graph.GraphFactory;
 import Graph.Label;
@@ -14,6 +15,9 @@ import Utils.ParseHIPRInputfile;
 import Utils.ParseHIPROutput;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
@@ -22,7 +26,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
  */
 public class MaxFlowSuperHalvedAxiomTheorem {
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws FileNotFoundException, IOException {
 
         System.out.println("Copying original graph...");
         GraphDatabaseService superGraph = GraphFactory.copyGraph("db/metamath", "db/metamath_halved_super-axiom-theorem");
@@ -33,6 +37,10 @@ public class MaxFlowSuperHalvedAxiomTheorem {
                 .addCustomFilter(n -> n.getProperty("name").toString().startsWith("dummy"))
                 .addCustomFilter(n -> n.getProperty("name").toString().matches("ax-7d|ax-8d|ax-9d1|ax-9d2|ax-10d|ax-11d"));
         gnr.execute();
+
+        System.out.println("Removing isolated remaining nodes...");
+        RemoveIsolatedNodes isolatedNodes = new RemoveIsolatedNodes(superGraph);
+        isolatedNodes.execute();
 
         System.out.println("Halving nodes...");
         HalveNodes halveNodes = new HalveNodes(superGraph);
