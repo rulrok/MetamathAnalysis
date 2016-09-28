@@ -13,7 +13,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 public class ConvertToSupersinkSupersourceTheoremsOnly {
 
     public static void main(String[] args) {
-        GraphDatabaseService graph = GraphFactory.copyGraph("db/metamath", "db/metamath_super_theorems");
+        GraphDatabaseService graph = GraphFactory.copyGraph(GraphFactory.DEFAULT_METAMATH_DB, "db/metamath_super_theorems");
 
         GraphNodeRemover gnr = new GraphNodeRemover(graph);
 

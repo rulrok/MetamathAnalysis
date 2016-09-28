@@ -11,7 +11,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 public class HalveNodesOfGraph {
 
     public static void main(String[] args) {
-        GraphDatabaseService graphCopy = GraphFactory.copyGraph("db/metamath", "db/metamath_halved");
+        GraphDatabaseService graphCopy = GraphFactory.copyGraph(GraphFactory.DEFAULT_METAMATH_DB, "db/metamath_halved");
 
         HalveNodes halveNodes = new HalveNodes(graphCopy);
 

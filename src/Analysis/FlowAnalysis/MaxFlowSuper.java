@@ -18,7 +18,7 @@ public class MaxFlowSuper {
 
     public static void main(String[] args) {
         System.out.println("Copying original graph...");
-        GraphDatabaseService superGraph = GraphFactory.copyGraph("db/metamath", "db/metamath_super-axiom-theorem");
+        GraphDatabaseService superGraph = GraphFactory.copyGraph(GraphFactory.DEFAULT_METAMATH_DB, "db/metamath_super-axiom-theorem");
 
         System.out.println("Creating super sink and super source...");
         SuperSinkSuperSource ssss = new SuperSinkSuperSource(superGraph);

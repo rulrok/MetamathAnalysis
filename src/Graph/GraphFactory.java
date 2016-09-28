@@ -22,12 +22,17 @@ import org.neo4j.io.fs.FileUtils;
  */
 public class GraphFactory {
 
+    
+    public static final String DEFAULT_METAMATH_DB = "db/metamath";
+
+    public static final String NOUSERBOX_METAMATH_DB = "db/metamath-nouserboxes";
+
     public static GraphDatabaseService makeDefaultMetamathGraph() {
-        return makeGraph("db/metamath");
+        return makeGraph(DEFAULT_METAMATH_DB);
     }
 
     public static GraphDatabaseService makeNoUserboxesMetamathGraph() {
-        return makeGraph("db/metamath-nouserboxes");
+        return makeGraph(NOUSERBOX_METAMATH_DB);
     }
 
     public static GraphDatabaseService makeGraph(String path) {

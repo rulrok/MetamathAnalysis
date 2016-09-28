@@ -25,7 +25,7 @@ public class MaxFlowSuperHalvedTheoremOnlyStrict {
     public static void main(String[] args) throws FileNotFoundException {
 
         System.out.println("Copying original graph...");
-        GraphDatabaseService superGraph = GraphFactory.copyGraph("db/metamath", "db/metamath_halved_super-theorem-strict");
+        GraphDatabaseService superGraph = GraphFactory.copyGraph(GraphFactory.DEFAULT_METAMATH_DB, "db/metamath_halved_super-theorem-strict");
 
         System.out.println("Removing undesired nodes");
         GraphNodeRemover gnr = new GraphNodeRemover(superGraph);

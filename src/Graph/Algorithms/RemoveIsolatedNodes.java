@@ -1,6 +1,7 @@
 package Graph.Algorithms;
 
 import Graph.Algorithms.Decomposition.Evaluators.IsolatedNodeEvaluator;
+import java.util.logging.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;
@@ -34,6 +35,9 @@ public class RemoveIsolatedNodes {
                     .traverse(allNodes)
                     .forEach((Path path) -> {
                         Node startNode = path.startNode();
+                        Logger.getGlobal().info(
+                                String.format("\tRemoving isolated node %s\n", startNode.getProperty("name").toString())
+                        );
 
                         startNode.delete();
                     });

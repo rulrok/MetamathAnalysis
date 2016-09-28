@@ -12,7 +12,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 public class GraphWithAxiomsTheoremsOnly {
 
     public static void main(String[] args) {
-        GraphDatabaseService graph = GraphFactory.copyGraph("db/metamath", "db/metamath-axioms-theorems-only");
+        GraphDatabaseService graph = GraphFactory.copyGraph(GraphFactory.DEFAULT_METAMATH_DB, "db/metamath-axioms-theorems-only");
 
         System.out.println("Removing all nodes but axioms and theorems...");
         GraphNodeRemover gnr = new GraphNodeRemover(graph);

@@ -12,7 +12,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 public class GraphWithTheoremsOnly {
 
     public static void main(String[] args) {
-        GraphDatabaseService graph = GraphFactory.copyGraph("db/metamath", "db/metamath-theorems-only");
+        GraphDatabaseService graph = GraphFactory.copyGraph(GraphFactory.DEFAULT_METAMATH_DB, "db/metamath-theorems-only");
 
         System.out.println("Removing all nodes but theorems...");
         GraphNodeRemover gnr = new GraphNodeRemover(graph);
