@@ -1,8 +1,13 @@
 package Analysis;
 
 import Graph.Algorithms.Export.EdgeWeigher.InnerOuterEdgeSplittedGraphWeigher;
+import Graph.Algorithms.Export.EdgeWeigher.UnitaryWeigher;
 import Graph.Algorithms.Export.Formatters.HiprFormatter;
 import Graph.Algorithms.Export.GraphToTxt;
+import Graph.Algorithms.HalveNodes;
+import Graph.Algorithms.RemoveIsolatedNodes;
+import Graph.Algorithms.SuperSinkSuperSource;
+import Graph.GraphFactory;
 import Graph.Label;
 import Utils.HIPR;
 import Utils.HIPRAnalyzeFlowSides;
@@ -10,8 +15,10 @@ import Utils.ParseHIPRInputfile;
 import Utils.ParseHIPROutput;
 import java.io.File;
 import java.io.FileNotFoundException;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 
 /**
@@ -23,148 +30,63 @@ public class CriticalNodesRemovalAnalysis {
     public static void main(String[] args) throws FileNotFoundException {
 
         System.out.println("Copying original graph...");
-        GraphDatabaseService graph = Graph.GraphFactory.copyGraph("db/super_halved_metamath", "db/super_halved_metamath-nodes-removal");
+        GraphDatabaseService graph = Graph.GraphFactory.copyGraph(GraphFactory.NOUSERBOX_METAMATH_DB, "db/super_halved_metamath-critical-nodes-removal");
+
+        System.out.println("Creating super sink and super source...");
+        SuperSinkSuperSource sinkSuperSource = new SuperSinkSuperSource(graph);
+        sinkSuperSource
+                .addFilterLabel(Label.AXIOM)
+                .addFilterLabel(Label.THEOREM)
+                .setSuperSourceLabel(Label.UNKNOWN)
+                .setSuperSinkLabel(Label.UNKNOWN)
+                .execute();
 
         //<editor-fold defaultstate="collapsed" desc="Node names">
         String[] names = new String[]{
-            "ax-ltl5",
-            "ax-7",
-            "ax-6",
-            "ax-9",
-            "ax-8",
-            "readdcl",
-            "ax-his4",
-            "ax-his1",
-            "ax-his2",
-            "ax-his3",
-            "ax-rep",
-            "ax-3",
-            "ax-2",
-            "ax-5",
-            "ax-4",
-            "ax-1",
-            "evevifev",
-            "ax-mulf",
-            "ax-dc",
-            "ax-un",
-            "ax-hvcom",
-            "axltadd",
-            "ax-hvmulid",
-            "cnex",
-            "ax-gen",
-            "ax-rrecex",
-            "ax-hilex",
-            "mulass",
-            "ax-hfvmul",
-            "ax-hfi",
-            "trtrst",
-            "althalne",
-            "ax-hvdistr1",
-            "ax-hvdistr2",
-            "ax-nul",
-            "ax-17",
-            "zfpair2",
-            "ax-15",
-            "ax-16",
-            "ax-13",
-            "ax-ac",
-            "ax-14",
-            "ax-11",
-            "ax-hvmulass",
-            "ax-mulrcl",
-            "ax-10",
-            "ax-mulcom",
-            "nxtor",
-            "ax-addf",
-            "ax10lem24",
-            "ax-cnre",
-            "ax-9o",
-            "omex",
-            "ax-mulcl",
-            "nxtand",
-            "axsup",
-            "ax-addcl",
-            "ax-hcompl",
-            "ax-9v",
-            "ax-hv0cl",
-            "ax-hvmul0",
-            "ax-i2m1",
-            "adddi",
-            "ax-hvass",
-            "axlttri",
-            "axreg",
-            "axmulgt0",
-            "ax-mp",
-            "axlttrn",
-            "ax-hvaddid",
-            "ax-hfvadd",
-            "ax-1rid",
-            "ax-11o",
-            "ax-resscn",
-            "ax-groth",
-            "ax-10o",
-            "bibox",
-            "axcc2",
-            "ax-ext",
-            "ax-5o",
-            "ax-addass",
-            "ax-6o",
-            "ax-meredith",
-            "ax-icn",
-            "ax-1ne0",
-            "zfinf",
-            "ax-rnegex",
-            "ax-12o",
-            "ax-1cn",
-            "ax-pow",
-            "ax-sep"
+            "a1i", "a2i", "a4i", "addass", "addcl", "adddi", "alequcom", "alim", "cnex", "cnre", "dfcleq", "gen2", "hbn1", "id1", "idi", "merlem1", "mp2b", "mpg", "mulass", "mulcl", "mulcom", "readdcl", "remulcl", "tbw-ax2", "wel", "weq", "wsb"
+
         };
 //</editor-fold>
 
         try (Transaction tx = graph.beginTx()) {
-            
-            System.out.println("Removing axiom nodes...");
-            for (String nodeName : names) {
-                Node axiom = graph.findNode(Label.AXIOM, "name", nodeName);
-                if (axiom == null) {
-                    continue;
-                }
 
-                axiom.getRelationships().forEach(r -> {
-                    r.delete();
-                });
-
-                axiom.delete();
-
-            }
-
-//            System.out.println("Removing theorem nodes...");
+//            System.out.println("Removing axiom nodes...");
 //            for (String nodeName : names) {
-//                Node theorem = graph.findNode(Label.THEOREM, "name", nodeName);
-//                if (theorem == null) {
+//                Node axiom = graph.findNode(Label.AXIOM, "name", nodeName);
+//                if (axiom == null) {
 //                    continue;
 //                }
 //
-//                theorem.getRelationships().forEach(r -> {
-//                    r.delete();
-//                });
-//
-//                theorem.delete();
+//                axiom.getRelationships().forEach(Relationship::delete);
 //
 //            }
+            System.out.println("Removing theorem nodes...");
+            for (String nodeName : names) {
+                Node theorem = graph.findNode(Label.THEOREM, "name", nodeName);
+                if (theorem == null) {
+                    continue;
+                }
+
+                theorem.getRelationships(Direction.OUTGOING).forEach(Relationship::delete);
+
+            }
             tx.success();
         }
 
-        String graphHIPR = "grafo_HIPR_super_halved_inner1_outer2-axiom-theorem-critial-axioms-removal.txt";
+        System.out.println("Exporting graph to TXT...");
+
+        String graphHIPR = "metamath-nouserboxes_super_halved_inner1_outer2-axiom-theorem-critial-nodes-removal.txt";
         String graphFlowOutput = graphHIPR.replace(".txt", "_maxflow.txt");
         String graphFlowSidesOutput = graphHIPR.replace(".txt", "_sides.txt");
 
-        System.out.println("Exporting graph to TXT...");
         GraphToTxt graphToTxt = new GraphToTxt(graph);
+        final HiprFormatter hiprFormatter = new HiprFormatter("S", "T", new InnerOuterEdgeSplittedGraphWeigher(1, 2));
+        hiprFormatter.setSuperSinkLabel(Label.UNKNOWN).setSuperSourceLabel(Label.UNKNOWN);
         graphToTxt
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
-                .export(graphHIPR, new HiprFormatter("S", "T", new InnerOuterEdgeSplittedGraphWeigher(1, 2)));
+                .addFilterLabel(Label.UNKNOWN)
+                .export(graphHIPR, hiprFormatter);
 
         System.out.println("Analyzing maxflow with HIPR...");
         HIPR hipr = new HIPR();
