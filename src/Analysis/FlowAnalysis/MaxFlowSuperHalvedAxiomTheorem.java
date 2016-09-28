@@ -1,7 +1,7 @@
 package Analysis.FlowAnalysis;
 
-import Graph.Algorithms.Export.Formatters.HiprFormatter;
 import Graph.Algorithms.Export.EdgeWeigher.*;
+import Graph.Algorithms.Export.Formatters.HiprFormatter;
 import Graph.Algorithms.Export.GraphToTxt;
 import Graph.Algorithms.GraphNodeRemover;
 import Graph.Algorithms.HalveNodes;
@@ -16,8 +16,6 @@ import Utils.ParseHIPROutput;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
@@ -29,13 +27,12 @@ public class MaxFlowSuperHalvedAxiomTheorem {
     public static void main(String[] args) throws FileNotFoundException, IOException {
 
         System.out.println("Copying original graph...");
-        GraphDatabaseService superGraph = GraphFactory.copyGraph(GraphFactory.DEFAULT_METAMATH_DB, "db/metamath_halved_super-axiom-theorem");
+        GraphDatabaseService superGraph = GraphFactory.copyGraph(GraphFactory.NOUSERBOX_METAMATH_DB, "db/metamath_halved_super-axiom-theorem");
 
-        System.out.println("Removing undesired nodes");
+        System.out.println("Removing undesired nodes...");
         GraphNodeRemover gnr = new GraphNodeRemover(superGraph);
         gnr = gnr
-                .addCustomFilter(n -> n.getProperty("name").toString().startsWith("dummy"))
-                .addCustomFilter(n -> n.getProperty("name").toString().matches("ax-7d|ax-8d|ax-9d1|ax-9d2|ax-10d|ax-11d"));
+                .addCustomFilter(n -> n.getProperty("name").toString().startsWith("dummy"));
         gnr.execute();
 
         System.out.println("Removing isolated remaining nodes...");
@@ -58,7 +55,7 @@ public class MaxFlowSuperHalvedAxiomTheorem {
 
         System.out.println("Exporting to TXT...");
 
-        String graphOutput = "grafo_HIPR_super_halved_inner1_outer2-axiom-theorem.txt";
+        String graphOutput = "metamath-nouserboxes_super_halved_inner1_outer2-axiom-theorem.txt";
         String graphFlowOutput = graphOutput.replace(".txt", "_maxflow.txt");
         String graphFlowSidesOutput = graphOutput.replace(".txt", "_sides.txt");
 
