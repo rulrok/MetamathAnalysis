@@ -1,11 +1,8 @@
-package Analysis;
+package Analysis.FlowAnalysis;
 
 import Graph.Algorithms.Export.EdgeWeigher.InnerOuterEdgeSplittedGraphWeigher;
-import Graph.Algorithms.Export.EdgeWeigher.UnitaryWeigher;
 import Graph.Algorithms.Export.Formatters.HiprFormatter;
 import Graph.Algorithms.Export.GraphToTxt;
-import Graph.Algorithms.HalveNodes;
-import Graph.Algorithms.RemoveIsolatedNodes;
 import Graph.Algorithms.SuperSinkSuperSource;
 import Graph.GraphFactory;
 import Graph.Label;
