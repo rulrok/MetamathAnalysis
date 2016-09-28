@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package parser;
 
+import Graph.GraphFactory;
 import Graph.IGraph;
 import Graph.Neo4jBatchGraph;
 import java.io.File;
@@ -27,7 +23,7 @@ public class ParseMetamath {
             Lexer lexer;
 
             lexer = new Lexer(new FileReader("set.mm"));
-            
+
             /* Below there is a simple test for analysing the lexer returned
             tokens. Just uncomment it out. */
 //            java_cup.runtime.Symbol next_token;
@@ -36,18 +32,14 @@ public class ParseMetamath {
 //
 //            }
 //            System.exit(0);
-
-            File databaseFolder = new File("db/metamath");
+            File databaseFolder = new File(GraphFactory.DEFAULT_METAMATH_DB);
 
             //Wipe out the database before parsing the file
             FileUtils.deleteRecursively(databaseFolder);
 
             IGraph graph = new Neo4jBatchGraph(databaseFolder);
 
-
             parser p = new parser(lexer, graph);
-
-//            System.out.println(p.parse());
             p.parse();
 
         } catch (FileNotFoundException ex) {
