@@ -5,6 +5,7 @@ import Graph.Algorithms.Export.EdgeWeigher.*;
 import Graph.Algorithms.Export.GraphToTxt;
 import Graph.Algorithms.GraphNodeRemover;
 import Graph.Algorithms.HalveNodes;
+import Graph.Algorithms.RemoveIsolatedNodes;
 import Graph.Algorithms.SuperSinkSuperSource;
 import Graph.GraphFactory;
 import Graph.Label;
@@ -25,19 +26,26 @@ public class MaxFlowSuperHalvedTheoremOnlyStrict {
     public static void main(String[] args) throws FileNotFoundException {
 
         System.out.println("Copying original graph...");
-        GraphDatabaseService superGraph = GraphFactory.copyGraph(GraphFactory.DEFAULT_METAMATH_DB, "db/metamath_halved_super-theorem-strict");
+        GraphDatabaseService superGraph = GraphFactory.copyGraph(GraphFactory.NOUSERBOX_METAMATH_DB, "db/metamath_halved_super-theorem-strict");
 
-        System.out.println("Removing undesired nodes");
+        System.out.println("Removing undesired nodes...");
         GraphNodeRemover gnr = new GraphNodeRemover(superGraph);
         gnr = gnr
                 .addFilterLabel(Label.AXIOM)
-                .addFilterLabel(Label.SYNTAX_DEFINITION)
-                .addFilterLabel(Label.HYPOTHESIS)
+                .addFilterLabel(Label.CONSTANT)
                 .addFilterLabel(Label.DEFINITION)
+                .addFilterLabel(Label.HYPOTHESIS)
+                .addFilterLabel(Label.SYNTAX_DEFINITION)
+                .addFilterLabel(Label.UNKNOWN)
+                .addFilterLabel(Label.VARIABLE)
                 .addCustomFilter(n -> n.getProperty("name").toString().startsWith("dummy"))
                 .addCustomFilter(n -> n.getProperty("name").toString().startsWith("ax"))
                 .addCustomFilter(n -> n.getProperty("name").toString().matches("ax-7d|ax-8d|ax-9d1|ax-9d2|ax-10d|ax-11d"));
         gnr.execute();
+
+        System.out.println("Removing isolated remaining nodes...");
+        RemoveIsolatedNodes isolatedNodes = new RemoveIsolatedNodes(superGraph);
+        isolatedNodes.execute();
 
         System.out.println("Halving nodes...");
         HalveNodes halveNodes = new HalveNodes(superGraph);
@@ -49,22 +57,23 @@ public class MaxFlowSuperHalvedTheoremOnlyStrict {
         SuperSinkSuperSource sinkSuperSource = new SuperSinkSuperSource(superGraph);
         sinkSuperSource
                 .addFilterLabel(Label.THEOREM)
-                .setSuperSourceLabel(Label.THEOREM)
-                .setSuperSinkLabel(Label.THEOREM)
+                .setSuperSourceLabel(Label.UNKNOWN)
+                .setSuperSinkLabel(Label.UNKNOWN)
                 .execute();
 
         System.out.println("Exporting to TXT...");
 
-        String graphOutput = "grafo_HIPR_super_halved_inner1_outer2-theorem-only-strict.txt";
+        String graphOutput = "metamath-nouserboxes_super_halved_inner1_outer2-theorem-only-strict.txt";
         String graphFlowOutput = graphOutput.replace(".txt", "_maxflow.txt");
         String graphFlowSidesOutput = graphOutput.replace(".txt", "_sides.txt");
 
         GraphToTxt graphToTxt = new GraphToTxt(superGraph);
         HiprFormatter hiprFormatter = new HiprFormatter("S", "T", new InnerOuterEdgeSplittedGraphWeigher(1, 2));
-        hiprFormatter = hiprFormatter.setSuperSourceLabel(Label.THEOREM).setSuperSinkLabel(Label.THEOREM);
+        hiprFormatter = hiprFormatter.setSuperSourceLabel(Label.UNKNOWN).setSuperSinkLabel(Label.UNKNOWN);
 
         graphToTxt
                 .addFilterLabel(Label.THEOREM)
+                .addFilterLabel(Label.UNKNOWN)
                 .export(graphOutput, hiprFormatter);
 
         System.out.println("Analyzing maxflow with HIPR...");
