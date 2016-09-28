@@ -47,7 +47,6 @@ public class ParseHIPRFlowOutput {
                 //Don't need to change the state of the parser
                 continue;
             }
-
             if (nextLine.startsWith("c flow values")) {
                 actualState = ParseState.FLOW_VALUES;
             } else if (nextLine.startsWith("c nodes on the sink side")) {
@@ -80,6 +79,9 @@ public class ParseHIPRFlowOutput {
     }
 
     private boolean parse_initial_state_line(String nextLine) {
+
+        System.out.println(nextLine);
+
         Pattern pattern = Pattern.compile("^c +(flow values|nodes on the).*", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(nextLine);
         return !matcher.matches();
