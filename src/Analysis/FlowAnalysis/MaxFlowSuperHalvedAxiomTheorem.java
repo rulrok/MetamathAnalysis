@@ -12,7 +12,7 @@ import Graph.Label;
 import Utils.HIPR;
 import Utils.HIPRAnalyzeFlowSides;
 import Utils.ParseHIPRInputfile;
-import Utils.ParseHIPROutput;
+import Utils.ParseHIPRFlowOutput;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -72,7 +72,7 @@ public class MaxFlowSuperHalvedAxiomTheorem {
         System.out.println("Analyzing maxflow sides...");
 
         ParseHIPRInputfile hipr_parsed = new ParseHIPRInputfile(new File(graphOutput));
-        ParseHIPROutput hipr_results_parsed = new ParseHIPROutput(new File(graphFlowOutput));
+        ParseHIPRFlowOutput hipr_results_parsed = new ParseHIPRFlowOutput(new File(graphFlowOutput));
         HIPRAnalyzeFlowSides.AnalyzeSides(superGraph, hipr_parsed, hipr_results_parsed, new File(graphFlowSidesOutput));
     }
 }

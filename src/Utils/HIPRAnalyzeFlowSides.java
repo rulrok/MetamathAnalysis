@@ -27,7 +27,7 @@ import org.neo4j.helpers.collection.MapUtil;
  */
 public class HIPRAnalyzeFlowSides {
 
-    public static void AnalyzeSides(final GraphDatabaseService graph, ParseHIPRInputfile hipr_parsed, ParseHIPROutput hipr_results_parsed, final File outputFile) throws FileNotFoundException {
+    public static void AnalyzeSides(final GraphDatabaseService graph, ParseHIPRInputfile hipr_parsed, ParseHIPRFlowOutput hipr_results_parsed, final File outputFile) throws FileNotFoundException {
 
         /**
          * Parse both files

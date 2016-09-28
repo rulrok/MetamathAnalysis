@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  *
  * @author Reuel
  */
-public class ParseHIPROutput {
+public class ParseHIPRFlowOutput {
 
     private enum ParseState {
         INITIAL_STATE, FLOW_VALUES, NODES_SINK_SIDE
@@ -23,7 +23,7 @@ public class ParseHIPROutput {
     private final Set<String> nodesSinkSide;
     private ParseState actualState = ParseState.INITIAL_STATE;
 
-    public ParseHIPROutput(File file) {
+    public ParseHIPRFlowOutput(File file) {
         this.file = file;
         this.nodesSinkSide = new HashSet<>(5000);
     }
