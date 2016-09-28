@@ -55,7 +55,7 @@ public class HiprFormatter implements IGraphFormatter {
             output.append("n ").append("<t_id>").append(" t").append(System.lineSeparator());
 
             //Arcs
-            int weight;
+            double weight;
             for (Relationship rel : relsToPrint) {
 
                 Node startNode = rel.getStartNode();

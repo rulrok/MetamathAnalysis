@@ -16,7 +16,7 @@ import org.neo4j.graphdb.Relationship;
 public class SuperSinkSourceCustomWeigher implements IEdgeWeigher {
 
     @Override
-    public int weigh(Relationship rel) {
+    public double weigh(Relationship rel) {
         Node startNode = rel.getStartNode();
         Node endNode = rel.getEndNode();
 

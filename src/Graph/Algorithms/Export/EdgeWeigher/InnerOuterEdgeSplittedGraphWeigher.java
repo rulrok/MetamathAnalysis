@@ -23,7 +23,7 @@ public class InnerOuterEdgeSplittedGraphWeigher implements IEdgeWeigher {
 
     private final int innerWeight;
     private final int outerWeight;
-    private final Map<String, Integer> customWeights;
+    private final Map<String, Double> customWeights;
 
     public InnerOuterEdgeSplittedGraphWeigher(int innerWeight, int outerWeight) {
         this.innerWeight = innerWeight;
@@ -31,13 +31,13 @@ public class InnerOuterEdgeSplittedGraphWeigher implements IEdgeWeigher {
         this.customWeights = new HashMap<>();
     }
 
-    public InnerOuterEdgeSplittedGraphWeigher addSpecificWeigh(String name, Integer weigh) {
+    public InnerOuterEdgeSplittedGraphWeigher addSpecificWeigh(String name, Double weigh) {
         customWeights.put(name, weigh);
         return this;
     }
 
     @Override
-    public int weigh(Relationship rel) {
+    public double weigh(Relationship rel) {
         Node startNode = rel.getStartNode();
         Node endNode = rel.getEndNode();
 

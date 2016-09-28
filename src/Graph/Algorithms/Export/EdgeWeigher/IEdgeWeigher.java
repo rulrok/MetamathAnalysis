@@ -11,5 +11,5 @@ import org.neo4j.graphdb.Relationship;
 @FunctionalInterface
 public interface IEdgeWeigher {
 
-    int weigh(Relationship rel);
+    double weigh(Relationship rel);
 }

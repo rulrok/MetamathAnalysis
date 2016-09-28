@@ -11,7 +11,7 @@ import org.neo4j.graphdb.Relationship;
 public class UnitaryWeigher implements IEdgeWeigher {
 
     @Override
-    public int weigh(Relationship rel) {
+    public double weigh(Relationship rel) {
         return 1;
     }
 
