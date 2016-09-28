@@ -4,6 +4,8 @@ import Graph.Algorithms.Export.EdgeWeigher.*;
 import Graph.Algorithms.Export.Formatters.HiprFormatter;
 import Graph.Algorithms.Export.GraphToTxt;
 import Graph.Algorithms.GraphNodeRemover;
+import Graph.Algorithms.HalveNodes;
+import Graph.Algorithms.RemoveIsolatedNodes;
 import Graph.Algorithms.SuperSinkSuperSource;
 import Graph.GraphFactory;
 import Graph.Label;
@@ -35,8 +37,19 @@ public class MaxFlowSuperHalvedTheoremOnly {
                 .addFilterLabel(Label.HYPOTHESIS)
                 .addFilterLabel(Label.SYNTAX_DEFINITION)
                 .addFilterLabel(Label.UNKNOWN)
-                .addFilterLabel(Label.VARIABLE);
+                .addFilterLabel(Label.VARIABLE)
+                .addCustomFilter(n -> n.getProperty("name").toString().startsWith("dummy"));
         gnr.execute();
+
+        System.out.println("Removing isolated remaining nodes...");
+        RemoveIsolatedNodes isolatedNodes = new RemoveIsolatedNodes(graph);
+        isolatedNodes.execute();
+
+        System.out.println("Halving nodes...");
+        HalveNodes halveNodes = new HalveNodes(graph);
+        halveNodes
+                .addFilterLabel(Label.THEOREM)
+                .execute();
 
         System.out.println("Creating super sink and super source...");
         SuperSinkSuperSource sinkSuperSource = new SuperSinkSuperSource(graph);
