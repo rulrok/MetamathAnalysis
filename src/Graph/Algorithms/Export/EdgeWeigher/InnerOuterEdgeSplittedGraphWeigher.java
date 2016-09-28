@@ -1,5 +1,7 @@
 package Graph.Algorithms.Export.EdgeWeigher;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
@@ -21,10 +23,17 @@ public class InnerOuterEdgeSplittedGraphWeigher implements IEdgeWeigher {
 
     private final int innerWeight;
     private final int outerWeight;
+    private final Map<String, Integer> customWeights;
 
     public InnerOuterEdgeSplittedGraphWeigher(int innerWeight, int outerWeight) {
         this.innerWeight = innerWeight;
         this.outerWeight = outerWeight;
+        this.customWeights = new HashMap<>();
+    }
+
+    public InnerOuterEdgeSplittedGraphWeigher addSpecificWeigh(String name, Integer weigh) {
+        customWeights.put(name, weigh);
+        return this;
     }
 
     @Override
@@ -40,6 +49,16 @@ public class InnerOuterEdgeSplittedGraphWeigher implements IEdgeWeigher {
         boolean isInnerEdge = startName.concat("'").equals(endName);
 
         if (isInnerEdge) {
+
+            if (customWeights.size() > 0) {
+                if (customWeights.containsKey(startName)) {
+                    return customWeights.get(startName);
+                }
+                if (customWeights.containsKey(endName)) {
+                    return customWeights.get(endName);
+                }
+            }
+
             return innerWeight;
         }
 
