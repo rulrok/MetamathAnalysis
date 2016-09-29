@@ -22,7 +22,7 @@ public class ParseMetamath {
         try {
             Lexer lexer;
 
-            lexer = new Lexer(new FileReader("set.mm"));
+            lexer = new Lexer(new FileReader("mm sets/set.mm"));
 
             /* Below there is a simple test for analysing the lexer returned
             tokens. Just uncomment it out. */
