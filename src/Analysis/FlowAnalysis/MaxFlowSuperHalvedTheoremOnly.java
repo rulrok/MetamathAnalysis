@@ -1,6 +1,6 @@
 package Analysis.FlowAnalysis;
 
-import Graph.Algorithms.Export.EdgeWeigher.*;
+import Graph.Algorithms.Export.EdgeWeigher.InnerOuterEdgeSplittedGraphWeigher;
 import Graph.Algorithms.Export.Formatters.HiprFormatter;
 import Graph.Algorithms.Export.GraphToTxt;
 import Graph.Algorithms.GraphNodeRemover;
@@ -11,8 +11,8 @@ import Graph.GraphFactory;
 import Graph.Label;
 import Utils.HIPR;
 import Utils.HIPRAnalyzeFlowSides;
+import Utils.ParseHIPRFlowOutput;
 import Utils.ParseHIPRInputfile;
-import Utils.ParseHIPROutput;
 import java.io.File;
 import java.io.FileNotFoundException;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -31,6 +31,9 @@ public class MaxFlowSuperHalvedTheoremOnly {
         System.out.println("Removing all nodes but theorem ones...");
         GraphNodeRemover gnr = new GraphNodeRemover(graph);
         gnr = gnr
+                //DFS from ax-meredith to remove undesired componente
+                .addComponentHeadDFS("ax-meredith")
+                //Add other labels
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.CONSTANT)
                 .addFilterLabel(Label.DEFINITION)
@@ -38,6 +41,7 @@ public class MaxFlowSuperHalvedTheoremOnly {
                 .addFilterLabel(Label.SYNTAX_DEFINITION)
                 .addFilterLabel(Label.UNKNOWN)
                 .addFilterLabel(Label.VARIABLE)
+                //Specific nodes
                 .addCustomFilter(n -> n.getProperty("name").toString().startsWith("dummy"));
         gnr.execute();
 
@@ -65,8 +69,10 @@ public class MaxFlowSuperHalvedTheoremOnly {
         String graphFlowOutput = graphOutput.replace(".txt", "_maxflow.txt");
         String graphFlowSidesOutput = graphOutput.replace(".txt", "_sides.txt");
 
-        HiprFormatter hiprFormatter = new HiprFormatter("S", "T", new InnerOuterEdgeSplittedGraphWeigher(1, 2));
-        hiprFormatter = hiprFormatter.setSuperSourceLabel(Label.UNKNOWN).setSuperSinkLabel(Label.UNKNOWN);
+        final InnerOuterEdgeSplittedGraphWeigher edgeWeigher = new InnerOuterEdgeSplittedGraphWeigher(1, 2);
+//        edgeWeigher.addSpecificWeigh("merlem1", 0.0);
+        HiprFormatter hiprFormatter = new HiprFormatter("S", "T", edgeWeigher);
+        hiprFormatter.setSuperSourceLabel(Label.UNKNOWN).setSuperSinkLabel(Label.UNKNOWN);
 
         GraphToTxt graphToTxt = new GraphToTxt(graph);
         graphToTxt
@@ -81,7 +87,7 @@ public class MaxFlowSuperHalvedTheoremOnly {
         System.out.println("Analyzing maxflow sides...");
 
         ParseHIPRInputfile hipr_parsed = new ParseHIPRInputfile(new File(graphOutput));
-        ParseHIPROutput hipr_results_parsed = new ParseHIPROutput(new File(graphFlowOutput));
+        ParseHIPRFlowOutput hipr_results_parsed = new ParseHIPRFlowOutput(new File(graphFlowOutput));
         HIPRAnalyzeFlowSides.AnalyzeSides(graph, hipr_parsed, hipr_results_parsed, new File(graphFlowSidesOutput));
     }
 }
