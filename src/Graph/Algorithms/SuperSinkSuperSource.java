@@ -13,6 +13,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.traversal.BranchOrderingPolicies;
 import org.neo4j.graphdb.traversal.Evaluator;
+import org.neo4j.graphdb.traversal.Evaluators;
 import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.graphdb.traversal.Uniqueness;
 import org.neo4j.tooling.GlobalGraphOperations;
@@ -30,14 +31,24 @@ public class SuperSinkSuperSource implements LabelFiltered {
     private final List<Evaluator> customSourceEvaluators = new ArrayList<>();
     private final List<Evaluator> customSinkEvaluators = new ArrayList<>();
 
-    private static final SourceEvaluator DEFAULT_SOURCE_EVALUATOR = new SourceEvaluator();
-    private static final SinkEvaluator DEFAULT_SINK_EVALUATOR = new SinkEvaluator();
+    private static Evaluator DEFAULT_SOURCE_EVALUATOR = new SourceEvaluator();
+    private static Evaluator DEFAULT_SINK_EVALUATOR = new SinkEvaluator();
 
     private Label SuperSourceLabel = Label.AXIOM;
     private Label SuperSinkLabel = Label.THEOREM;
 
     public SuperSinkSuperSource(GraphDatabaseService graph) {
         this.graph = graph;
+    }
+
+    public SuperSinkSuperSource removeDefaultSourceEvaluator() {
+        DEFAULT_SOURCE_EVALUATOR = Evaluators.all();
+        return this;
+    }
+
+    public SuperSinkSuperSource removeDefaultSinkEvaluator() {
+        DEFAULT_SINK_EVALUATOR = Evaluators.all();
+        return this;
     }
 
     public SuperSinkSuperSource addCustomSourceEvaluator(Evaluator evaluator) {
