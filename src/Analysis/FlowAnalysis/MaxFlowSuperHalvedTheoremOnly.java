@@ -23,10 +23,12 @@ import org.neo4j.graphdb.GraphDatabaseService;
  */
 public class MaxFlowSuperHalvedTheoremOnly {
 
+    private static final String OUTPUT_NAME = "metamath-nouserboxes_halved_super-theorem-only";
+
     public static void main(String[] args) throws FileNotFoundException {
 
         System.out.println("Copying original graph...");
-        GraphDatabaseService graph = GraphFactory.copyGraph(GraphFactory.NOUSERBOX_METAMATH_DB, "db/metamath-nouserboxes_halved_super-theorem-only");
+        GraphDatabaseService graph = GraphFactory.copyGraph(GraphFactory.NOUSERBOX_METAMATH_DB, "db/".concat(OUTPUT_NAME));
 
         System.out.println("Removing all nodes but theorem ones...");
         GraphNodeRemover gnr = new GraphNodeRemover(graph);
@@ -65,9 +67,9 @@ public class MaxFlowSuperHalvedTheoremOnly {
 
         System.out.println("Exporting to TXT...");
 
-        String graphOutput = "metamath-nouserboxes_super_halved_inner1_outer2-theorem-only.txt";
-        String graphFlowOutput = graphOutput.replace(".txt", "_maxflow.txt");
-        String graphFlowSidesOutput = graphOutput.replace(".txt", "_sides.txt");
+        String graphOutput = OUTPUT_NAME.concat(".txt");
+        String graphFlowOutput = OUTPUT_NAME.concat("_maxflow.txt");
+        String graphFlowSidesOutput = OUTPUT_NAME.concat("_sides.txt");
 
         final InnerOuterEdgeSplittedGraphWeigher edgeWeigher = new InnerOuterEdgeSplittedGraphWeigher(1, 2);
 //        edgeWeigher.addSpecificWeigh("merlem1", 0.0);

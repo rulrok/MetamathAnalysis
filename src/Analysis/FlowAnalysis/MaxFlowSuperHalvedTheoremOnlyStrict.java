@@ -1,7 +1,7 @@
 package Analysis.FlowAnalysis;
 
+import Graph.Algorithms.Export.EdgeWeigher.InnerOuterEdgeSplittedGraphWeigher;
 import Graph.Algorithms.Export.Formatters.HiprFormatter;
-import Graph.Algorithms.Export.EdgeWeigher.*;
 import Graph.Algorithms.Export.GraphToTxt;
 import Graph.Algorithms.GraphNodeRemover;
 import Graph.Algorithms.HalveNodes;
@@ -11,8 +11,8 @@ import Graph.GraphFactory;
 import Graph.Label;
 import Utils.HIPR;
 import Utils.HIPRAnalyzeFlowSides;
-import Utils.ParseHIPRInputfile;
 import Utils.ParseHIPRFlowOutput;
+import Utils.ParseHIPRInputfile;
 import java.io.File;
 import java.io.FileNotFoundException;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -23,10 +23,12 @@ import org.neo4j.graphdb.GraphDatabaseService;
  */
 public class MaxFlowSuperHalvedTheoremOnlyStrict {
 
+    private static final String OUTPUT_NAME = "metamath_halved_super-theorem-strict";
+
     public static void main(String[] args) throws FileNotFoundException {
 
         System.out.println("Copying original graph...");
-        GraphDatabaseService graph = GraphFactory.copyGraph(GraphFactory.NOUSERBOX_METAMATH_DB, "db/metamath_halved_super-theorem-strict");
+        GraphDatabaseService graph = GraphFactory.copyGraph(GraphFactory.NOUSERBOX_METAMATH_DB, "db/".concat(OUTPUT_NAME));
 
         System.out.println("Removing undesired nodes...");
         GraphNodeRemover gnr = new GraphNodeRemover(graph);
@@ -63,9 +65,9 @@ public class MaxFlowSuperHalvedTheoremOnlyStrict {
 
         System.out.println("Exporting to TXT...");
 
-        String graphOutput = "metamath-nouserboxes_super_halved_inner1_outer2-theorem-only-strict.txt";
-        String graphFlowOutput = graphOutput.replace(".txt", "_maxflow.txt");
-        String graphFlowSidesOutput = graphOutput.replace(".txt", "_sides.txt");
+        String graphOutput = OUTPUT_NAME.concat(".txt");
+        String graphFlowOutput = OUTPUT_NAME.concat("_maxflow.txt");
+        String graphFlowSidesOutput = OUTPUT_NAME.concat("_sides.txt");
 
         GraphToTxt graphToTxt = new GraphToTxt(graph);
         HiprFormatter hiprFormatter = new HiprFormatter("S", "T", new InnerOuterEdgeSplittedGraphWeigher(1, 2));

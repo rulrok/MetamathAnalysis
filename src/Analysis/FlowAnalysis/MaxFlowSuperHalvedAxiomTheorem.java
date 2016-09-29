@@ -24,10 +24,12 @@ import org.neo4j.graphdb.GraphDatabaseService;
  */
 public class MaxFlowSuperHalvedAxiomTheorem {
 
+    private static final String OUTPUT_NAME = "metamath_halved_super-axiom-theorem";
+
     public static void main(String[] args) throws FileNotFoundException, IOException {
 
         System.out.println("Copying original graph...");
-        GraphDatabaseService superGraph = GraphFactory.copyGraph(GraphFactory.NOUSERBOX_METAMATH_DB, "db/metamath_halved_super-axiom-theorem");
+        GraphDatabaseService superGraph = GraphFactory.copyGraph(GraphFactory.NOUSERBOX_METAMATH_DB, "db/".concat(OUTPUT_NAME));
 
         System.out.println("Removing undesired nodes...");
         GraphNodeRemover gnr = new GraphNodeRemover(superGraph);
@@ -55,9 +57,9 @@ public class MaxFlowSuperHalvedAxiomTheorem {
 
         System.out.println("Exporting to TXT...");
 
-        String graphOutput = "metamath-nouserboxes_super_halved_inner1_outer2-axiom-theorem.txt";
-        String graphFlowOutput = graphOutput.replace(".txt", "_maxflow.txt");
-        String graphFlowSidesOutput = graphOutput.replace(".txt", "_sides.txt");
+        String graphOutput = OUTPUT_NAME.concat(".txt");
+        String graphFlowOutput = OUTPUT_NAME.concat("_maxflow.txt");
+        String graphFlowSidesOutput = OUTPUT_NAME.concat("_sides.txt");
 
         GraphToTxt graphToTxt = new GraphToTxt(superGraph);
         graphToTxt
