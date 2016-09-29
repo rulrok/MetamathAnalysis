@@ -9,6 +9,7 @@
 /.nb-gradle/
 /db/*
 
+manifest.mf
 *.log
 *.java~
 *.mm
