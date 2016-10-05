@@ -4,11 +4,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.ujmp.core.Matrix;
 import org.ujmp.core.SparseMatrix;
+import org.ujmp.core.intmatrix.IntMatrix;
 
 /**
  *
@@ -27,7 +30,7 @@ public class ParseHIPRFlowOutput {
      * Parser data structures
      */
     private final File file;
-    private final Set<String> nodesSinkSide;
+    private Set<String> nodesSinkSide;
 
     SparseMatrix graph;
 
@@ -36,13 +39,12 @@ public class ParseHIPRFlowOutput {
     /*
      * File properties
      */
-    private int nodes;
-    private int edges;
+    private int nodesCount;
+    private int edgesCount;
     private double flow;
 
     public ParseHIPRFlowOutput(File file) {
         this.file = file;
-        this.nodesSinkSide = new HashSet<>(5000);
     }
 
     public Set<String> getNodesOnSinkSide() {
@@ -54,11 +56,11 @@ public class ParseHIPRFlowOutput {
     }
 
     public int getNodesCount() {
-        return nodes;
+        return nodesCount;
     }
 
     public int getEdgesCount() {
-        return edges;
+        return edgesCount;
     }
 
     public double getFlow() {
@@ -118,9 +120,10 @@ public class ParseHIPRFlowOutput {
         Matcher nodesMatcher = nodesPat.matcher(nextLine);
         if (nodesMatcher.matches()) {
             String nodesStr = nodesMatcher.group(1);
-            this.nodes = Integer.parseInt(nodesStr);
+            this.nodesCount = Integer.parseInt(nodesStr);
 
-            graph = SparseMatrix.Factory.zeros(nodes, nodes);
+            graph = SparseMatrix.Factory.zeros(nodesCount, nodesCount);
+            nodesSinkSide = new HashSet<>(nodesCount + 1);
         }
 
         /*
@@ -130,7 +133,7 @@ public class ParseHIPRFlowOutput {
         Matcher edgeMatcher = edgePat.matcher(nextLine);
         if (edgeMatcher.matches()) {
             String edgeStr = edgeMatcher.group(1);
-            this.edges = Integer.parseInt(edgeStr);
+            this.edgesCount = Integer.parseInt(edgeStr);
         }
 
         /*
@@ -187,6 +190,8 @@ public class ParseHIPRFlowOutput {
         ParseHIPRFlowOutput flowOutput = new ParseHIPRFlowOutput(file);
         flowOutput.parse();
         System.out.println(flowOutput.graph.getAsInt(1, 126));
+        IntMatrix toIntMatrix = flowOutput.graph.toIntMatrix();
+
     }
 
 }
