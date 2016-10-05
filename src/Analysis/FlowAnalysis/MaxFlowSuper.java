@@ -7,7 +7,7 @@ import Graph.Algorithms.Export.GraphToTxt;
 import Graph.Algorithms.SuperSinkSuperSource;
 import Graph.GraphFactory;
 import Graph.Label;
-import Utils.HIPR;
+import Utils.HIPR.HIPR;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
