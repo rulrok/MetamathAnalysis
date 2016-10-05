@@ -15,13 +15,26 @@ import java.util.regex.Pattern;
  */
 public class ParseHIPRFlowOutput {
 
+    /*
+     * Parser internal states
+     */
     private enum ParseState {
         INITIAL_STATE, FLOW_VALUES, NODES_SINK_SIDE
     }
 
+    /*
+     * Parser data structures
+     */
     private final File file;
     private final Set<String> nodesSinkSide;
     private ParseState actualState = ParseState.INITIAL_STATE;
+
+    /*
+     * File properties
+     */
+    private int nodes;
+    private int edges;
+    private double flow;
 
     public ParseHIPRFlowOutput(File file) {
         this.file = file;
@@ -34,6 +47,18 @@ public class ParseHIPRFlowOutput {
 
     public boolean isNodeOnSinkSide(String name) {
         return nodesSinkSide.contains(name);
+    }
+
+    public int getNodesCount() {
+        return nodes;
+    }
+
+    public int getEdgesCount() {
+        return edges;
+    }
+
+    public double getFlow() {
+        return flow;
     }
 
     public void parse() throws FileNotFoundException {
@@ -82,6 +107,39 @@ public class ParseHIPRFlowOutput {
 
         System.out.println(nextLine);
 
+        /*
+         * Nodes pattern matcher
+         */
+        Pattern nodesPat = Pattern.compile("c nodes:\\s+?(\\d+)");
+        Matcher nodesMatcher = nodesPat.matcher(nextLine);
+        if (nodesMatcher.matches()) {
+            String nodesStr = nodesMatcher.group(1);
+            this.nodes = Integer.parseInt(nodesStr);
+        }
+
+        /*
+         * Edges pattern matcher
+         */
+        Pattern edgePat = Pattern.compile("c arcs:\\s+?(\\d+)");
+        Matcher edgeMatcher = edgePat.matcher(nextLine);
+        if (edgeMatcher.matches()) {
+            String edgeStr = edgeMatcher.group(1);
+            this.edges = Integer.parseInt(edgeStr);
+        }
+
+        /*
+         * Flow pattern matcher
+         */
+        Pattern flowPat = Pattern.compile("c flow:\\s+?(\\d+\\.\\d+)");
+        Matcher flowMatcher = flowPat.matcher(nextLine);
+        if (flowMatcher.matches()) {
+            String flowStr = flowMatcher.group(1);
+            this.flow = Double.parseDouble(flowStr);
+        }
+
+        /*
+         * Initial state matcher
+         */
         Pattern pattern = Pattern.compile("^c +(flow values|nodes on the).*", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(nextLine);
         return !matcher.matches();
