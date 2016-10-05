@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -99,6 +100,17 @@ public class ParseHIPRInputfile {
 
     public String getNodeName(String id) {
         return nodesNames.get(id);
+    }
+
+    public int getNodeId(String nodeName) {
+
+        for (Entry<String, String> entry : nodesNames.entrySet()) {
+            if (entry.getValue().equals(nodeName)) {
+                return Integer.parseInt(entry.getKey());
+            }
+        }
+
+        return -1;
     }
 
     public static void main(String[] args) throws FileNotFoundException {
