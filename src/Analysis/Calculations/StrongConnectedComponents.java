@@ -1,4 +1,4 @@
-package Calculations;
+package Analysis.Calculations;
 
 import Graph.Algorithms.SCC.TarjanSCC;
 import Graph.GraphFactory;

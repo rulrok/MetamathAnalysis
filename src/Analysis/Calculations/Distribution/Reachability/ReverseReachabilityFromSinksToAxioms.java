@@ -1,4 +1,4 @@
-package Calculations.Distribution.Reachability;
+package Analysis.Calculations.Distribution.Reachability;
 
 import Graph.Algorithms.Decomposition.Evaluators.AxiomEvaluator;
 import Graph.Algorithms.Decomposition.SimpleGraphDecomposition;

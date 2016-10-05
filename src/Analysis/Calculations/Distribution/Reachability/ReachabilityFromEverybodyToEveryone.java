@@ -1,4 +1,4 @@
-package Calculations.Distribution.Reachability;
+package Analysis.Calculations.Distribution.Reachability;
 
 import Graph.Algorithms.ReachabilityFromNode;
 import Graph.GraphFactory;
@@ -15,7 +15,7 @@ import org.neo4j.tooling.GlobalGraphOperations;
  *
  * @author Reuel
  */
-public class ReverseReachabilityFromEverybodyToEveryone {
+public class ReachabilityFromEverybodyToEveryone {
 
     public static void main(String[] args) {
         GraphDatabaseService graph = GraphFactory.makeDefaultMetamathGraph();
@@ -24,14 +24,12 @@ public class ReverseReachabilityFromEverybodyToEveryone {
         try (Transaction tx = graph.beginTx()) {
 
             ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
-            Map<String, Integer> calculate = reachabilityFromSource
-                    .reverseGraph()
-                    .calculate(allNodes.iterator(), RelType.SUPPORTS);
+            Map<String, Integer> calculate = reachabilityFromSource.calculate(allNodes.iterator(), RelType.SUPPORTS);
 //        calculate.forEach((key, value) -> {
 //            System.out.println(key + "\t" + value);
 //        });
 
-            ExportMapToTXT.export("reverse_reach_distribution_everyone_to_everybody", calculate, new String[]{"id", "name", "count"});
+            ExportMapToTXT.export("reach_distribution_everyone_to_everybody", calculate, new String[]{"id", "name", "count"});
         }
 
     }

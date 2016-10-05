@@ -1,4 +1,4 @@
-package Calculations.Distribution;
+package Analysis.Calculations.Distribution;
 
 import Graph.Algorithms.DegreeDistribution;
 import Graph.GraphFactory;
