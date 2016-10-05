@@ -1,4 +1,4 @@
-package Utils;
+package Utils.HIPR;
 
 import java.io.File;
 import java.io.FileNotFoundException;
