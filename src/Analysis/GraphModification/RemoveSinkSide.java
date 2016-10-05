@@ -21,10 +21,12 @@ import org.neo4j.tooling.GlobalGraphOperations;
  */
 public class RemoveSinkSide {
 
+    private final static String OUTPUT = "metamath_source_sink_disconnected";
+
     public static void main(String[] args) {
 
         System.out.println("Copying original graph...");
-        GraphDatabaseService graph = GraphFactory.copyGraph("db/metamath", "db/metamath_source_sink_disconnected");
+        GraphDatabaseService graph = GraphFactory.copyGraph(GraphFactory.DEFAULT_METAMATH_DB, "db/".concat(OUTPUT));
 
         System.out.println("Removing all but axiom and theorem nodes...");
         GraphNodeRemover gnr = new GraphNodeRemover(graph);
@@ -83,6 +85,6 @@ public class RemoveSinkSide {
 
         GraphToTxt graphToTxt = new GraphToTxt(graph);
         graphToTxt
-                .export("metamath_source_sink_disconnected.sif", new SIFFormatter());
+                .export(OUTPUT.concat(".sif"), new SIFFormatter());
     }
 }
