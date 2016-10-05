@@ -8,6 +8,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.ujmp.core.SparseMatrix;
 
 /**
  *
@@ -27,6 +28,9 @@ public class ParseHIPRFlowOutput {
      */
     private final File file;
     private final Set<String> nodesSinkSide;
+
+    SparseMatrix graph;
+
     private ParseState actualState = ParseState.INITIAL_STATE;
 
     /*
@@ -115,6 +119,8 @@ public class ParseHIPRFlowOutput {
         if (nodesMatcher.matches()) {
             String nodesStr = nodesMatcher.group(1);
             this.nodes = Integer.parseInt(nodesStr);
+
+            graph = SparseMatrix.Factory.zeros(nodes, nodes);
         }
 
         /*
@@ -160,8 +166,27 @@ public class ParseHIPRFlowOutput {
     }
 
     private boolean parse_flow_values(String nextLine) {
-        Pattern pattern = Pattern.compile("^f +[0-9]+ +[0-9]+ +[0-9]+", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(nextLine);
-        return matcher.matches();
+        Pattern flowPat = Pattern.compile("^f\\s+([0-9]+)\\s+([0-9]+)\\s+([0-9]+)", Pattern.CASE_INSENSITIVE);
+        Matcher flowMatcher = flowPat.matcher(nextLine);
+
+        if (flowMatcher.matches()) {
+
+            int originNode = Integer.parseInt(flowMatcher.group(1));
+            int destinNode = Integer.parseInt(flowMatcher.group(2));
+            int edgeCost = Integer.parseInt(flowMatcher.group(3));
+
+            graph.setAsInt(edgeCost, originNode, destinNode);
+        }
+
+        return flowMatcher.matches();
     }
+
+    public static void main(String[] args) throws FileNotFoundException {
+
+        File file = new File("biparted-graph-super-axiom-theorem_maxflow.txt");
+        ParseHIPRFlowOutput flowOutput = new ParseHIPRFlowOutput(file);
+        flowOutput.parse();
+        System.out.println(flowOutput.graph.getAsInt(1, 126));
+    }
+
 }
