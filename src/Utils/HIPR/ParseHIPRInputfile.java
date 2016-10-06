@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -17,6 +16,7 @@ public class ParseHIPRInputfile {
 
     private final File file;
     private final Map<String, String> nodesNames;
+    private final Map<String, Integer> nodesIds;
 
     private int S;
     private int T;
@@ -26,6 +26,7 @@ public class ParseHIPRInputfile {
     public ParseHIPRInputfile(File file) {
         this.file = file;
         this.nodesNames = new HashMap<>(5000);
+        this.nodesIds = new HashMap<>(5000);
     }
 
     public void parse() throws FileNotFoundException {
@@ -94,6 +95,10 @@ public class ParseHIPRInputfile {
         return new HashSet<>(nodesNames.keySet());
     }
 
+    public Set<String> getAllNodeNames() {
+        return new HashSet<>(nodesNames.values());
+    }
+
     public String getNodeName(Integer id) {
         return getNodeName(Integer.toString(id));
     }
@@ -104,13 +109,20 @@ public class ParseHIPRInputfile {
 
     public int getNodeId(String nodeName) {
 
-        for (Entry<String, String> entry : nodesNames.entrySet()) {
-            if (entry.getValue().equals(nodeName)) {
-                return Integer.parseInt(entry.getKey());
-            }
+        if (nodesIds.isEmpty()) {
+            createReversingMapping();
         }
 
-        return -1;
+        return nodesIds.getOrDefault(nodeName, -1);
+    }
+
+    private void createReversingMapping() {
+        nodesNames.entrySet().stream().forEach((entry) -> {
+            Integer key = Integer.parseInt(entry.getKey());
+            String value = entry.getValue();
+
+            nodesIds.put(value, key);
+        });
     }
 
     public static void main(String[] args) throws FileNotFoundException {
