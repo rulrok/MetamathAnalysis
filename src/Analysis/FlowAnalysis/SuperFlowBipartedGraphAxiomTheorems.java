@@ -2,6 +2,7 @@ package Analysis.FlowAnalysis;
 
 import Utils.HIPR.ParseHIPRFlowOutput;
 import Utils.HIPR.ParseHIPRInputfile;
+import Utils.HistogramUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -86,7 +88,9 @@ public class SuperFlowBipartedGraphAxiomTheorems {
         System.out.println("===========================================");
 
         System.out.println("Greatest path:");
-        Optional<Entry<Integer, List<String>>> foundPath = paths.entrySet().stream()
+        Optional<Entry<Integer, List<String>>> foundPath = paths
+                .entrySet()
+                .stream()
                 .collect(
                         Collectors.maxBy(Comparator.comparingInt((Entry<Integer, List<String>> e) -> {
                             return e.getValue().size();
@@ -97,44 +101,11 @@ public class SuperFlowBipartedGraphAxiomTheorems {
 
         System.out.println("\n===========================================");
         System.out.println("Histogram:\n");
-        Map<Integer, Integer> histogram = new TreeMap<>();
+        Map<Integer, Integer> histogram = HistogramUtils.CreateHistogramFromMapBasedOn(paths, List::size);
 
-        paths.entrySet().stream()
-                .forEach((Map.Entry<Integer, List<String>> entry) -> {
-                    List<String> path = entry.getValue();
-                    final int pathSize = path.size();
+        HistogramUtils.PrintHistogram(histogram);
 
-                    histogram.putIfAbsent(pathSize, 0);
-
-                    int count = histogram.get(pathSize);
-                    count++;
-                    histogram.put(pathSize, count);
-
-                });
-
-        Optional<Entry<Integer, Integer>> largestHistogramFoundEntry = histogram.entrySet().stream()
-                .collect(
-                        Collectors.maxBy(Comparator.comparingInt((Entry<Integer, Integer> e) -> {
-                            return e.getValue();
-                        }))
-                );
-        Integer largestHistogramValue = largestHistogramFoundEntry.get().getValue();
-
-        histogram.entrySet().stream().forEach((entry) -> {
-            Integer key = entry.getKey();
-            Integer value = entry.getValue();
-
-            String column = "";
-
-            for (int i = 0; i < ((double) value / largestHistogramValue) * 50.0; i++) {
-                column = column.concat("#");
-            }
-            System.out.printf("%02d : % 5d %s\n", key, value, column);
-        });
-
-        Integer pathsSum = histogram.entrySet()
-                .stream()
-                .collect(Collectors.summingInt(Entry<Integer, Integer>::getValue));
+        Integer pathsSum = HistogramUtils.SumValueEntries(histogram);
 
         System.out.println("Total of paths: " + pathsSum);
         int minus = hiprOutput.getNodesCount() - (int) hiprOutput.getMaxFlow();
