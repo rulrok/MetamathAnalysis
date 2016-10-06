@@ -124,16 +124,4 @@ public class ParseHIPRInputfile {
             nodesIds.put(value, key);
         });
     }
-
-    public static void main(String[] args) throws FileNotFoundException {
-        File file = new File("biparted-graph-super-axiom-theorem.txt");
-        ParseHIPRInputfile hIPRInputfile = new ParseHIPRInputfile(file);
-        hIPRInputfile.parse();
-
-        System.out.println(hIPRInputfile.getEdgesCount());
-        System.out.println(hIPRInputfile.getNodesCount());
-        System.out.println(hIPRInputfile.getS());
-        System.out.println(hIPRInputfile.getT());
-
-    }
 }

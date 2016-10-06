@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.ujmp.core.SparseMatrix;
-import org.ujmp.core.intmatrix.IntMatrix;
 
 /**
  *
@@ -28,7 +27,7 @@ public class ParseHIPRFlowOutput {
      * Parser data structures
      */
     private final File file;
-    private Set<String> nodesSinkSide;
+    private Set<String> nodesIDsSinkSide;
 
     private SparseMatrix graph;
 
@@ -45,12 +44,12 @@ public class ParseHIPRFlowOutput {
         this.file = file;
     }
 
-    public Set<String> getNodesOnSinkSide() {
-        return Collections.unmodifiableSet(nodesSinkSide);
+    public Set<String> getNodesIDsOnSinkSide() {
+        return Collections.unmodifiableSet(nodesIDsSinkSide);
     }
 
-    public boolean isNodeOnSinkSide(String name) {
-        return nodesSinkSide.contains(name);
+    public boolean isNodeOnSinkSide(String nodeId) {
+        return nodesIDsSinkSide.contains(nodeId);
     }
 
     public int getNodesCount() {
@@ -126,7 +125,7 @@ public class ParseHIPRFlowOutput {
             this.nodesCount = Integer.parseInt(nodesStr);
 
             graph = SparseMatrix.Factory.zeros(nodesCount, nodesCount);
-            nodesSinkSide = new HashSet<>(nodesCount + 1);
+            nodesIDsSinkSide = new HashSet<>(nodesCount + 1);
         }
 
         /*
@@ -166,7 +165,7 @@ public class ParseHIPRFlowOutput {
         }
 
         String[] split = nextLine.split(" ");
-        nodesSinkSide.add(split[1]);
+        nodesIDsSinkSide.add(split[1]);
 
         return true;
     }
@@ -186,15 +185,4 @@ public class ParseHIPRFlowOutput {
 
         return flowMatcher.matches();
     }
-
-    public static void main(String[] args) throws FileNotFoundException {
-
-        File file = new File("biparted-graph-super-axiom-theorem_maxflow.txt");
-        ParseHIPRFlowOutput flowOutput = new ParseHIPRFlowOutput(file);
-        flowOutput.parse();
-        System.out.println(flowOutput.graph.getAsInt(1, 126));
-        IntMatrix toIntMatrix = flowOutput.graph.toIntMatrix();
-
-    }
-
 }

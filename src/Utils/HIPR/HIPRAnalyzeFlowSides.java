@@ -27,30 +27,30 @@ import org.neo4j.helpers.collection.MapUtil;
  */
 public class HIPRAnalyzeFlowSides {
 
-    public static void AnalyzeSides(final GraphDatabaseService graph, ParseHIPRInputfile hipr_parsed, ParseHIPRFlowOutput hipr_results_parsed, final File outputFile) throws FileNotFoundException {
+    public static void AnalyzeSides(final GraphDatabaseService graph, ParseHIPRInputfile hiprInput, ParseHIPRFlowOutput hiprOutput, final File outputFile) throws FileNotFoundException {
 
         /**
          * Parse both files
          */
-        hipr_parsed.parse();
-        hipr_results_parsed.parse();
+        hiprInput.parse();
+        hiprOutput.parse();
 
         /**
          * Gather nodes on SINK side
          */
-        Set<String> nodeIDsOnSinkSide = hipr_results_parsed.getNodesOnSinkSide();
+        Set<String> nodeIDsOnSinkSide = hiprOutput.getNodesIDsOnSinkSide();
         Set<String> nodeNamesSinkSide = new HashSet<>();
         nodeIDsOnSinkSide.stream().forEach((nodeID) -> {
-            nodeNamesSinkSide.add(hipr_parsed.getNodeName(nodeID));
+            nodeNamesSinkSide.add(hiprInput.getNodeName(nodeID));
         });
         /**
          * Gather nodes on SOURCE side
          */
         Set<String> nodeNamesSourceSide = new HashSet<>();
-        Set<String> nodeIDsOnSourceSide = hipr_parsed.getAllNodeIDs();
+        Set<String> nodeIDsOnSourceSide = hiprInput.getAllNodeIDs();
         nodeIDsOnSourceSide.removeAll(nodeIDsOnSinkSide);
         nodeIDsOnSourceSide.stream().forEach((nodeID) -> {
-            nodeNamesSourceSide.add(hipr_parsed.getNodeName(nodeID));
+            nodeNamesSourceSide.add(hiprInput.getNodeName(nodeID));
         });
         /**
          * Output nodes
