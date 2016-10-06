@@ -82,34 +82,43 @@ public class SuperFlowBipartedGraphAxiomTheorems {
                 }
             }
         }
-        
+
         System.out.println("===========================================");
 
         System.out.println("Greatest path:");
-        Optional<Entry<Integer, List<String>>> collect = paths.entrySet().stream()
+        Optional<Entry<Integer, List<String>>> foundPath = paths.entrySet().stream()
                 .collect(
                         Collectors.maxBy(Comparator.comparingInt((Entry<Integer, List<String>> e) -> {
                             return e.getValue().size();
                         }))
                 );
-        Entry<Integer, List<String>> get = collect.get();
-        System.out.println(get);
+        Entry<Integer, List<String>> greatestPath = foundPath.get();
+        System.out.println(greatestPath);
 
+        System.out.println("\n===========================================");
+        System.out.println("Histogram:\n");
         Map<Integer, Integer> histogram = new TreeMap<>();
 
         paths.entrySet().stream()
-                .sorted((Map.Entry<Integer, List<String>> t, Map.Entry<Integer, List<String>> t1) -> Integer.compare(t.getValue().size(), t1.getValue().size()))
                 .forEach((Map.Entry<Integer, List<String>> entry) -> {
-                    Integer key = entry.getKey();
-                    List<String> list = entry.getValue();
+                    List<String> path = entry.getValue();
+                    final int pathSize = path.size();
 
-                    histogram.putIfAbsent(list.size(), 0);
+                    histogram.putIfAbsent(pathSize, 0);
 
-                    int count = histogram.get(list.size());
+                    int count = histogram.get(pathSize);
                     count++;
-                    histogram.put(list.size(), count);
+                    histogram.put(pathSize, count);
 
                 });
+
+        Optional<Entry<Integer, Integer>> largestHistogramFoundEntry = histogram.entrySet().stream()
+                .collect(
+                        Collectors.maxBy(Comparator.comparingInt((Entry<Integer, Integer> e) -> {
+                            return e.getValue();
+                        }))
+                );
+        Integer largestHistogramValue = largestHistogramFoundEntry.get().getValue();
 
         histogram.entrySet().stream().forEach((entry) -> {
             Integer key = entry.getKey();
@@ -117,10 +126,10 @@ public class SuperFlowBipartedGraphAxiomTheorems {
 
             String column = "";
 
-            for (int i = 0; i < value; i++) {
+            for (int i = 0; i < ((double) value / largestHistogramValue) * 50.0; i++) {
                 column = column.concat("#");
             }
-            System.out.printf("%d : %d %s\n", key, value, column);
+            System.out.printf("%02d : % 5d %s\n", key, value, column);
         });
 
         Integer pathsSum = histogram.entrySet()
