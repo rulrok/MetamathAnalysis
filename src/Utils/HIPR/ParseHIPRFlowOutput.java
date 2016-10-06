@@ -4,12 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.ujmp.core.Matrix;
 import org.ujmp.core.SparseMatrix;
 import org.ujmp.core.intmatrix.IntMatrix;
 
@@ -32,7 +30,7 @@ public class ParseHIPRFlowOutput {
     private final File file;
     private Set<String> nodesSinkSide;
 
-    SparseMatrix graph;
+    private SparseMatrix graph;
 
     private ParseState actualState = ParseState.INITIAL_STATE;
 
@@ -63,8 +61,13 @@ public class ParseHIPRFlowOutput {
         return edgesCount;
     }
 
-    public double getFlow() {
+    public double getMaxFlow() {
         return flow;
+    }
+
+    public double getArcFlow(int startNode, int endNode) {
+
+        return graph.getAsDouble(startNode, endNode);
     }
 
     public void parse() throws FileNotFoundException {
