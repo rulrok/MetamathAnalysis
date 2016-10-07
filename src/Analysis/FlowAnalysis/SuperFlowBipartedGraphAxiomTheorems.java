@@ -5,6 +5,8 @@ import Utils.HIPR.ParseHIPRInputfile;
 import Utils.HistogramUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -12,7 +14,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.TreeMap;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
  */
 public class SuperFlowBipartedGraphAxiomTheorems {
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws FileNotFoundException, IOException {
 
         /**
          * Parse the input graph file of HIPR.
@@ -41,6 +42,7 @@ public class SuperFlowBipartedGraphAxiomTheorems {
         int S = hiprInput.getS();
 
         Map<Integer, List<String>> paths = new TreeMap<>();
+        Map<Integer, List<String>> reversePaths = new TreeMap<>();
 
         /**
          * The u vertices are located in the first component of the biparted
@@ -52,6 +54,11 @@ public class SuperFlowBipartedGraphAxiomTheorems {
             //verify if S has and outgoing edge to the actual node
             if (hiprOutput.getArcFlow(S, startingU) <= 0) {
                 continue;
+            }
+
+            String startingUName = hiprInput.getNodeName(startingU);
+            if (startingUName.endsWith("'")) {
+                throw new RuntimeException(startingUName);
             }
 
             pathCount++;
@@ -85,7 +92,75 @@ public class SuperFlowBipartedGraphAxiomTheorems {
             }
         }
 
+        /**
+         * The ideia is similar to the above loop, but here the reverse path it
+         * taken.
+         */
+        for (int i1 = 1, pathCount = 0; i1 <= nodesCount; i1++) {
+            final double arcFlow = hiprOutput.getArcFlow(S, i1);
+
+            //verify if S has and outgoing edge to the actual node
+            if (i1 == S || arcFlow > 0) {
+                continue;
+            }
+
+            String i1Name = hiprInput.getNodeName(i1);
+            if (i1Name.endsWith("'")) {
+                continue;
+            }
+
+            pathCount++;
+
+            List<String> actualPath = new ArrayList<>();
+            reversePaths.put(pathCount, actualPath);
+
+            actualPath.add(i1Name);
+
+            String i2Name = i1Name.concat("'");
+            int i2 = hiprInput.getNodeId(i2Name);
+
+            //An edge has been found from S to some node
+            for (int j1 = 0; j1 <= nodesCount; j1++) {
+
+                if (hiprOutput.getArcFlow(j1, i2) > 0) {
+
+                    String j1Name = hiprInput.getNodeName(j1);
+                    actualPath.add(j1Name);
+
+                    if (j1Name.equals("S") || j1Name.endsWith("'")) {
+                        throw new RuntimeException("Some possible inconsistency has been found.\nDestin node is " + j1Name);
+                    }
+
+                    String nextI2Name = j1Name.concat("'");
+                    int nextI2 = hiprInput.getNodeId(nextI2Name);
+
+                    if (nextI2 == -1) {
+                        break; //'Tis the end of the actual path
+                    }
+
+                    j1 = -1;
+                    i2 = nextI2; //It will become 0 at the next iteration
+                }
+            }
+        }
+
         System.out.println("===========================================");
+
+        File pathOutput = new File("path.txt");
+        try (FileWriter fileWriter = new FileWriter(pathOutput)) {
+            for (Entry<Integer, List<String>> e : paths.entrySet()) {
+                fileWriter.append(e.toString());
+                fileWriter.append("\r\n");
+            }
+        }
+
+        File pathReverseOutput = new File("path_reverse.txt");
+        try (FileWriter fileWriter = new FileWriter(pathReverseOutput)) {
+            for (Entry<Integer, List<String>> e : reversePaths.entrySet()) {
+                fileWriter.append(e.toString());
+                fileWriter.append("\r\n");
+            }
+        }
 
         System.out.println("Greatest path:");
         Optional<Entry<Integer, List<String>>> foundPath = paths
@@ -100,26 +175,33 @@ public class SuperFlowBipartedGraphAxiomTheorems {
         System.out.println(greatestPath);
 
         System.out.println("\n===========================================");
+
+        System.out.println("Greatest reverse path:");
+        Optional<Entry<Integer, List<String>>> foundReversePath = reversePaths
+                .entrySet()
+                .stream()
+                .collect(
+                        Collectors.maxBy(Comparator.comparingInt((Entry<Integer, List<String>> e) -> {
+                            return e.getValue().size();
+                        }))
+                );
+        Entry<Integer, List<String>> greatestReversePath = foundReversePath.get();
+        System.out.println(greatestReversePath);
+
+        System.out.println("\n===========================================");
         System.out.println("Histogram:\n");
-        Map<Integer, Integer> histogram = HistogramUtils.CreateHistogramFromMapBasedOn(paths, List::size);
+        Map<Integer, Integer> pathsHistogram = HistogramUtils.CreateHistogramFromMapBasedOn(paths, List::size);
+        Map<Integer, Integer> reversePathsHistogram = HistogramUtils.CreateHistogramFromMapBasedOn(reversePaths, List::size);
 
-        HistogramUtils.PrintHistogram(histogram);
-
-        Integer pathsSum = HistogramUtils.SumValueEntries(histogram);
+        Integer pathsSum = HistogramUtils.SumValueEntries(pathsHistogram);
+        Integer reverPathsSum = HistogramUtils.SumValueEntries(reversePathsHistogram);
 
         System.out.println("Total of paths: " + pathsSum);
-        int minus = hiprOutput.getNodesCount() - (int) hiprOutput.getMaxFlow();
+        System.out.println("Total of reverse paths: " + reverPathsSum);
+        System.out.println("");
 
-        System.out.println("Nodes - Flow: " + minus);
+        int NodeMinusFlow = hiprOutput.getNodesCount() - (int) hiprOutput.getMaxFlow();
 
-        int compare = Integer.compare(pathsSum, minus);
-
-        if (compare == 0) {
-            System.out.println("The paths are consistent");
-        } else if (compare < 0) {
-            System.out.printf("The paths are inconsistent (%d)\n", compare);
-        } else {
-            System.out.printf("The paths are inconsistent (%d)\n", compare);
-        }
+        System.out.printf("Path nodes (%d) - Flow(%.1f) = %d\n", hiprOutput.getNodesCount(), hiprOutput.getMaxFlow(), NodeMinusFlow);
     }
 }
