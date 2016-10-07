@@ -2,7 +2,6 @@ package Analysis.FlowAnalysis;
 
 import Utils.HIPR.ParseHIPRFlowOutput;
 import Utils.HIPR.ParseHIPRInputfile;
-import Utils.HistogramUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -15,7 +14,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.TreeMap;
-import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -102,7 +100,7 @@ public class SuperFlowBipartedGraphAxiomTheorems {
             final double arcFlow = hiprOutput.getArcFlow(S, i1);
 
             //verify if S has and outgoing edge to the actual node
-            if (i1 == S || arcFlow > 0) {
+            if (i1 == S || arcFlow != 0) {
                 continue;
             }
 
@@ -124,13 +122,13 @@ public class SuperFlowBipartedGraphAxiomTheorems {
             //An edge has been found from S to some node
             for (int j1 = 0; j1 <= nodesCount; j1++) {
 
-                if (hiprOutput.getArcFlow(j1, i2) > 0) {
+                if (hiprOutput.getArcFlow(j1, i2) == 1) {
 
                     String j1Name = hiprInput.getNodeName(j1);
-                    actualPath.add(j1Name);
-
                     if (j1Name.equals("S") || j1Name.endsWith("'")) {
                         throw new RuntimeException("Some possible inconsistency has been found.\nDestin node is " + j1Name);
+                    } else {
+                        actualPath.add(j1Name);
                     }
 
                     String nextI2Name = j1Name.concat("'");
