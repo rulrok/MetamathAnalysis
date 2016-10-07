@@ -9,11 +9,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -148,7 +150,16 @@ public class SuperFlowBipartedGraphAxiomTheorems {
 
         File pathOutput = new File("path.txt");
         try (FileWriter fileWriter = new FileWriter(pathOutput)) {
-            for (Entry<Integer, List<String>> e : paths.entrySet()) {
+            Iterator<Entry<Integer, List<String>>> iterator = paths.entrySet()
+                    .stream()
+                    .sorted(
+                            Comparator.comparingInt((Entry<Integer, List<String>> t) -> {
+                                return t.getValue().size();
+                            })
+                    ).iterator();
+            while (iterator.hasNext()) {
+                Entry<Integer, List<String>> e = iterator.next();
+
                 fileWriter.append(e.toString());
                 fileWriter.append("\r\n");
             }
@@ -156,7 +167,16 @@ public class SuperFlowBipartedGraphAxiomTheorems {
 
         File pathReverseOutput = new File("path_reverse.txt");
         try (FileWriter fileWriter = new FileWriter(pathReverseOutput)) {
-            for (Entry<Integer, List<String>> e : reversePaths.entrySet()) {
+            Iterator<Entry<Integer, List<String>>> iterator = reversePaths.entrySet()
+                    .stream()
+                    .sorted(
+                            Comparator.comparingInt((Entry<Integer, List<String>> t) -> {
+                                return t.getValue().size();
+                            })
+                    ).iterator();
+            while (iterator.hasNext()) {
+                Entry<Integer, List<String>> e = iterator.next();
+
                 fileWriter.append(e.toString());
                 fileWriter.append("\r\n");
             }
@@ -188,16 +208,13 @@ public class SuperFlowBipartedGraphAxiomTheorems {
         Entry<Integer, List<String>> greatestReversePath = foundReversePath.get();
         System.out.println(greatestReversePath);
 
-        System.out.println("\n===========================================");
-        System.out.println("Histogram:\n");
-        Map<Integer, Integer> pathsHistogram = HistogramUtils.CreateHistogramFromMapBasedOn(paths, List::size);
-        Map<Integer, Integer> reversePathsHistogram = HistogramUtils.CreateHistogramFromMapBasedOn(reversePaths, List::size);
+        System.out.println("\n===========================================\n");
+//        System.out.println("Histogram:\n");
+//        Map<Integer, Integer> pathsHistogram = HistogramUtils.CreateHistogramFromMapBasedOn(paths, List::size);
+//        Map<Integer, Integer> reversePathsHistogram = HistogramUtils.CreateHistogramFromMapBasedOn(reversePaths, List::size);
 
-        Integer pathsSum = HistogramUtils.SumValueEntries(pathsHistogram);
-        Integer reverPathsSum = HistogramUtils.SumValueEntries(reversePathsHistogram);
-
-        System.out.println("Total of paths: " + pathsSum);
-        System.out.println("Total of reverse paths: " + reverPathsSum);
+        System.out.println("Total of paths: " + paths.size());
+        System.out.println("Total of reverse paths: " + reversePaths.size());
         System.out.println("");
 
         int NodeMinusFlow = hiprOutput.getNodesCount() - (int) hiprOutput.getMaxFlow();
