@@ -32,10 +32,6 @@ public class MaxFlowBipartedAxiomTheorems {
         System.out.println("Copying original graph...");
         GraphDatabaseService graph = GraphFactory.copyGraph("db/biparted-graph-axiom-theorem-nomeredith", "db/".concat(OUTPUT_NAME));
 
-        System.out.println("Removing isolated nodes...");
-        RemoveIsolatedNodes isolatedNodes = new RemoveIsolatedNodes(graph);
-        isolatedNodes.execute();
-
         System.out.println("Creating super sink and source...");
         SuperSinkSuperSource ssss = new SuperSinkSuperSource(graph);
         ssss
