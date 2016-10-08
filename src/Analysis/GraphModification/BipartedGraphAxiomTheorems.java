@@ -23,6 +23,7 @@ public class BipartedGraphAxiomTheorems {
                 .addCustomFilter(n -> {
                     return n.getProperty("name").toString().startsWith("dummy");
                 })
+                .addComponentHeadDFS("ax-meredith")
                 .addFilterLabel(Label.CONSTANT)
                 .addFilterLabel(Label.DEFINITION)
                 .addFilterLabel(Label.HYPOTHESIS)
@@ -37,7 +38,7 @@ public class BipartedGraphAxiomTheorems {
 
         System.out.println("Biparting the graph...");
         BipartGraph bg = new BipartGraph(inputGraph);
-        GraphDatabaseService graph = bg.execute("db/biparted-graph-axiom-theorem");
+        GraphDatabaseService graph = bg.execute("db/biparted-graph-axiom-theorem-nomeredith");
 
     }
 
