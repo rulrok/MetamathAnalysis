@@ -26,17 +26,11 @@ import org.neo4j.graphdb.traversal.Evaluation;
  */
 public class MaxFlowBipartedAxiomTheorems {
 
-    private static final String OUTPUT_NAME = "biparted-graph-super-axiom-theorem";
+    private static final String OUTPUT_NAME = "biparted-graph-super-axiom-theorem-nomeredith";
 
     public static void main(String[] args) throws FileNotFoundException {
         System.out.println("Copying original graph...");
-        GraphDatabaseService graph = GraphFactory.copyGraph("db/biparted-graph-axiom-theorem", "db/".concat(OUTPUT_NAME));
-
-        System.out.println("Removing ax-meredith component...");
-        GraphNodeRemover gnr = new GraphNodeRemover(graph);
-        gnr
-                .addComponentHeadDFS("ax-meredith")
-                .execute();
+        GraphDatabaseService graph = GraphFactory.copyGraph("db/biparted-graph-axiom-theorem-nomeredith", "db/".concat(OUTPUT_NAME));
 
         System.out.println("Removing isolated nodes...");
         RemoveIsolatedNodes isolatedNodes = new RemoveIsolatedNodes(graph);
