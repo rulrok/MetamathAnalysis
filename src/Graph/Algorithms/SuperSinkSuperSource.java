@@ -41,13 +41,29 @@ public class SuperSinkSuperSource implements LabelFiltered {
         this.graph = graph;
     }
 
+    /**
+     * @deprecated @return
+     */
     public SuperSinkSuperSource removeDefaultSourceEvaluator() {
         DEFAULT_SOURCE_EVALUATOR = Evaluators.all();
         return this;
     }
 
+    /**
+     * @deprecated @return
+     */
     public SuperSinkSuperSource removeDefaultSinkEvaluator() {
         DEFAULT_SINK_EVALUATOR = Evaluators.all();
+        return this;
+    }
+
+    public SuperSinkSuperSource replaceDefaultSourceEvaluator(Evaluator evaluator) {
+        DEFAULT_SOURCE_EVALUATOR = evaluator;
+        return this;
+    }
+
+    public SuperSinkSuperSource replaceDefaultSinkEvaluator(Evaluator evaluator) {
+        DEFAULT_SINK_EVALUATOR = evaluator;
         return this;
     }
 

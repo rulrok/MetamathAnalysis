@@ -39,8 +39,7 @@ public class MaxFlowBipartedAxiomTheorems {
         System.out.println("Creating super sink and source...");
         SuperSinkSuperSource ssss = new SuperSinkSuperSource(graph);
         ssss
-                .removeDefaultSourceEvaluator()
-                .addCustomSourceEvaluator((Path e) -> {
+                .replaceDefaultSourceEvaluator((Path e) -> {
                     Node endNode = e.endNode();
                     String nodeName = endNode.getProperty("name").toString();
 
@@ -50,8 +49,7 @@ public class MaxFlowBipartedAxiomTheorems {
 
                     return Evaluation.EXCLUDE_AND_CONTINUE;
                 })
-                .removeDefaultSinkEvaluator()
-                .addCustomSinkEvaluator(e -> {
+                .replaceDefaultSinkEvaluator(e -> {
                     Node endNode = e.endNode();
                     String nodeName = endNode.getProperty("name").toString();
 
