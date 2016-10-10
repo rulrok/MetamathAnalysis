@@ -81,10 +81,10 @@ public class HiprFormatter implements IGraphFormatter {
             long T_id = usg.uniqueSequencialId(T.getId());
 
             int s_index = output.indexOf("<s_id>");
-            output.replace(s_index, s_index + Long.toString((S_id)).length() + 1, Long.toString(S_id));
+            output.replace(s_index, s_index + "<s_id>".length(), Long.toString(S_id));
 
             int t_index = output.indexOf("<t_id>");
-            output.replace(t_index, t_index + Long.toString((T_id)).length() + 1, Long.toString(T_id));
+            output.replace(t_index, t_index + "<t_id>".length(), Long.toString(T_id));
 
             tx.failure();
         }
