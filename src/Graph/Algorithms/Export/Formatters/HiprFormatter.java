@@ -2,9 +2,9 @@ package Graph.Algorithms.Export.Formatters;
 
 import Graph.Algorithms.Export.EdgeWeigher.IEdgeWeigher;
 import Graph.Algorithms.Export.UniqueSequenceGenerator;
-import Graph.Label;
 import java.util.List;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
@@ -20,10 +20,10 @@ public class HiprFormatter implements IGraphFormatter {
     private final IEdgeWeigher weigher;
 
     private final String SourceNodeName;
-    private Label SourceLabel = Label.AXIOM;
+    private Label SourceLabel = Graph.Label.AXIOM;
 
     private final String SinkNodeName;
-    private Label SinkLabel = Label.THEOREM;
+    private Label SinkLabel = Graph.Label.THEOREM;
 
     public HiprFormatter(String sourceNodeName, String sinkNodeName, IEdgeWeigher weigher) {
         SourceNodeName = sourceNodeName;
