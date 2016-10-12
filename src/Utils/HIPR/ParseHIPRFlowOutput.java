@@ -39,6 +39,7 @@ public class ParseHIPRFlowOutput {
     private int nodesCount;
     private int edgesCount;
     private double flow;
+    private boolean suppressConsoleOutput = false;
 
     public ParseHIPRFlowOutput(File file) {
         this.file = file;
@@ -67,6 +68,10 @@ public class ParseHIPRFlowOutput {
     public double getArcFlow(int startNode, int endNode) {
 
         return graph.getAsDouble(startNode, endNode);
+    }
+
+    public void suppressConsoleOutput() {
+        suppressConsoleOutput = true;
     }
 
     public void parse() throws FileNotFoundException {
@@ -113,7 +118,9 @@ public class ParseHIPRFlowOutput {
 
     private boolean parse_initial_state_line(String nextLine) {
 
-        System.out.println(nextLine);
+        if (!suppressConsoleOutput) {
+            System.out.println(nextLine);
+        }
 
         /*
          * Nodes pattern matcher
@@ -170,19 +177,21 @@ public class ParseHIPRFlowOutput {
         return true;
     }
 
+    private static final Pattern FLOW_PATTERN = Pattern.compile("^f +?([0-9]+) +?([0-9]+) +?([0-9]+)$", Pattern.CASE_INSENSITIVE);
+    private static final Matcher FLOW_MATCHER = FLOW_PATTERN.matcher("");
+
     private boolean parse_flow_values(String nextLine) {
-        Pattern flowPat = Pattern.compile("^f\\s+([0-9]+)\\s+([0-9]+)\\s+([0-9]+)", Pattern.CASE_INSENSITIVE);
-        Matcher flowMatcher = flowPat.matcher(nextLine);
 
-        if (flowMatcher.matches()) {
+        FLOW_MATCHER.reset(nextLine);
+        if (FLOW_MATCHER.matches()) {
 
-            int originNode = Integer.parseInt(flowMatcher.group(1));
-            int destinNode = Integer.parseInt(flowMatcher.group(2));
-            int edgeCost = Integer.parseInt(flowMatcher.group(3));
+            int originNode = Integer.parseInt(FLOW_MATCHER.group(1));
+            int destinNode = Integer.parseInt(FLOW_MATCHER.group(2));
+            int edgeCost = Integer.parseInt(FLOW_MATCHER.group(3));
 
             graph.setAsInt(edgeCost, originNode, destinNode);
         }
 
-        return flowMatcher.matches();
+        return FLOW_MATCHER.matches();
     }
 }
