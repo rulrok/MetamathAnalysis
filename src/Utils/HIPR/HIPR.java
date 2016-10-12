@@ -14,7 +14,7 @@ public class HIPR {
     public HIPR() {
     }
 
-    public int execute(String inputFilePath, String outputFilePath) {
+    public static int execute(String inputFilePath, String outputFilePath) {
         try {
             Runtime rt = Runtime.getRuntime();
 
