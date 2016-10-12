@@ -2,6 +2,7 @@ package Analysis.FlowAnalysis;
 
 import Utils.HIPR.ParseHIPRFlowOutput;
 import Utils.HIPR.ParseHIPRInputfile;
+import Utils.HistogramUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -207,9 +208,18 @@ public class SuperFlowBipartedGraphAxiomTheorems {
         System.out.println(greatestReversePath);
 
         System.out.println("\n===========================================\n");
-//        System.out.println("Histogram:\n");
-//        Map<Integer, Integer> pathsHistogram = HistogramUtils.CreateHistogramFromMapBasedOn(paths, List::size);
-//        Map<Integer, Integer> reversePathsHistogram = HistogramUtils.CreateHistogramFromMapBasedOn(reversePaths, List::size);
+
+        System.out.println("Histograms:");
+        System.out.println("Normal paths:\n");
+
+        Map<Integer, Integer> pathsHistogram = HistogramUtils.CreateHistogramFromMapBasedOn(paths, List::size);
+        HistogramUtils.PrintHistogram(pathsHistogram);
+        System.out.println("Reverse paths:\n");
+
+        Map<Integer, Integer> reversePathsHistogram = HistogramUtils.CreateHistogramFromMapBasedOn(reversePaths, List::size);
+        HistogramUtils.PrintHistogram(reversePathsHistogram);
+
+        System.out.println("\n===========================================\n");
 
         System.out.println("Total of paths: " + paths.size());
         System.out.println("Total of reverse paths: " + reversePaths.size());
