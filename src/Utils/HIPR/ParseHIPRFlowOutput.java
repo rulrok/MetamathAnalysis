@@ -2,9 +2,11 @@ package Utils.HIPR;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Scanner;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -74,24 +76,21 @@ public class ParseHIPRFlowOutput {
         suppressConsoleOutput = true;
     }
 
-    public void parse() throws FileNotFoundException {
-        Scanner scanner = new Scanner(file);
-        while (scanner.hasNextLine()) {
-            String nextLine = scanner.nextLine();
+    public void parse() throws FileNotFoundException, IOException {
 
+        List<String> readAllLines = Files.readAllLines(file.toPath());
+
+        readAllLines.stream().forEach((nextLine) -> {
+            //Don't need to change the state of the parser
             boolean parsedOK = parse_line(nextLine);
-
-            if (parsedOK) {
-                //Don't need to change the state of the parser
-                continue;
+            if (!(parsedOK)) {
+                if (nextLine.startsWith("c flow values")) {
+                    actualState = ParseState.FLOW_VALUES;
+                } else if (nextLine.startsWith("c nodes on the sink side")) {
+                    actualState = ParseState.NODES_SINK_SIDE;
+                }
             }
-            if (nextLine.startsWith("c flow values")) {
-                actualState = ParseState.FLOW_VALUES;
-            } else if (nextLine.startsWith("c nodes on the sink side")) {
-                actualState = ParseState.NODES_SINK_SIDE;
-            }
-
-        }
+        });
     }
 
     /**
