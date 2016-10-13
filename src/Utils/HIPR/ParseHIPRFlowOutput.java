@@ -40,7 +40,7 @@ public class ParseHIPRFlowOutput {
      */
     private int nodesCount;
     private int edgesCount;
-    private double flow;
+    private double maxFlow;
     private boolean suppressConsoleOutput = false;
 
     public ParseHIPRFlowOutput(File file) {
@@ -64,10 +64,14 @@ public class ParseHIPRFlowOutput {
     }
 
     public double getMaxFlow() {
-        return flow;
+        return maxFlow;
     }
 
     public double getArcFlow(int startNode, int endNode) {
+        if (maxFlow == 0) {
+            //We are sure no edge has flow passing through it.
+            return 0;
+        }
 
         return graph.getAsDouble(startNode, endNode);
     }
@@ -81,6 +85,7 @@ public class ParseHIPRFlowOutput {
         List<String> readAllLines = Files.readAllLines(file.toPath());
 
         readAllLines.stream().forEach((nextLine) -> {
+
             //Don't need to change the state of the parser
             boolean parsedOK = parse_line(nextLine);
             if (!(parsedOK)) {
@@ -90,6 +95,7 @@ public class ParseHIPRFlowOutput {
                     actualState = ParseState.NODES_SINK_SIDE;
                 }
             }
+
         });
     }
 
@@ -116,6 +122,15 @@ public class ParseHIPRFlowOutput {
     }
 
     private boolean parse_initial_state_line(String nextLine) {
+
+        /*
+         * Initial state matcher
+         */
+        Pattern pattern = Pattern.compile("^c +(flow values|nodes on the).*", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(nextLine);
+        if (matcher.matches()) {
+            return false;
+        }
 
         if (!suppressConsoleOutput) {
             System.out.println(nextLine);
@@ -151,22 +166,17 @@ public class ParseHIPRFlowOutput {
         Matcher flowMatcher = flowPat.matcher(nextLine);
         if (flowMatcher.matches()) {
             String flowStr = flowMatcher.group(1);
-            this.flow = Double.parseDouble(flowStr);
+            this.maxFlow = Double.parseDouble(flowStr);
         }
 
-        /*
-         * Initial state matcher
-         */
-        Pattern pattern = Pattern.compile("^c +(flow values|nodes on the).*", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(nextLine);
-        return !matcher.matches();
+        return true;
     }
 
     private boolean parse_nodes_sink_side_line(String nextLine) {
         Pattern pattern = Pattern.compile("^c +[0-9]+", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(nextLine);
-        boolean matches = matcher.matches();
-        if (!matches) {
+
+        if (!matcher.matches()) {
             return false;
         }
 
@@ -181,6 +191,10 @@ public class ParseHIPRFlowOutput {
 
     private boolean parse_flow_values(String nextLine) {
 
+        if (maxFlow == 0) {
+            return false;
+        }
+
         FLOW_MATCHER.reset(nextLine);
         if (FLOW_MATCHER.matches()) {
 
@@ -188,9 +202,13 @@ public class ParseHIPRFlowOutput {
             int destinNode = Integer.parseInt(FLOW_MATCHER.group(2));
             int edgeCost = Integer.parseInt(FLOW_MATCHER.group(3));
 
-            graph.setAsInt(edgeCost, originNode, destinNode);
-        }
+            if (edgeCost > 0) {
+                graph.setAsInt(edgeCost, originNode, destinNode);
+            }
 
-        return FLOW_MATCHER.matches();
+            return true;
+        } else {
+            return false;
+        }
     }
 }
