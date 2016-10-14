@@ -1,12 +1,12 @@
 package Utils.HIPR;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -82,9 +82,8 @@ public class ParseHIPRFlowOutput {
 
     public void parse() throws FileNotFoundException, IOException {
 
-        List<String> readAllLines = Files.readAllLines(file.toPath());
-
-        readAllLines.stream().forEach((nextLine) -> {
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        br.lines().forEach((nextLine) -> {
 
             //Don't need to change the state of the parser
             boolean parsedOK = parse_line(nextLine);
