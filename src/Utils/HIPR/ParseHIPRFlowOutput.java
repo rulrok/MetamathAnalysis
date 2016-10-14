@@ -22,7 +22,7 @@ public class ParseHIPRFlowOutput {
      * Parser internal states
      */
     private enum ParseState {
-        INITIAL_STATE, FLOW_VALUES, NODES_SINK_SIDE
+        INITIAL_STATE, FLOW_VALUES, NODES_SINK_SIDE, FINISH_STATE
     }
 
     /*
@@ -97,6 +97,8 @@ public class ParseHIPRFlowOutput {
             }
 
         });
+
+        change_actual_state(ParseState.FINISH_STATE);
     }
 
     private void change_actual_state(ParseState newState) {
@@ -137,6 +139,8 @@ public class ParseHIPRFlowOutput {
                 return parse_nodes_sink_side_line(nextLine);
             case FLOW_VALUES:
                 return parse_flow_values_line(nextLine);
+            case FINISH_STATE:
+                throw new RuntimeException("The parser has already finished parsing lines. New lines are not expected.");
             default:
                 return false;
         }
