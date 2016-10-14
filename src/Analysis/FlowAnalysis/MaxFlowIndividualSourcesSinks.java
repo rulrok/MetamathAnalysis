@@ -167,10 +167,10 @@ public class MaxFlowIndividualSourcesSinks {
                 stopWatch.start("Processing for source: " + source.getProperty("name"));
                 System.out.print("Processing for source: " + source.getProperty("name"));
 
-                String sourceName = source.getProperty("name").toString();
+                String sourceName = source.getProperty("name").toString().concat("'");
                 int sourceId = hiprInput.getNodeId(sourceName);
                 for (Node sink : sinks) {
-                    String sinkName = sink.getProperty("name").toString();
+                    String sinkName = sink.getProperty("name").toString().replace("'", "");
                     int sinkId = hiprInput.getNodeId(sinkName);
 
                     try (RandomAccessFile file = new RandomAccessFile(hiprInputFile, "rw")) {
