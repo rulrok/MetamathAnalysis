@@ -90,13 +90,34 @@ public class ParseHIPRFlowOutput {
             boolean parsedOK = parse_line(nextLine);
             if (!(parsedOK)) {
                 if (nextLine.startsWith("c flow values")) {
-                    actualState = ParseState.FLOW_VALUES;
+                    change_actual_state(ParseState.FLOW_VALUES);
                 } else if (nextLine.startsWith("c nodes on the sink side")) {
-                    actualState = ParseState.NODES_SINK_SIDE;
+                    change_actual_state(ParseState.NODES_SINK_SIDE);
                 }
             }
 
         });
+    }
+
+    private void change_actual_state(ParseState newState) {
+        if (actualState == ParseState.INITIAL_STATE) {
+            //If we are changing from the INITIAL_STATE,
+            //execute the needed actions
+            post_initial_state_actions();
+        }
+
+        actualState = newState;
+    }
+
+    /**
+     * After knowing the flow value, we can decided to not instanciate a new
+     * sparse matrix, since all value will be zero.
+     */
+    private void post_initial_state_actions() {
+        if (maxFlow > 0) {
+            graph = SparseMatrix.Factory.zeros(nodesCount, nodesCount);
+        }
+        nodesIDsSinkSide = new HashSet<>(nodesCount + 1);
     }
 
     /**
@@ -115,7 +136,7 @@ public class ParseHIPRFlowOutput {
             case NODES_SINK_SIDE:
                 return parse_nodes_sink_side_line(nextLine);
             case FLOW_VALUES:
-                return parse_flow_values(nextLine);
+                return parse_flow_values_line(nextLine);
             default:
                 return false;
         }
@@ -144,9 +165,6 @@ public class ParseHIPRFlowOutput {
         if (nodesMatcher.matches()) {
             String nodesStr = nodesMatcher.group(1);
             this.nodesCount = Integer.parseInt(nodesStr);
-
-            graph = SparseMatrix.Factory.zeros(nodesCount, nodesCount);
-            nodesIDsSinkSide = new HashSet<>(nodesCount + 1);
         }
 
         /*
@@ -189,26 +207,26 @@ public class ParseHIPRFlowOutput {
     private static final Pattern FLOW_PATTERN = Pattern.compile("^f +?([0-9]+) +?([0-9]+) +?([0-9]+)$", Pattern.CASE_INSENSITIVE);
     private static final Matcher FLOW_MATCHER = FLOW_PATTERN.matcher("");
 
-    private boolean parse_flow_values(String nextLine) {
+    private boolean parse_flow_values_line(String nextLine) {
 
         if (maxFlow == 0) {
             return false;
         }
 
         FLOW_MATCHER.reset(nextLine);
-        if (FLOW_MATCHER.matches()) {
-
-            int originNode = Integer.parseInt(FLOW_MATCHER.group(1));
-            int destinNode = Integer.parseInt(FLOW_MATCHER.group(2));
-            int edgeCost = Integer.parseInt(FLOW_MATCHER.group(3));
-
-            if (edgeCost > 0) {
-                graph.setAsInt(edgeCost, originNode, destinNode);
-            }
-
-            return true;
-        } else {
+        if (!FLOW_MATCHER.matches()) {
             return false;
         }
+
+        int originNode = Integer.parseInt(FLOW_MATCHER.group(1));
+        int destinNode = Integer.parseInt(FLOW_MATCHER.group(2));
+        int edgeCost = Integer.parseInt(FLOW_MATCHER.group(3));
+
+        if (edgeCost > 0) {
+            graph.setAsInt(edgeCost, originNode, destinNode);
+        }
+
+        return true;
+
     }
 }
