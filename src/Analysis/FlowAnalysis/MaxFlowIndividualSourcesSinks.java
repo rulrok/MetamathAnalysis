@@ -177,8 +177,8 @@ public class MaxFlowIndividualSourcesSinks {
                         int length = file.readLine().length();
                         file.seek(length);
                         file.write("\r\n".getBytes());
-                        file.write(String.format("n %06d s\r\n", sourceId).getBytes());
-                        file.write(String.format("n %06d t\r\n", sinkId).getBytes());
+                        file.write(String.format("n %06d s" + System.lineSeparator(), sourceId).getBytes());
+                        file.write(String.format("n %06d t" + System.lineSeparator(), sinkId).getBytes());
                     } catch (IOException ex) {
                         Logger.getLogger(MaxFlowIndividualSourcesSinks.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -189,7 +189,7 @@ public class MaxFlowIndividualSourcesSinks {
                     hiprOutput.suppressConsoleOutput();
                     hiprOutput.parse();
 
-                    fw.write(String.format("%s -> %s flow: %04.2f\n", sourceName, sinkName, hiprOutput.getMaxFlow()));
+                    fw.write(String.format("%s -> %s flow: %04.2f" + System.lineSeparator(), sourceName, sinkName, hiprOutput.getMaxFlow()));
                     fw.flush();
                 }
                 stopWatch.stop();
