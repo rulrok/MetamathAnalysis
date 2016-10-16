@@ -33,7 +33,12 @@ public class HIPRAnalyzeFlowSides {
          * Parse both files
          */
         hiprInput.parse();
-        hiprOutput.parse();
+        try {
+            hiprOutput.parse();
+        } catch (IOException ex) {
+            Logger.getLogger(HIPRAnalyzeFlowSides.class.getName()).log(Level.SEVERE, null, ex);
+            return;
+        }
 
         /**
          * Gather nodes on SINK side
