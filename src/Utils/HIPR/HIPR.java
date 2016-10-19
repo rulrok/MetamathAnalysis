@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jodd.io.StreamGobbler;
 
 /**
  *
@@ -18,29 +19,43 @@ public class HIPR {
         try {
             Runtime rt = Runtime.getRuntime();
 
-            String command;
+            String[] command;
 
             switch (File.separatorChar) {
                 case '\\':
                     //Windows
-                    command = String.format("cmd.exe /c type %s | .\\lib\\hipr\\hi_pr.exe > %s", inputFilePath, outputFilePath);
+                    command = new String[]{
+                        String.format("cmd.exe /c type %s | .\\lib\\hipr\\hi_pr.exe > %s", inputFilePath, outputFilePath)
+                    };
                     break;
                 case '/':
                     //Unix
-                    command = String.format("cat %s | ./hi_pr.exe > %s", inputFilePath, outputFilePath);
+                    command = new String[]{
+                        "/bin/sh",
+                        "-c",
+                        String.format("cat %s | ./lib/hipr/hi_pr > %s", inputFilePath, outputFilePath)
+                    };
                     break;
                 default:
-                    command = "exit";
+                    command = new String[]{
+                        "exit"
+                    };
                     break;
             }
-
             Process pr = rt.exec(command);
 
+            // any error message?
+            StreamGobbler errorGobbler = new StreamGobbler(pr.getErrorStream());
+
+            // any output?
+            StreamGobbler outputGobbler = new StreamGobbler(pr.getInputStream());
+
+            // kick them off
+            errorGobbler.start();
+            outputGobbler.start();
+
             return pr.waitFor();
-        } catch (IOException ex) {
-            Logger.getLogger(HIPR.class.getName()).log(Level.SEVERE, null, ex);
-            return -1;
-        } catch (InterruptedException ex) {
+        } catch (IOException | InterruptedException ex) {
             Logger.getLogger(HIPR.class.getName()).log(Level.SEVERE, null, ex);
             return -1;
         }
