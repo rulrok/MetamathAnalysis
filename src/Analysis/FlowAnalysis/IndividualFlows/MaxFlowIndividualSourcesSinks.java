@@ -1,4 +1,4 @@
-package Analysis.FlowAnalysis;
+package Analysis.FlowAnalysis.IndividualFlows;
 
 import Graph.Algorithms.Decomposition.Evaluators.SinkEvaluator;
 import Graph.Algorithms.Decomposition.Evaluators.SourceEvaluator;

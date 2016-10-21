@@ -1,4 +1,4 @@
-package Analysis.FlowAnalysis;
+package Analysis.FlowAnalysis.Bipartite;
 
 import Utils.HIPR.ParseHIPRFlowOutput;
 import Utils.HIPR.ParseHIPRInputfile;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  *
  * @author Reuel
  */
-public class SuperFlowBipartedGraphAxiomTheorems {
+public class SuperFlowBipartiteGraphAxiomTheorems {
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
 

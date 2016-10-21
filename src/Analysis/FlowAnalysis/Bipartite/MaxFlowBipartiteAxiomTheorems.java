@@ -1,11 +1,9 @@
-package Analysis.FlowAnalysis;
+package Analysis.FlowAnalysis.Bipartite;
 
 import Graph.Algorithms.Export.EdgeWeigher.IEdgeWeigher;
 import Graph.Algorithms.Export.EdgeWeigher.UnitaryWeigher;
 import Graph.Algorithms.Export.Formatters.HiprFormatter;
 import Graph.Algorithms.Export.GraphToTxt;
-import Graph.Algorithms.GraphNodeRemover;
-import Graph.Algorithms.RemoveIsolatedNodes;
 import Graph.Algorithms.SuperSinkSuperSource;
 import Graph.GraphFactory;
 import Graph.Label;
@@ -24,7 +22,7 @@ import org.neo4j.graphdb.traversal.Evaluation;
  *
  * @author Reuel
  */
-public class MaxFlowBipartedAxiomTheorems {
+public class MaxFlowBipartiteAxiomTheorems {
 
     private static final String OUTPUT_NAME = "biparted-graph-super-axiom-theorem-nomeredith";
 

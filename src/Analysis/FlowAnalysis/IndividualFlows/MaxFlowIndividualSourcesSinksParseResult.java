@@ -1,4 +1,4 @@
-package Analysis.FlowAnalysis;
+package Analysis.FlowAnalysis.IndividualFlows;
 
 import Utils.HistogramUtils;
 import java.io.IOException;

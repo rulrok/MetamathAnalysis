@@ -1,4 +1,4 @@
-package Analysis.FlowAnalysis;
+package Analysis.FlowAnalysis.HalvedNodes;
 
 import Graph.Algorithms.Export.EdgeWeigher.InnerOuterEdgeSplittedGraphWeigher;
 import Graph.Algorithms.Export.Formatters.HiprFormatter;
