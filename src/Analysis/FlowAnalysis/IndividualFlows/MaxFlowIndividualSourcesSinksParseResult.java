@@ -2,6 +2,7 @@ package Analysis.FlowAnalysis.IndividualFlows;
 
 import Graph.GraphFactory;
 import Graph.Label;
+import Graph.RelType;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class MaxFlowIndividualSourcesSinksParseResult {
         /**
          * Parse each line
          */
-        GraphDatabaseService graph = GraphFactory.makeNoUserboxesMetamathGraph();
+        GraphDatabaseService graph = GraphFactory.makeGraph("db/metamath-nouserboxes_halved_individual-flow_axiom-theorem");
         Map<String, Integer> nodesDegreeCache = new HashMap<>();
 
         Map<String, Double> sourcesFlows = new TreeMap<>();
@@ -75,9 +76,9 @@ public class MaxFlowIndividualSourcesSinksParseResult {
                     Integer originOutDegree = nodesDegreeCache.get(origin);
 
                     if (!nodesDegreeCache.containsKey(destin)) {
-                        Node nodeFound = graph.findNode(Label.THEOREM, "name", origin.replaceFirst("'", ""));
+                        Node nodeFound = graph.findNode(Label.THEOREM, "name", destin.replaceFirst("'", ""));
                         if (nodeFound == null) {
-                            nodeFound = graph.findNode(Label.AXIOM, "name", origin.replaceFirst("'", ""));
+                            nodeFound = graph.findNode(Label.AXIOM, "name", destin.replaceFirst("'", ""));
                         }
                         int destinInDegree = nodeFound.getDegree(Direction.INCOMING);
                         nodesDegreeCache.put(destin, destinInDegree);
