@@ -2,6 +2,8 @@ package Analysis.FlowAnalysis.IndividualFlows;
 
 import Graph.GraphFactory;
 import Graph.Label;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,8 +43,9 @@ public class MaxFlowIndividualSourcesSinksParseResult {
         Map<String, Integer> nodesDegreeCache = new HashMap<>();
 
         Map<String, Double> sourcesFlows = new TreeMap<>();
+        int destinBottleNeckCount = 0, originBottleneckCount = 0, elsewhereBottleneckCount = 0;
         try (Transaction tx = graph.beginTx()) {
-            allLines.forEach((String line) -> {
+            for (String line : allLines) {
                 String[] values = line.split(" ");
                 String origin = values[0];
                 String destin = values[2];
@@ -56,6 +59,9 @@ public class MaxFlowIndividualSourcesSinksParseResult {
                     sourcesFlows.put(origin, maxFlow);
                 }
 
+                /**
+                 * Interpret line
+                 */
                 if (maxFlow > 0) {
 
                     if (!nodesDegreeCache.containsKey(origin)) {
@@ -81,8 +87,12 @@ public class MaxFlowIndividualSourcesSinksParseResult {
                     String bottleNeck = "elsewhere";
                     if (maxFlow.intValue() == originOutDegree) {
                         bottleNeck = "origin";
+                        originBottleneckCount++;
                     } else if (maxFlow.intValue() == destingInDegree) {
                         bottleNeck = "destin";
+                        destinBottleNeckCount++;
+                    } else {
+                        elsewhereBottleneckCount++;
                     }
 
                     analysisSB
@@ -90,9 +100,21 @@ public class MaxFlowIndividualSourcesSinksParseResult {
                             .append(" flow: ").append(maxFlow)
                             .append(" origin_out_degree: ").append(originOutDegree)
                             .append(" desting_in_degree: ").append(destingInDegree)
-                            .append(" bottle_neck: ").append(bottleNeck);
+                            .append(" bottle_neck: ").append(bottleNeck)
+                            .append(System.lineSeparator());
                 }
-            });
+            }
+            tx.failure();
+        }
+
+        /**
+         * Write stringbuilder to file
+         */
+        try (FileWriter fileWriter = new FileWriter(new File(outputFilePath.toUri()))) {
+            fileWriter.append("Destin bottlenecks: " + destinBottleNeckCount + System.lineSeparator());
+            fileWriter.append("Origin bottlenecks: " + originBottleneckCount + System.lineSeparator());
+            fileWriter.append("Elsewhere bottlenecks: " + elsewhereBottleneckCount + System.lineSeparator());
+            fileWriter.append(analysisSB);
         }
 
         System.out.println("======================================");
