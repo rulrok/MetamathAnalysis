@@ -1,5 +1,6 @@
 package Analysis.FlowAnalysis.IndividualFlows;
 
+import static Graph.GraphFactory.makeDefaultMetamathGraph;
 import Utils.HistogramUtils;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.BiConsumer;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Transaction;
 
 /**
  *
@@ -18,13 +21,26 @@ import java.util.function.BiConsumer;
 public class MaxFlowIndividualSourcesSinksParseResult {
 
     public static void main(String[] args) throws IOException {
+        /**
+         * Input and output files
+         */
         final Path inputFilePath = Paths.get("metamath-nouserboxes_halved_individual-flow_axiom-theorem_all_maxflows.txt");
-        List<String> allLines = Files.readAllLines(inputFilePath);
+        final Path outputFilePath = Paths.get("metamath-nouserboxes_halved_individual-flow_axiom-theorem_all_maxflows_results.txt");
 
+        /**
+         * Read all lines from input files
+         */
+        List<String> allLines = Files.readAllLines(inputFilePath);
+        StringBuilder analysisSB = new StringBuilder(allLines.size() * 80);
+
+        /**
+         * Parse each line
+         */
         Map<String, Double> sourcesFlows = new TreeMap<>();
         allLines.forEach((String line) -> {
             String[] values = line.split(" ");
             String origin = values[0];
+            String destin = values[2];
             Double maxFlow = Double.parseDouble(values[values.length - 1]);
 
             if (sourcesFlows.containsKey(origin)) {
@@ -33,6 +49,12 @@ public class MaxFlowIndividualSourcesSinksParseResult {
                 sourcesFlows.put(origin, currentFlow);
             } else {
                 sourcesFlows.put(origin, maxFlow);
+            }
+
+            if (maxFlow > 0) {
+                analysisSB
+                        .append(origin).append(" -> ").append(destin)
+                        .append(" flow: ").append(maxFlow);
             }
         });
 
