@@ -25,14 +25,14 @@ public class MaxFlowIndividualSourcesSinksParseResult {
         allLines.forEach((String line) -> {
             String[] values = line.split(" ");
             String origin = values[0];
-            String maxFlow = values[values.length - 1];
+            Double maxFlow = Double.parseDouble(values[values.length - 1]);
 
             if (sourcesFlows.containsKey(origin)) {
                 Double currentFlow = sourcesFlows.get(origin);
-                currentFlow += Double.parseDouble(maxFlow);
+                currentFlow += maxFlow;
                 sourcesFlows.put(origin, currentFlow);
             } else {
-                sourcesFlows.put(origin, Double.parseDouble(maxFlow));
+                sourcesFlows.put(origin, maxFlow);
             }
         });
 
