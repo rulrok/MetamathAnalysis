@@ -2,7 +2,6 @@ package Analysis.FlowAnalysis.IndividualFlows;
 
 import Graph.GraphFactory;
 import Graph.Label;
-import Graph.RelType;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,7 +28,7 @@ public class MaxFlowIndividualSourcesSinksParseResult {
          * Input and output files
          */
         final Path inputFilePath = Paths.get("metamath-nouserboxes_halved_individual-flow_axiom-theorem_all_maxflows.txt");
-        final Path outputFilePath = Paths.get("metamath-nouserboxes_halved_individual-flow_axiom-theorem_all_maxflows_results.txt");
+        final Path outputFilePath = Paths.get("metamath-nouserboxes_halved_individual-flow_axiom-theorem_all_maxflows_results.csv");
 
         /**
          * Read all lines from input files
@@ -114,9 +113,9 @@ public class MaxFlowIndividualSourcesSinksParseResult {
          */
         try (FileWriter fileWriter = new FileWriter(new File(outputFilePath.toUri()))) {
             fileWriter.append("# Bottlenecks" + System.lineSeparator());
-            fileWriter.append("Destin: " + destinBottleNeckCount + System.lineSeparator());
-            fileWriter.append("Origin: " + originBottleneckCount + System.lineSeparator());
-            fileWriter.append("Elsewhere: " + elsewhereBottleneckCount + System.lineSeparator());
+            fileWriter.append("Destin ; " + destinBottleNeckCount + System.lineSeparator());
+            fileWriter.append("Origin ; " + originBottleneckCount + System.lineSeparator());
+            fileWriter.append("Elsewhere ; " + elsewhereBottleneckCount + System.lineSeparator());
             fileWriter.append("# origin ; destin ; flow ; origin_out_degree ; desting_in_degree ; bottleneck" + System.lineSeparator());
             fileWriter.append(analysisSB);
         }
