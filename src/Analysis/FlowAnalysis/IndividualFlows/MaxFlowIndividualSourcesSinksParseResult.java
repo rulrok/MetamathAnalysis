@@ -66,9 +66,9 @@ public class MaxFlowIndividualSourcesSinksParseResult {
                 if (maxFlow > 0) {
 
                     if (!nodesDegreeCache.containsKey(origin)) {
-                        Node nodeFound = graph.findNode(Label.AXIOM, "name", origin.replaceFirst("'", ""));
+                        Node nodeFound = graph.findNode(Label.AXIOM, "name", origin);
                         if (nodeFound == null) {
-                            nodeFound = graph.findNode(Label.THEOREM, "name", origin.replaceFirst("'", ""));
+                            nodeFound = graph.findNode(Label.THEOREM, "name", origin);
                         }
                         int originOutDegree = nodeFound.getDegree(Direction.OUTGOING);
                         nodesDegreeCache.put(origin, originOutDegree);
@@ -76,9 +76,9 @@ public class MaxFlowIndividualSourcesSinksParseResult {
                     Integer originOutDegree = nodesDegreeCache.get(origin);
 
                     if (!nodesDegreeCache.containsKey(destin)) {
-                        Node nodeFound = graph.findNode(Label.THEOREM, "name", destin.replaceFirst("'", ""));
+                        Node nodeFound = graph.findNode(Label.THEOREM, "name", destin);
                         if (nodeFound == null) {
-                            nodeFound = graph.findNode(Label.AXIOM, "name", destin.replaceFirst("'", ""));
+                            nodeFound = graph.findNode(Label.AXIOM, "name", destin);
                         }
                         int destinInDegree = nodeFound.getDegree(Direction.INCOMING);
                         nodesDegreeCache.put(destin, destinInDegree);
@@ -97,11 +97,12 @@ public class MaxFlowIndividualSourcesSinksParseResult {
                     }
 
                     analysisSB
-                            .append(origin).append(" -> ").append(destin)
-                            .append(" flow: ").append(maxFlow)
-                            .append(" origin_out_degree: ").append(originOutDegree)
-                            .append(" desting_in_degree: ").append(destingInDegree)
-                            .append(" bottle_neck: ").append(bottleNeck)
+                            .append(origin).append(" ; ")
+                            .append(destin).append(" ; ")
+                            .append(maxFlow).append(" ; ")
+                            .append(originOutDegree).append(" ; ")
+                            .append(destingInDegree).append(" ; ")
+                            .append(bottleNeck)
                             .append(System.lineSeparator());
                 }
             }
@@ -112,9 +113,11 @@ public class MaxFlowIndividualSourcesSinksParseResult {
          * Write stringbuilder to file
          */
         try (FileWriter fileWriter = new FileWriter(new File(outputFilePath.toUri()))) {
-            fileWriter.append("Destin bottlenecks: " + destinBottleNeckCount + System.lineSeparator());
-            fileWriter.append("Origin bottlenecks: " + originBottleneckCount + System.lineSeparator());
-            fileWriter.append("Elsewhere bottlenecks: " + elsewhereBottleneckCount + System.lineSeparator());
+            fileWriter.append("# Bottlenecks" + System.lineSeparator());
+            fileWriter.append("Destin: " + destinBottleNeckCount + System.lineSeparator());
+            fileWriter.append("Origin: " + originBottleneckCount + System.lineSeparator());
+            fileWriter.append("Elsewhere: " + elsewhereBottleneckCount + System.lineSeparator());
+            fileWriter.append("# origin ; destin ; flow ; origin_out_degree ; desting_in_degree ; bottleneck" + System.lineSeparator());
             fileWriter.append(analysisSB);
         }
 
