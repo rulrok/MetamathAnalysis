@@ -24,6 +24,13 @@ import org.neo4j.graphdb.Transaction;
 public class MaxFlowIndividualSourcesSinksParseResult {
 
     public static void main(String[] args) throws IOException {
+
+        /**
+         * Those are the values used during the HIPR analysis for max flow.
+         */
+        final int INNER_EDGE_WEIGHT = 1;
+        final int OUTER_EDGE_WEIGHT = 2;
+
         /**
          * Input and output files
          */
@@ -85,22 +92,26 @@ public class MaxFlowIndividualSourcesSinksParseResult {
                     Integer destingInDegree = nodesDegreeCache.get(destin);
 
                     String bottleNeck = "elsewhere";
-                    if (maxFlow.intValue() == originOutDegree) {
+                    if (maxFlow.intValue() == originOutDegree * OUTER_EDGE_WEIGHT) {
                         bottleNeck = "origin";
                         originBottleneckCount++;
-                    } else if (maxFlow.intValue() == destingInDegree) {
+                    } else if (maxFlow.intValue() == destingInDegree * OUTER_EDGE_WEIGHT) {
                         bottleNeck = "destin";
                         destinBottleNeckCount++;
                     } else {
                         elsewhereBottleneckCount++;
                     }
 
+                    if (maxFlow > originOutDegree * OUTER_EDGE_WEIGHT || maxFlow > destingInDegree * OUTER_EDGE_WEIGHT) {
+                        throw new RuntimeException("Inconsistent values found");
+                    }
+
                     analysisSB
                             .append(origin).append(" ; ")
                             .append(destin).append(" ; ")
                             .append(maxFlow).append(" ; ")
-                            .append(originOutDegree).append(" ; ")
-                            .append(destingInDegree).append(" ; ")
+                            .append(originOutDegree * OUTER_EDGE_WEIGHT).append(" ; ")
+                            .append(destingInDegree * OUTER_EDGE_WEIGHT).append(" ; ")
                             .append(bottleNeck)
                             .append(System.lineSeparator());
                 }
@@ -116,7 +127,7 @@ public class MaxFlowIndividualSourcesSinksParseResult {
             fileWriter.append("Destin ; " + destinBottleNeckCount + System.lineSeparator());
             fileWriter.append("Origin ; " + originBottleneckCount + System.lineSeparator());
             fileWriter.append("Elsewhere ; " + elsewhereBottleneckCount + System.lineSeparator());
-            fileWriter.append("# origin ; destin ; flow ; origin_out_degree ; desting_in_degree ; bottleneck" + System.lineSeparator());
+            fileWriter.append("# origin ; destin ; flow ; source_max_out_flow ; sink_max_in_flow ; bottleneck" + System.lineSeparator());
             fileWriter.append(analysisSB);
         }
 
