@@ -19,10 +19,14 @@ public class ParseMetamath {
 
     public static void main(String[] args) {
 
+        final String[] default_metamath = new String[]{"mm sets/set.mm", GraphFactory.DEFAULT_METAMATH_DB};
+        final String[] nouserboxes_metamath = new String[]{"mm sets/set_nouserboxes.uncompressed.mm", GraphFactory.NOUSERBOX_METAMATH_DB};
+
+        final String[] selectedConfigs = nouserboxes_metamath;
         try {
             Lexer lexer;
 
-            lexer = new Lexer(new FileReader("mm sets/set.mm"));
+            lexer = new Lexer(new FileReader(selectedConfigs[0]));
 
             /* Below there is a simple test for analysing the lexer returned
             tokens. Just uncomment it out. */
@@ -32,7 +36,7 @@ public class ParseMetamath {
 //
 //            }
 //            System.exit(0);
-            File databaseFolder = new File(GraphFactory.DEFAULT_METAMATH_DB);
+            File databaseFolder = new File(selectedConfigs[1]);
 
             //Wipe out the database before parsing the file
             FileUtils.deleteRecursively(databaseFolder);
