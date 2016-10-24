@@ -18,7 +18,7 @@ import org.neo4j.graphdb.Node;
 public class ReverseReachabilityFromSinksToAxioms {
 
     public static void main(String[] args) {
-        GraphDatabaseService graph = GraphFactory.makeDefaultMetamathGraph();
+        GraphDatabaseService graph = GraphFactory.makeNoUserboxesNoJunkAxiomTheoremMetamathGraph();
         ReachabilityFromNode reachabilityFromSource = new ReachabilityFromNode(graph);
 
         List<Node> originalSinks = new SimpleGraphDecomposition(graph)
