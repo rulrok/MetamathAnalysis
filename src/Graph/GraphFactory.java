@@ -54,6 +54,13 @@ public class GraphFactory {
         return graph;
     }
 
+    public static GraphDatabaseService makeNoUserboxesNoJunkAxiomTheoremMetamathGraph() {
+        GraphDatabaseService graph = makeNoUserboxesNoJunkMetamathGraph();
+        GraphNodeRemover.KeepOnlyAxiomsAndTheorems(graph);
+
+        return graph;
+    }
+
     public static GraphDatabaseService makeGraph(String path) {
         return makeGraph(path, false);
     }
