@@ -19,7 +19,7 @@ import org.neo4j.tooling.GlobalGraphOperations;
 public class ReachabilityFromEverybodyToSinks {
 
     public static void main(String[] args) {
-        GraphDatabaseService graph = GraphFactory.makeDefaultMetamathGraph();
+        GraphDatabaseService graph = GraphFactory.makeNoUserboxesNoJunkAxiomTheoremMetamathGraph();
         ReachabilityFromNode reachabilityFromSource = new ReachabilityFromNode(graph);
 
         try (Transaction tx = graph.beginTx()) {

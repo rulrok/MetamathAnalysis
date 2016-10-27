@@ -23,6 +23,37 @@ import org.neo4j.tooling.GlobalGraphOperations;
  */
 public class GraphNodeRemover implements LabelFiltered {
 
+    private static final Logger LOG = Logger.getLogger(GraphNodeRemover.class.getName());
+
+    public static void KeepOnlyAxioms(GraphDatabaseService graph) {
+
+        LOG.info("Removing all nodes but Axioms...");
+        GraphNodeRemover gnr = new GraphNodeRemover(graph);
+        gnr
+                .addFilterLabel(Label.CONSTANT)
+                .addFilterLabel(Label.DEFINITION)
+                .addFilterLabel(Label.HYPOTHESIS)
+                .addFilterLabel(Label.SYNTAX_DEFINITION)
+                .addFilterLabel(Label.THEOREM)
+                .addFilterLabel(Label.UNKNOWN)
+                .addFilterLabel(Label.VARIABLE)
+                .execute();
+    }
+
+    public static void KeepOnlyAxiomsAndTheorems(GraphDatabaseService graph) {
+
+        LOG.info("Removing all nodes but Axioms and Theorems...");
+        GraphNodeRemover gnr = new GraphNodeRemover(graph);
+        gnr
+                .addFilterLabel(Label.CONSTANT)
+                .addFilterLabel(Label.DEFINITION)
+                .addFilterLabel(Label.HYPOTHESIS)
+                .addFilterLabel(Label.SYNTAX_DEFINITION)
+                .addFilterLabel(Label.UNKNOWN)
+                .addFilterLabel(Label.VARIABLE)
+                .execute();
+    }
+
     List<Label> labelFilters;
     List<Function<Node, Boolean>> customFilters;
 

@@ -1,5 +1,7 @@
 package Graph;
 
+import Graph.Algorithms.GraphNodeRemover;
+import Graph.Algorithms.RemoveIsolatedNodes;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -22,10 +24,11 @@ import org.neo4j.io.fs.FileUtils;
  */
 public class GraphFactory {
 
-    
     public static final String DEFAULT_METAMATH_DB = "db/metamath";
 
     public static final String NOUSERBOX_METAMATH_DB = "db/metamath-nouserboxes";
+
+    public static final String NOUSERBOX_METAMATH_NOJUNK_DB = "db/metamath-nouserboxes-nojunk";
 
     public static GraphDatabaseService makeDefaultMetamathGraph() {
         return makeGraph(DEFAULT_METAMATH_DB);
@@ -33,6 +36,29 @@ public class GraphFactory {
 
     public static GraphDatabaseService makeNoUserboxesMetamathGraph() {
         return makeGraph(NOUSERBOX_METAMATH_DB);
+    }
+
+    public static GraphDatabaseService makeNoUserboxesNoJunkMetamathGraph() {
+
+        GraphDatabaseService graph = copyGraph(NOUSERBOX_METAMATH_DB, NOUSERBOX_METAMATH_NOJUNK_DB);
+
+        GraphNodeRemover gnr = new GraphNodeRemover(graph);
+        gnr
+                .addComponentHeadDFS("ax-meredith")
+                .addCustomFilter(n -> n.getProperty("name").toString().startsWith("dummy"))
+                .execute();
+
+        RemoveIsolatedNodes isolatedNodes = new RemoveIsolatedNodes(graph);
+        isolatedNodes.execute();
+
+        return graph;
+    }
+
+    public static GraphDatabaseService makeNoUserboxesNoJunkAxiomTheoremMetamathGraph() {
+        GraphDatabaseService graph = makeNoUserboxesNoJunkMetamathGraph();
+        GraphNodeRemover.KeepOnlyAxiomsAndTheorems(graph);
+
+        return graph;
     }
 
     public static GraphDatabaseService makeGraph(String path) {
