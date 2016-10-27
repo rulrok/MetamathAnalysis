@@ -89,6 +89,55 @@ public class GraphFactory {
     /**
      * Returns the folowing graph
      * <pre>
+     *       A(0)
+     *      /   \
+     *     B(1) C(2)
+     *    /    /  \
+     *   D(3)-/   E(4)
+     *    \      /
+     *     \    /
+     *      \  /
+     *      F(5)
+     * </pre> All edges go downward and use RelType.SUPPORT
+     *
+     * @return GraphDatabaseService
+     */
+    public static GraphDatabaseService makeTestGraphF() {
+
+        GraphDatabaseService graphTest = makeGraph("db/test", true);
+
+        try (Transaction tx = graphTest.beginTx()) {
+            Node a = graphTest.createNode();
+            a.setProperty("name", "A");
+            Node b = graphTest.createNode();
+            b.setProperty("name", "B");
+            Node c = graphTest.createNode();
+            c.setProperty("name", "C");
+            Node d = graphTest.createNode();
+            d.setProperty("name", "D");
+            Node e = graphTest.createNode();
+            e.setProperty("name", "E");
+            Node f = graphTest.createNode();
+            f.setProperty("name", "F");
+
+            a.createRelationshipTo(b, RelType.SUPPORTS);
+            a.createRelationshipTo(c, RelType.SUPPORTS);
+            b.createRelationshipTo(d, RelType.SUPPORTS);
+            c.createRelationshipTo(d, RelType.SUPPORTS);
+            c.createRelationshipTo(e, RelType.SUPPORTS);
+            d.createRelationshipTo(f, RelType.SUPPORTS);
+            e.createRelationshipTo(f, RelType.SUPPORTS);
+
+            tx.success();
+
+        }
+
+        return graphTest;
+    }
+
+    /**
+     * Returns the folowing graph
+     * <pre>
      *       E(4)
      *      / \
      *     D(3)G(6)
