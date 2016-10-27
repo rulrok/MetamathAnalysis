@@ -8,6 +8,8 @@
 /nbactions.xml
 /.nb-gradle/
 /db/*
+/lib/hipr/hi_pr
+/lib/hipr/*.exe
 
 manifest.mf
 *.log
