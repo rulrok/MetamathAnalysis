@@ -16,6 +16,46 @@ import java.util.logging.Logger;
  */
 public class ExportMapToTXT {
 
+    public static <V> boolean exportValuesOnly(String fileOutput, Map<?, V> map) {
+
+        return exportValuesOnly(fileOutput, map, new String[]{});
+    }
+
+    public static <V> boolean exportValuesOnly(String fileOutput, Map<?, V> map, String[] headers) {
+        try {
+            File output = new File(fileOutput.trim() + ".txt");
+            output.createNewFile();
+            try (PrintWriter printWriter = new PrintWriter(output)) {
+                //Construct the header
+                if (headers.length > 0) {
+                    StringJoiner sj = new StringJoiner("\t");
+                    for (String header : headers) {
+                        sj.add(header);
+                    }
+                    printWriter.append(sj.toString());
+                    printWriter.append("\r\n");
+                }
+
+                //Construct the body
+                map.keySet().stream().forEach((key) -> {
+                    V value = map.get(key);
+                    printWriter.printf("%s\r\n", value);
+                });
+
+                printWriter.flush();
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(GraphToTxt.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            }
+
+        } catch (IOException ex) {
+            Logger.getLogger(ExportMapToTXT.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+
+        return true;
+    }
+
     public static boolean export(String fileOutput, Map map) {
         return export(fileOutput, map, new String[]{});
     }
@@ -36,7 +76,7 @@ public class ExportMapToTXT {
                     printWriter.append(sj.toString());
                     printWriter.append("\r\n");
                 }
-                
+
                 //Construct the body
                 map.keySet().stream().forEach((key) -> {
                     V value = map.get(key);
@@ -44,13 +84,17 @@ public class ExportMapToTXT {
                 });
 
                 printWriter.flush();
+
             } catch (FileNotFoundException ex) {
-                Logger.getLogger(GraphToTxt.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(GraphToTxt.class
+                        .getName()).log(Level.SEVERE, null, ex);
                 return false;
+
             }
 
         } catch (IOException ex) {
-            Logger.getLogger(ExportMapToTXT.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ExportMapToTXT.class
+                    .getName()).log(Level.SEVERE, null, ex);
             return false;
         }
         return true;
