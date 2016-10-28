@@ -25,7 +25,7 @@ public class ReverseReachabilityFromSinksToAxioms {
                 .getSinks();
 
         Map<String, Integer> calculate = reachabilityFromSource
-                .evaluator(new AxiomEvaluator())
+                .addEvaluator(new AxiomEvaluator())
                 .reverseGraph()
                 .calculate(originalSinks.iterator(), RelType.SUPPORTS);
 //        calculate.forEach((key, value) -> {

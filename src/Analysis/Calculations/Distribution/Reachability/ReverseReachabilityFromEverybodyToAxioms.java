@@ -26,7 +26,7 @@ public class ReverseReachabilityFromEverybodyToAxioms {
 
             ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
             Map<String, Integer> calculate = reachabilityFromSource
-                    .evaluator(new AxiomEvaluator())
+                    .addEvaluator(new AxiomEvaluator())
                     .reverseGraph()
                     .calculate(allNodes.iterator(), RelType.SUPPORTS);
 //        calculate.forEach((key, value) -> {

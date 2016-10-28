@@ -20,7 +20,7 @@ public class ReachabilityFromAxiomsToSinks {
         ReachabilityFromNode reachabilityFromSource = new ReachabilityFromNode(graph);
 
         Map<String, Integer> calculate = reachabilityFromSource
-                .evaluator(new SinkEvaluator())
+                .addEvaluator(new SinkEvaluator())
                 .calculate(Label.AXIOM, RelType.SUPPORTS);
 //        calculate.forEach((key, value) -> {
 //            System.out.println(key + "\t" + value);
