@@ -32,15 +32,19 @@ public class PlotDataSet {
     public void addData(String title, double[] xAxis, double[] yAxis) {
         addData(new PlotData(title, xAxis, yAxis));
     }
-    
+
+    public void addData(String title, int[] xAxis, int[] yAxis) {
+        addData(new PlotData(title, xAxis, yAxis));
+    }
+
     public void addData(PlotData data) {
         sets.put(data.title, data);
     }
-    
+
     public PlotData removeData(PlotData data) {
         return sets.remove(data.title);
     }
-    
+
     public PlotData removeData(String title) {
         return sets.remove(title);
     }
