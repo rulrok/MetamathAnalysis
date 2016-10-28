@@ -56,6 +56,12 @@ public class HistogramUtils {
         return collect.orElse(null);
     }
 
+    public static <K, V> Map<Integer, Integer> CreateHistogramFromMapBasedOn(Map<K, Integer> data) {
+        return CreateHistogramFromMapBasedOn(data, (Integer i) -> {
+            return i;
+        });
+    }
+
     public static <K, V> Map<Integer, Integer> CreateHistogramFromMapBasedOn(Map<K, V> data, Function<V, Integer> entryProcess) {
 
         Map<Integer, Integer> histogram = new TreeMap<>();
