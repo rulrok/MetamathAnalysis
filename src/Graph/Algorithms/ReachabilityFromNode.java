@@ -31,7 +31,7 @@ public class ReachabilityFromNode {
     public ReachabilityFromNode(GraphDatabaseService graph) {
         this.graph = graph;
         this.calculations = new TreeMap<>();
-        this.evaluator = Evaluators.all();
+        this.evaluator = Evaluators.excludeStartPosition();
     }
 
     public ReachabilityFromNode reverseGraph() {
@@ -40,6 +40,12 @@ public class ReachabilityFromNode {
         return this;
     }
 
+    /**
+     * By default, Evaluators.excludeStartPosition() is used.
+     *
+     * @param evaluator
+     * @return
+     */
     public ReachabilityFromNode evaluator(Evaluator evaluator) {
         this.evaluator = evaluator;
 
