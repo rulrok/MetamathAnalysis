@@ -29,7 +29,7 @@ public class HistogramUtils {
     }
 
     public static void PrintHistogram(Map<Integer, Integer> histogram) {
-        Entry<Integer, Integer> largestHistogramFoundEntry = FindMaxValue(histogram);
+        Entry<?, Integer> largestHistogramFoundEntry = FindMaxValue(histogram);
         Integer largestHistogramValue = largestHistogramFoundEntry.getValue();
 
         histogram.entrySet().stream().forEach((entry) -> {
@@ -45,10 +45,21 @@ public class HistogramUtils {
         });
     }
 
-    public static Entry<Integer, Integer> FindMaxValue(Map<Integer, Integer> histogram) {
-        Optional<Entry<Integer, Integer>> collect = histogram.entrySet().stream()
+    public static Entry<?, Integer> FindMaxValue(Map<?, Integer> histogram) {
+        Optional<Entry<?, Integer>> collect = histogram.entrySet().stream()
                 .collect(
-                        Collectors.maxBy(Comparator.comparingInt((Entry<Integer, Integer> e) -> {
+                        Collectors.maxBy(Comparator.comparingInt((Entry<?, Integer> e) -> {
+                            return e.getValue();
+                        }))
+                );
+
+        return collect.orElse(null);
+    }
+
+    public static Entry<?, Integer> FindMinValue(Map<?, Integer> histogram) {
+        Optional<Entry<?, Integer>> collect = histogram.entrySet().stream()
+                .collect(
+                        Collectors.minBy(Comparator.comparingInt((Entry<?, Integer> e) -> {
                             return e.getValue();
                         }))
                 );
@@ -82,5 +93,41 @@ public class HistogramUtils {
                 });
 
         return histogram;
+    }
+
+    public static void PlotFrequencyHistogram(Map<?, Integer> data) {
+
+        Entry<?, Integer> maxValueEntry = FindMaxValue(data);
+        Entry<?, Integer> minValueEntry = FindMinValue(data);
+
+        if (maxValueEntry == null || minValueEntry == null) {
+            return;
+        }
+
+        double maxValue = maxValueEntry.getValue();
+        double minValue = minValueEntry.getValue();
+
+        double dataRange = maxValue - minValue;
+        Integer dataClasses = (int) Math.sqrt(data.size());
+
+        double classWidth = dataRange / dataClasses;
+
+        int[] histogram = new int[dataClasses];
+
+        data.entrySet().stream().forEach(e -> {
+            Integer value = e.getValue();
+
+            int index = (int) ((value / maxValue) * dataClasses);
+            if (index < 0) {
+                index = 0;
+            } else if (index >= dataClasses) {
+                index = dataClasses - 1;
+            }
+
+            histogram[index]++;
+
+        });
+
+        System.out.println("");
     }
 }
