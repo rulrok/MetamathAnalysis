@@ -4,6 +4,7 @@ import Graph.Algorithms.ReachabilityFromNode;
 import Graph.GraphFactory;
 import Graph.RelType;
 import Utils.ExportMapToTXT;
+import Utils.HistogramUtils;
 import java.util.Map;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -25,11 +26,17 @@ public class ReachabilityFromEverybodyToEveryone {
 
             ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
             Map<String, Integer> calculate = reachabilityFromSource.calculate(allNodes.iterator(), RelType.SUPPORTS);
-//        calculate.forEach((key, value) -> {
-//            System.out.println(key + "\t" + value);
-//        });
 
-            ExportMapToTXT.export("reach_distribution_everyone_to_everybody", calculate, new String[]{"id", "name", "count"});
+            final String OUTPUT = "reach_distribution_everyone_to_everybody";
+
+            ExportMapToTXT.export(OUTPUT, calculate, new String[]{"id", "name", "count"});
+
+            Map<Integer, Integer> histogram = HistogramUtils.CreateHistogramFromMapBasedOn(calculate);
+
+            ExportMapToTXT.export(OUTPUT.concat("_histogram"), histogram, new String[]{"reach", "count"}
+            );
+
+            tx.failure();
         }
 
     }

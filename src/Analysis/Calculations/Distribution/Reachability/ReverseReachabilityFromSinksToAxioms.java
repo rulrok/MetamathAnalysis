@@ -6,6 +6,7 @@ import Graph.Algorithms.ReachabilityFromNode;
 import Graph.GraphFactory;
 import Graph.RelType;
 import Utils.ExportMapToTXT;
+import Utils.HistogramUtils;
 import java.util.List;
 import java.util.Map;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -28,11 +29,13 @@ public class ReverseReachabilityFromSinksToAxioms {
                 .addEvaluator(new AxiomEvaluator())
                 .reverseGraph()
                 .calculate(originalSinks.iterator(), RelType.SUPPORTS);
-//        calculate.forEach((key, value) -> {
-//            System.out.println(key + "\t" + value);
-//        });
+        final String OUTPUT = "reverse_reach_distribution_sinks_to_axioms";
 
-        ExportMapToTXT.export("reverse_reach_distribution_sinks_to_axioms", calculate, new String[]{"id", "name", "count"});
+        ExportMapToTXT.export(OUTPUT, calculate, new String[]{"id", "name", "count"});
+
+        Map<Integer, Integer> histogram = HistogramUtils.CreateHistogramFromMapBasedOn(calculate);
+
+        ExportMapToTXT.export(OUTPUT.concat("_histogram"), histogram);
 
     }
 

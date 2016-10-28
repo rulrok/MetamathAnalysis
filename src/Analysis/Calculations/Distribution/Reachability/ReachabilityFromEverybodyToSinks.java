@@ -5,6 +5,7 @@ import Graph.Algorithms.ReachabilityFromNode;
 import Graph.GraphFactory;
 import Graph.RelType;
 import Utils.ExportMapToTXT;
+import Utils.HistogramUtils;
 import java.util.Map;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -28,11 +29,13 @@ public class ReachabilityFromEverybodyToSinks {
             Map<String, Integer> calculate = reachabilityFromSource
                     .addEvaluator(new SinkEvaluator())
                     .calculate(allNodes.iterator(), RelType.SUPPORTS);
-//        calculate.forEach((key, value) -> {
-//            System.out.println(key + "\t" + value);
-//        });
+            final String OUTPUT = "reach_distribution_everyone_to_sinks";
 
-            ExportMapToTXT.export("reach_distribution_everyone_to_sinks", calculate, new String[]{"id", "name", "count"});
+            ExportMapToTXT.export(OUTPUT, calculate, new String[]{"id", "name", "count"});
+
+            Map<Integer, Integer> histogram = HistogramUtils.CreateHistogramFromMapBasedOn(calculate);
+
+            ExportMapToTXT.export(OUTPUT.concat("_histogram"), histogram);
         }
 
     }

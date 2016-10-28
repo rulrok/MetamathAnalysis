@@ -5,6 +5,7 @@ import Graph.GraphFactory;
 import Graph.Label;
 import Graph.RelType;
 import Utils.ExportMapToTXT;
+import Utils.HistogramUtils;
 import java.util.Map;
 import org.neo4j.graphdb.GraphDatabaseService;
 
@@ -19,11 +20,11 @@ public class ReachabilityFromAxiomsToEverybody {
         ReachabilityFromNode reachabilityFromSource = new ReachabilityFromNode(graph);
 
         Map<String, Integer> calculate = reachabilityFromSource.calculate(Label.AXIOM, RelType.SUPPORTS);
-//        calculate.forEach((key, value) -> {
-//            System.out.println(key + "\t" + value);
-//        });
+        final String OUTPUT = "reach_distribution_axioms_to_everybody";
 
-        ExportMapToTXT.export("reach_distribution_axioms_to_everybody", calculate, new String[]{"id", "axiom name", "count"});
+        ExportMapToTXT.export(OUTPUT, calculate, new String[]{"id", "axiom name", "count"});
 
+        Map<Integer, Integer> histogram = HistogramUtils.CreateHistogramFromMapBasedOn(calculate);
+        ExportMapToTXT.export(OUTPUT.concat("_histogram"), histogram);
     }
 }
