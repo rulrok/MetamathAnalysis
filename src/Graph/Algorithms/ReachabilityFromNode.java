@@ -50,9 +50,9 @@ public class ReachabilityFromNode {
 
         try (Transaction tx = graph.beginTx()) {
 
-            ResourceIterator<Node> axioms = graph.findNodes(startNodeType);
+            ResourceIterator<Node> initialNodes = graph.findNodes(startNodeType);
 
-            return calculate(axioms, relationshipType);
+            return calculate(initialNodes, relationshipType);
         }
     }
 
@@ -79,11 +79,11 @@ public class ReachabilityFromNode {
         return calculations;
     }
 
-    public Map<String, Integer> calculate(Iterator<Node> nodes, RelationshipType relationshipType) {
+    public Map<String, Integer> calculate(Iterator<Node> initialNodes, RelationshipType relationshipType) {
         try (Transaction tx = graph.beginTx()) {
 
-            for (; nodes.hasNext();) {
-                Node node = nodes.next();
+            for (; initialNodes.hasNext();) {
+                Node node = initialNodes.next();
                 traverse(node, relationshipType);
             }
             tx.failure();
@@ -97,17 +97,17 @@ public class ReachabilityFromNode {
 
 //        System.out.println("Going from node: " + startNode.getProperty("name"));
         ResourceIterator<Node> iterator = traverser.traverse(startNode).nodes().iterator();
-        int counter = 0;
+        int nodesCount = 0;
         for (; iterator.hasNext();) {
             Node node = iterator.next();
 //            System.out.println("\t" + node.getProperty("name") + "\t" + n.getLabels().toString());
-            ++counter;
+            ++nodesCount;
         }
 
         Object nodeId = startNode.getId();
         Object nodeName = startNode.getProperty("name");
         String key = String.join("\t", String.valueOf(nodeId), String.valueOf(nodeName));
-        calculations.put(key, counter);
+        calculations.put(key, nodesCount);
     }
 
     private TraversalDescription prepareTraverser(RelationshipType relationshipType) {
