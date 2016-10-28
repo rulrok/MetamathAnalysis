@@ -1,7 +1,9 @@
 package Graph.Algorithms;
 
 import Graph.Label;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import org.neo4j.graphdb.Direction;
@@ -26,12 +28,13 @@ public class ReachabilityFromNode {
     private final GraphDatabaseService graph;
     private final Map<String, Integer> calculations;
     private boolean reverseGraph;
-    private Evaluator evaluator;
+    private final List<Evaluator> evaluatorList;
 
     public ReachabilityFromNode(GraphDatabaseService graph) {
         this.graph = graph;
         this.calculations = new TreeMap<>();
-        this.evaluator = Evaluators.excludeStartPosition();
+        this.evaluatorList = new ArrayList<>();
+        evaluatorList.add(Evaluators.excludeStartPosition());
     }
 
     public ReachabilityFromNode reverseGraph() {
@@ -46,8 +49,8 @@ public class ReachabilityFromNode {
      * @param evaluator
      * @return
      */
-    public ReachabilityFromNode evaluator(Evaluator evaluator) {
-        this.evaluator = evaluator;
+    public ReachabilityFromNode addEvaluator(Evaluator evaluator) {
+        evaluatorList.add(evaluator);
 
         return this;
     }
@@ -121,8 +124,10 @@ public class ReachabilityFromNode {
                 .depthFirst()
                 .order(BranchOrderingPolicies.PREORDER_DEPTH_FIRST)
                 .uniqueness(Uniqueness.NODE_GLOBAL)
-                .evaluator(evaluator)
                 .relationships(relationshipType, Direction.OUTGOING);
+        for (Evaluator eval : evaluatorList) {
+            traverser = traverser.evaluator(eval);
+        }
 
         if (reverseGraph) {
             traverser = traverser.reverse();
