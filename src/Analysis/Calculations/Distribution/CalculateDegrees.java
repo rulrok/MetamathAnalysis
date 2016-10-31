@@ -1,12 +1,11 @@
 package Analysis.Calculations.Distribution;
 
 import Graph.Algorithms.DegreeDistribution;
-import Graph.Algorithms.GraphNodeRemover;
-import Graph.Algorithms.RemoveIsolatedNodes;
 import Graph.GraphFactory;
 import Plot.Gnuplot;
 import Plot.PlotDataSet;
 import java.util.Map;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
@@ -17,20 +16,7 @@ public class CalculateDegrees {
 
     public static void main(String[] args) {
 
-        GraphDatabaseService graph = GraphFactory.copyGraph(GraphFactory.NOUSERBOX_METAMATH_DB, "db/degree_distribution");
-
-        System.out.println("Removing undesired nodes...");
-        GraphNodeRemover.KeepOnlyAxiomsAndTheorems(graph);
-        GraphNodeRemover gnr = new GraphNodeRemover(graph);
-        gnr
-                //DFS from ax-meredith to remove undesired componente
-                .addComponentHeadDFS("ax-meredith")
-                //Specific nodes
-                .addCustomFilter(n -> n.getProperty("name").toString().startsWith("dummy"));
-
-        System.out.println("Removing isolated nodes...");
-        RemoveIsolatedNodes isolatedNodes = new RemoveIsolatedNodes(graph);
-        isolatedNodes.execute();
+        GraphDatabaseService graph = GraphFactory.makeNoUserboxesNoJunkAxiomTheoremMetamathGraph();
 
         /*
          * Calculate the distributions
@@ -52,13 +38,34 @@ public class CalculateDegrees {
         double[] innerY = innerDegrees.values().stream().mapToDouble(i -> i).toArray();
         dataSet.addData("Inner degrees", innerX, innerY);
 
+        DescriptiveStatistics innerDS = new DescriptiveStatistics(innerY);
+
         double[] outerX = outerDegrees.keySet().stream().mapToDouble(i -> i).toArray();
         double[] outerY = outerDegrees.values().stream().mapToDouble(i -> i).toArray();
         dataSet.addData("Outer degrees", outerX, outerY);
 
+        DescriptiveStatistics outerDS = new DescriptiveStatistics(outerY);
+
         double[] allX = allDegrees.keySet().stream().mapToDouble(i -> i).toArray();
         double[] allY = allDegrees.values().stream().mapToDouble(i -> i).toArray();
         dataSet.addData("All degrees", allX, allY);
+
+        DescriptiveStatistics allDS = new DescriptiveStatistics(allY);
+
+        double inner_standardDeviation = innerDS.getStandardDeviation();
+        double inner_mean = innerDS.getMean();
+        System.out.printf("inner : μ = %f; σ = %f\n", inner_mean, inner_standardDeviation);
+        System.out.println(innerDS);
+
+        double outer_standardDeviation = outerDS.getStandardDeviation();
+        double outer_mean = outerDS.getMean();
+        System.out.printf("outer : μ = %f; σ = %f\n", outer_mean, outer_standardDeviation);
+        System.out.println(outerDS);
+
+        double all_standardDeviation = allDS.getStandardDeviation();
+        double all_mean = allDS.getMean();
+        System.out.printf("all   : μ = %f; σ = %f\n", all_mean, all_standardDeviation);
+        System.out.println(allDS);
 
         new Gnuplot(dataSet)
                 .setFilename("grafo_degrees.png")
