@@ -21,8 +21,8 @@ public class randomValuesHistogram {
         try (FileWriter fw = new FileWriter("rand_values.txt")) {
             Random r = new Random(2011_1_08_021);
 
-            for (int i = 0; i < 100; i++) {
-                fw.write(Integer.toString(r.nextInt(10)).concat("\n"));
+            for (int i = 0; i < 1000; i++) {
+                fw.write(Double.toString(r.nextGaussian()).concat("\n"));
             }
         } catch (IOException ex) {
             Logger.getLogger(randomValuesHistogram.class.getName()).log(Level.SEVERE, null, ex);
