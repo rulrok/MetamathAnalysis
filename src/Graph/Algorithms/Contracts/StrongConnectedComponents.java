@@ -11,9 +11,9 @@ public interface StrongConnectedComponents {
 
     /**
      * Execute the algorithm and return a list of components.
-     * 
-     * @return 
+     *
+     * @return
      */
     List<List<Node>> execute();
-    
+
 }

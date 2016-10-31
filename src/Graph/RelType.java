@@ -9,11 +9,9 @@ public enum RelType implements org.neo4j.graphdb.RelationshipType {
     /*
     Relationship labels
      */
-    
     RELIES("Relies"),
     USES("Uses"),
     SUPPORTS("Supports"),
-    
     /*
     General unknown label
      */

@@ -37,7 +37,7 @@ public class NodeRemovalTraversal {
             Node cNode = graph.getNodeById(2);
             Node gNode = graph.getNodeById(3);
             Node iNode = graph.getNodeById(8);
-            PrintTraversal.printResults(traversalDescription,aNode, bNode, cNode, gNode, iNode);
+            PrintTraversal.printResults(traversalDescription, aNode, bNode, cNode, gNode, iNode);
         }
     }
 }

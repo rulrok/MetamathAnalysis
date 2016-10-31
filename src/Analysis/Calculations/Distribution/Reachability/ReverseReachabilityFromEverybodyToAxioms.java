@@ -33,11 +33,11 @@ public class ReverseReachabilityFromEverybodyToAxioms {
             final String OUTPUT = "reverse_reach_distribution_everyone_to_axioms";
 
             ExportMapToTXT.export(OUTPUT, calculate, new String[]{"id", "name", "count"});
-            
+
             Map<Integer, Integer> histogram = HistogramUtils.CreateHistogramFromMapBasedOn(calculate);
 
             ExportMapToTXT.export(OUTPUT.concat("_histogram"), histogram);
-            
+
         }
 
     }

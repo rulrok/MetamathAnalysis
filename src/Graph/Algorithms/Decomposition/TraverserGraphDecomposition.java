@@ -81,7 +81,6 @@ public class TraverserGraphDecomposition implements GraphDecomposition {
 //                    .evaluator(new SourceEvaluator());
 
 //            try (Transaction tx = graph.beginTx()) {
-
 //                do {
 //                    List<Node> component = new LinkedList<>();
 //                    bfs.traverse(initialNodesList).forEach((Path path) -> {

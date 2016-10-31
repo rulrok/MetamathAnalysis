@@ -31,8 +31,7 @@ public class MaxFlowSuper {
         exportToTXT = exportToTXT
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM);
-        
-        
+
         System.out.println("Exporting to TXT (1)...");
         String output1 = "grafo_HIPR_super-axiom-theorem.txt";
         exportToTXT

@@ -54,7 +54,7 @@ public class GabowSCC extends AbstractStrongConnectedComponentsAlgorithm {
                     visit(node);
                 }
             });
-            
+
             tx.failure();
         }
         return components;

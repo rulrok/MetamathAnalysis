@@ -13,7 +13,7 @@ public class StringUtils {
         String output = Arrays.asList(split).stream().reduce((left, right) -> {
             return left + "\"" + right.trim() + "\",";
         }).get();
-        
+
         return output.substring(0, output.length() - 1);
     }
 

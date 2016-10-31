@@ -27,7 +27,7 @@ public class PlotData {
         for (int i = 0; i < yAxis.length; i++) {
             newYAxis[i] = yAxis[i];
         }
-        
+
         this.title = title;
         this.xAxis = newXAxis;
         this.yAxis = newYAxis;

@@ -50,7 +50,7 @@ public class DegreeDistribution {
                 int outerDegree = node.getDegree(Direction.OUTGOING);
                 outerDegrees.put(outerDegree, outerDegrees.getOrDefault(outerDegree, 0) + 1);
             });
-            
+
             tx.failure();
         }
     }

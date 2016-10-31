@@ -15,7 +15,7 @@ import org.neo4j.graphdb.RelationshipType;
  *
  * @author Reuel
  */
-public class FakeRelationship implements Relationship{
+public class FakeRelationship implements Relationship {
 
     @Override
     public long getId() {
@@ -101,5 +101,5 @@ public class FakeRelationship implements Relationship{
     public Map<String, Object> getAllProperties() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

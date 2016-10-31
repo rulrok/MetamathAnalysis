@@ -42,7 +42,7 @@ public class StrongConnectedComponents {
 
             /*
              * Print the result
-             */            
+             */
             System.out.println("Total components found: " + components.size());
             components.stream()
                     .filter((component) -> (component.size() > 1))

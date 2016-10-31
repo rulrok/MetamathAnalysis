@@ -9,7 +9,7 @@ public enum Label implements org.neo4j.graphdb.Label {
 
     /*
     Node labels
-    */
+     */
     AXIOM("Axiom"),
     CONSTANT("Constant"),
     DEFINITION("Definition"),
@@ -17,8 +17,6 @@ public enum Label implements org.neo4j.graphdb.Label {
     SYNTAX_DEFINITION("Syntax_Definition"),
     THEOREM("Theorem"),
     VARIABLE("Variable"),
-
-    
     /*
     General unknown label
      */

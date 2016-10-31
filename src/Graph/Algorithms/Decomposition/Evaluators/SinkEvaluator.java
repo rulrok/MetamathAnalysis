@@ -11,7 +11,7 @@ import org.neo4j.graphdb.traversal.Evaluator;
  * @author Reuel
  */
 public class SinkEvaluator implements Evaluator {
-    
+
     @Override
     public Evaluation evaluate(Path path) {
         Node lastNode = path.endNode();
@@ -27,5 +27,5 @@ public class SinkEvaluator implements Evaluator {
         //The node has outgoing edges
         return Evaluation.EXCLUDE_AND_CONTINUE;
     }
-    
+
 }

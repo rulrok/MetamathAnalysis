@@ -62,7 +62,7 @@ public class TarjanSCC extends AbstractStrongConnectedComponentsAlgorithm {
                     visit(node);
                 }
             });
-            
+
             tx.failure();
         }
         return components;

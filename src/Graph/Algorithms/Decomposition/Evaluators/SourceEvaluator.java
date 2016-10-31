@@ -11,13 +11,13 @@ import org.neo4j.graphdb.traversal.Evaluator;
  * @author Reuel
  */
 public class SourceEvaluator implements Evaluator {
-    
+
     @Override
     public Evaluation evaluate(Path path) {
         Node lastNode = path.endNode();
         if (lastNode.getDegree(Direction.INCOMING) == 0) {
             //We reached a potentially source node
-            
+
             if (lastNode.getDegree(Direction.OUTGOING) > 0) {
                 //The node links to other nodes
                 return Evaluation.INCLUDE_AND_CONTINUE;
@@ -28,5 +28,5 @@ public class SourceEvaluator implements Evaluator {
         //The node has incoming edges
         return Evaluation.EXCLUDE_AND_CONTINUE;
     }
-    
+
 }

@@ -196,5 +196,5 @@ public class FakeNode implements Node {
     public Map<String, Object> getAllProperties() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }
