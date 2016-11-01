@@ -95,7 +95,7 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
                 for (ResourceIterator<Node> iterator = allNodes.iterator(); iterator.hasNext();) {
                     Node node = iterator.next();
 
-                    if (node.getDegree(Direction.OUTGOING) > 0 && node.getDegree(Direction.INCOMING) == 0) {
+                    if (node.getDegree(Direction.OUTGOING) >= 0 && node.getDegree(Direction.INCOMING) == 0) {
                         component.add(node);
 
                     }
