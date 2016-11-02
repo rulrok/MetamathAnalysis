@@ -18,7 +18,7 @@ public class StrongConnectedComponents {
 
     public static void main(String[] args) {
 
-        GraphDatabaseService graphDb = GraphFactory.makeDefaultMetamathGraph();
+        GraphDatabaseService graphDb = GraphFactory.makeNoUserboxesNoJunkAxiomTheoremMetamathGraph();
 
         Node helperNode;
 
