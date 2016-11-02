@@ -23,7 +23,8 @@ import org.neo4j.tooling.GlobalGraphOperations;
 public class SimpleGraphDecomposition implements GraphDecomposition {
 
     private final GraphDatabaseService graph;
-    private ArrayList<List<Node>> components;
+    private ArrayList<List<Node>> sinkDecompositionComponents;
+    private ArrayList<List<Node>> sourceDecompositionComponents;
 
     public SimpleGraphDecomposition(GraphDatabaseService graph) {
         this.graph = graph;
@@ -31,7 +32,8 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
     }
 
     private void configure() {
-        components = new ArrayList<>();
+        sinkDecompositionComponents = new ArrayList<>();
+        sourceDecompositionComponents = new ArrayList<>();
     }
 
     @Override
@@ -46,12 +48,13 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
             decomposeIntoSources();
 
         }
-        return components;
+        return sinkDecompositionComponents;
     }
 
     @Override
     public List<List<Node>> decomposeIntoSinks() {
         try (Transaction tx = graph.beginTx()) {
+
             List<Node> component;
             do {
                 component = new LinkedList<>();
@@ -59,28 +62,29 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
                 for (ResourceIterator<Node> iterator = allNodes.iterator(); iterator.hasNext();) {
                     Node node = iterator.next();
 
-                    if (node.getDegree(Direction.INCOMING) > 0 && node.getDegree(Direction.OUTGOING) == 0) {
+                    if (isSink(node)) {
                         component.add(node);
                     }
                 }
 
-                if (component.size() > 0) {
-                    for (Node node : component) {
-                        node.getRelationships().forEach(relationship -> {
-                            relationship.delete();
-                        });
-                        node.delete();
-                    }
-                    components.add(component);
-                } else {
+                if (component.isEmpty()) {
                     break;
                 }
+
+                for (Node node : component) {
+                    node.getRelationships().forEach(relationship -> {
+                        relationship.delete();
+                    });
+                    node.delete();
+                }
+                sinkDecompositionComponents.add(component);
+
             } while (true);
 
             tx.failure();
         }
 
-        return components;
+        return sinkDecompositionComponents;
     }
 
     @Override
@@ -88,6 +92,7 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
         try (Transaction tx = graph.beginTx()) {
 
             ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
+
             List<Node> component;
             do {
                 component = new LinkedList<>();
@@ -95,9 +100,8 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
                 for (ResourceIterator<Node> iterator = allNodes.iterator(); iterator.hasNext();) {
                     Node node = iterator.next();
 
-                    if (node.getDegree(Direction.OUTGOING) >= 0 && node.getDegree(Direction.INCOMING) == 0) {
+                    if (isSource(node)) {
                         component.add(node);
-
                     }
                 }
 
@@ -108,7 +112,7 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
                         });
                         node.delete();
                     }
-                    components.add(component);
+                    sourceDecompositionComponents.add(component);
                 } else {
                     break;
                 }
@@ -116,7 +120,7 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
             tx.failure();
         }
 
-        return components;
+        return sourceDecompositionComponents;
     }
 
     @Override
@@ -126,7 +130,7 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
 
             ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
             allNodes.forEach((Node node) -> {
-                if (node.getDegree(Direction.INCOMING) > 0 && node.getDegree(Direction.OUTGOING) == 0) {
+                if (isSink(node)) {
                     sinks.add(node);
                 }
             });
@@ -142,7 +146,7 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
         try (Transaction tx = graph.beginTx()) {
             ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
             allNodes.forEach((Node node) -> {
-                if (node.getDegree(Direction.INCOMING) == 0 && node.getDegree(Direction.OUTGOING) > 0) {
+                if (isSource(node)) {
                     sources.add(node);
                 }
             });
@@ -150,6 +154,14 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
         }
 
         return sources;
+    }
+
+    private boolean isSink(Node n) {
+        return n.getDegree(Direction.OUTGOING) == 0;
+    }
+
+    private boolean isSource(Node n) {
+        return n.getDegree(Direction.INCOMING) == 0;
     }
 
     public static void main(String[] args) {
