@@ -48,11 +48,11 @@ public class ExportDegrees {
             for (Integer integer : all) {
                 fw.write(Integer.toString(integer) + ls);
             }
-            fw.write(ls.concat("#inner").concat(ls));
+            fw.write(ls + ls + "#inner" + ls);
             for (Integer integer : inner) {
                 fw.write(Integer.toString(integer) + ls);
             }
-            fw.write(ls.concat("#outer").concat(ls));
+            fw.write(ls + ls + "#outer" + ls);
             for (Integer integer : outer) {
                 fw.write(Integer.toString(integer) + ls);
             }
