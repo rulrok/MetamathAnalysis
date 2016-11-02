@@ -1,6 +1,5 @@
 package Graph.Algorithms.Contracts;
 
-import Graph.Algorithms.Decomposition.DecompositionTarget;
 import java.util.List;
 import org.neo4j.graphdb.Node;
 
@@ -9,9 +8,6 @@ import org.neo4j.graphdb.Node;
  * @author Reuel
  */
 public interface GraphDecomposition {
-
-    @Deprecated
-    List<List<Node>> execute(DecompositionTarget decompositionTarget, List<Node> initialNodes);
 
     /*
      * Decompose the graph into sinks until no node remains.

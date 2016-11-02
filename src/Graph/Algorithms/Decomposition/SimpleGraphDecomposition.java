@@ -1,7 +1,6 @@
 package Graph.Algorithms.Decomposition;
 
 import Graph.Algorithms.Contracts.GraphDecomposition;
-import Graph.GraphFactory;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,21 +33,6 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
     private void configure() {
         sinkDecompositionComponents = new ArrayList<>();
         sourceDecompositionComponents = new ArrayList<>();
-    }
-
-    @Override
-    @Deprecated
-    public List<List<Node>> execute(DecompositionTarget decompositionTarget, List<Node> initialNodes) {
-
-        if (decompositionTarget == DecompositionTarget.SINK) {
-
-            decomposeIntoSinks();
-
-        } else if (decompositionTarget == DecompositionTarget.SOURCE) {
-            decomposeIntoSources();
-
-        }
-        return sinkDecompositionComponents;
     }
 
     @Override
@@ -162,24 +146,6 @@ public class SimpleGraphDecomposition implements GraphDecomposition {
 
     private boolean isSource(Node n) {
         return n.getDegree(Direction.INCOMING) == 0;
-    }
-
-    public static void main(String[] args) {
-        GraphDatabaseService graph = GraphFactory.makeDefaultMetamathGraph();
-        SimpleGraphDecomposition sgd = new SimpleGraphDecomposition(graph);
-
-        try (Transaction tx = graph.beginTx()) {
-
-            System.out.println("Sinks:");
-            sgd.getSinks().forEach(sink -> {
-                System.out.println("\t" + sink.getProperty("name"));
-            });
-
-            System.out.println("Sources:");
-            sgd.getSources().forEach(sink -> {
-                System.out.println("\t" + sink.getProperty("name"));
-            });
-        }
     }
 
 }
