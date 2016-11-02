@@ -19,10 +19,10 @@ public class ParseMetamath {
 
     public static void main(String[] args) {
 
-        final String[] default_metamath = new String[]{"mm sets/set.mm", GraphFactory.DEFAULT_METAMATH_DB};
+        final String[] default_metamath = new String[]{"mm sets/set.uncompressed.mm", GraphFactory.DEFAULT_METAMATH_DB};
         final String[] nouserboxes_metamath = new String[]{"mm sets/set_nouserboxes.uncompressed.mm", GraphFactory.NOUSERBOX_METAMATH_DB};
 
-        final String[] selectedConfigs = nouserboxes_metamath;
+        final String[] selectedConfigs = default_metamath;
         try {
             Lexer lexer;
 
