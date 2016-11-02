@@ -22,36 +22,41 @@ public class DecomposeIntoSources {
 
     public static void main(String[] args) {
 
-        GraphDatabaseService graphDb = GraphFactory.makeDefaultMetamathGraph();
+        /*
+         * Get the graph
+         */
+        GraphDatabaseService graphDb = GraphFactory.makeNoUserboxesNoJunkAxiomTheoremMetamathGraph();
 
         /*
          * Decompose the graph into sources
          */
         GraphDecomposition decomposition = new SimpleGraphDecomposition(graphDb);
-        List<List<Node>> sources = decomposition.decomposeIntoSources();
+        List<List<Node>> sourceLayers = decomposition.decomposeIntoSources();
 
         PlotDataSet dataset;
         dataset = new PlotDataSet("Decomposição em sources");
 
-        double[] x = new double[sources.size()];
-        double[] y = new double[sources.size()];
+        double[] x = new double[sourceLayers.size()];
+        double[] y = new double[sourceLayers.size()];
         try (Transaction tx = graphDb.beginTx(); PrintWriter writer = new PrintWriter("decomposicao_sources_nomes.txt")) {
 
-            for (int i = 0; i < sources.size(); i++) {
-                List<Node> component = sources.get(i);
+            for (int i = 0; i < sourceLayers.size(); i++) {
+                List<Node> actualLayer = sourceLayers.get(i);
                 x[i] = i;
-                y[i] = component.size();
+                y[i] = actualLayer.size();
 
                 writer.append("Componente\t")
                         .append(Integer.toString(i))
                         .append("\tTamanho\t")
-                        .append(String.format("%05d", component.size()))
+                        .append(String.format("%05d", actualLayer.size()))
                         .append(" ; ");
-                for (Node n : component) {
-                    Node node = graphDb.getNodeById(n.getId());
-                    Object NodeName = node.getProperty("name");
-                    writer.append(NodeName.toString()).append(' ');
-                }
+
+                actualLayer.stream()
+                        .map((node) -> graphDb.getNodeById(node.getId())) //It's necessary to refetch the node from the graph
+                        .map((node) -> node.getProperty("name").toString())
+                        .forEach((String nodeName) -> {
+                            writer.append(nodeName).append(' ');
+                        });
                 writer.println();
             }
             tx.failure();
@@ -68,7 +73,7 @@ public class DecomposeIntoSources {
                 .plot();
 
         System.out.print("Total number of source components: ");
-        System.out.println(sources.size());
+        System.out.println(sourceLayers.size());
     }
 
 }
