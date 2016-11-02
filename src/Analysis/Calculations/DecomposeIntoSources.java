@@ -45,9 +45,9 @@ public class DecomposeIntoSources {
                 x[i] = i;
                 y[i] = actualLayer.size();
 
-                writer.append("Componente\t")
+                writer.append("Component #\t")
                         .append(Integer.toString(i))
-                        .append("\tTamanho\t")
+                        .append("\tSize\t")
                         .append(String.format("%05d", actualLayer.size()))
                         .append(" ; ");
 
