@@ -11,11 +11,10 @@ import org.neo4j.graphdb.GraphDatabaseService;
  */
 public class ExportToTXT {
 
-    private final static String OUTPUT = "metamath-theorems-only";
+    private final static String OUTPUT = "metamath-axioms-theorems-nouserbox-nojunk";
 
     public static void main(String[] args) {
-        GraphDatabaseService graphDb = GraphFactory.makeGraph("db/".concat(OUTPUT));
-
+        GraphDatabaseService graphDb = GraphFactory.makeNoUserboxesNoJunkAxiomTheoremMetamathGraph();
         /*
          * Export to txt
          */
