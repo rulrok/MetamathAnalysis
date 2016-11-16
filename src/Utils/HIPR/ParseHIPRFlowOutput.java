@@ -69,6 +69,10 @@ public class ParseHIPRFlowOutput {
         return maxFlow;
     }
 
+    public boolean hasFlow() {
+        return maxFlow > 0;
+    }
+
     public double getArcFlow(int startNode, int endNode) {
         if (maxFlow == 0) {
             //We are sure no edge has flow passing through it.
