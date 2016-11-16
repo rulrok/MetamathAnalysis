@@ -11,6 +11,7 @@ import Graph.Algorithms.RemoveIsolatedNodes;
 import Graph.GraphFactory;
 import Graph.Label;
 import Utils.HIPR.HIPR;
+import Utils.HIPR.HIPRAnalyzeFlowSides;
 import Utils.HIPR.ParseHIPRFlowOutput;
 import Utils.HIPR.ParseHIPRInputfile;
 import Utils.StopWatch;
@@ -44,27 +45,9 @@ public class MaxFlowIndividualSourcesSinks {
 //        GraphDatabaseService graph = GraphFactory.makeGraph("db/".concat(OUTPUT_NAME));
         StopWatch stopWatch = new StopWatch();
 
-        stopWatch.start("Copying original graph...");
-        System.out.println("Copying original graph...");
-        GraphDatabaseService graph = GraphFactory.copyGraph(GraphFactory.NOUSERBOX_METAMATH_DB, "db/".concat(OUTPUT_NAME));
-        stopWatch.stop();
-
-        stopWatch.start("Removing all nodes but axioms and theorems...");
-        System.out.println("Removing all nodes but axioms and theorems...");
-        GraphNodeRemover gnr = new GraphNodeRemover(graph);
-        gnr = gnr
-                //DFS from ax-meredith to remove undesired componente
-                .addComponentHeadDFS("ax-meredith")
-                //Add other labels
-                .addFilterLabel(Label.CONSTANT)
-                .addFilterLabel(Label.DEFINITION)
-                .addFilterLabel(Label.HYPOTHESIS)
-                .addFilterLabel(Label.SYNTAX_DEFINITION)
-                .addFilterLabel(Label.UNKNOWN)
-                .addFilterLabel(Label.VARIABLE)
-                //Specific nodes
-                .addCustomFilter(n -> n.getProperty("name").toString().startsWith("dummy"));
-        gnr.execute();
+        stopWatch.start("Getting graph...");
+        System.out.println("Getting graph...");
+        GraphDatabaseService graph = GraphFactory.makeNoUserboxesNoJunkAxiomTheoremMetamathGraph();
         stopWatch.stop();
 
         stopWatch.start("Removing isolated remaining nodes...");
@@ -188,6 +171,9 @@ public class MaxFlowIndividualSourcesSinks {
                     ParseHIPRFlowOutput hiprOutput = new ParseHIPRFlowOutput(new File(graphFlowOutput));
                     hiprOutput.suppressConsoleOutput();
                     hiprOutput.parse();
+
+                    String sidesOutput = sourceName + "_" + sinkName + "_sides.txt";
+                    HIPRAnalyzeFlowSides.AnalyzeSides(graph, hiprInput, hiprOutput, new File(sidesOutput));
 
                     fw.write(String.format("%s -> %s flow: %04.2f" + System.lineSeparator(), sourceName, sinkName, hiprOutput.getMaxFlow()));
                     fw.flush();
