@@ -108,8 +108,7 @@ public class MaxFlowSuperAllHalvedTheoremOnly {
                 .export(graphOutput, hiprFormatter);
 
         System.out.println("Analyzing maxflow with HIPR...");
-        HIPR hipr = new HIPR();
-        hipr.execute(graphOutput, graphFlowOutput);
+        HIPR.execute(graphOutput, graphFlowOutput);
 
         System.out.println("Analyzing maxflow sides...");
 
