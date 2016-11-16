@@ -35,6 +35,8 @@ public class ParseHIPRFlowOutput {
 
     private ParseState actualState = ParseState.INITIAL_STATE;
 
+    private boolean parsed = false;
+
     /*
      * File properties
      */
@@ -82,6 +84,10 @@ public class ParseHIPRFlowOutput {
 
     public void parse() throws FileNotFoundException, IOException {
 
+        if (parsed) {
+            return;
+        }
+
         BufferedReader br = new BufferedReader(new FileReader(file));
         br.lines().forEach((nextLine) -> {
 
@@ -98,6 +104,7 @@ public class ParseHIPRFlowOutput {
         });
 
         change_actual_state(ParseState.FINISH_STATE);
+        parsed = true;
     }
 
     private void change_actual_state(ParseState newState) {

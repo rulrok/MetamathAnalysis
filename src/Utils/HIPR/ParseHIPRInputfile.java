@@ -23,6 +23,8 @@ public class ParseHIPRInputfile {
     private int nodesCount;
     private int edgesCount;
 
+    private boolean parsed = false;
+
     public ParseHIPRInputfile(File file) {
         this.file = file;
         this.nodesNames = new HashMap<>(5000);
@@ -30,6 +32,10 @@ public class ParseHIPRInputfile {
     }
 
     public void parse() throws FileNotFoundException {
+        if (parsed) {
+            return;
+        }
+
         Scanner scanner = new Scanner(file);
         while (scanner.hasNextLine()) {
             String nextLine = scanner.nextLine();
@@ -73,6 +79,7 @@ public class ParseHIPRInputfile {
             }
         }
 
+        parsed = true;
     }
 
     public int getNodesCount() {
