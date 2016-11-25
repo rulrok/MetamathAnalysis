@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,13 +14,12 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Result;
+import org.neo4j.graphdb.ResourceIterable;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.helpers.collection.MapUtil;
+import org.neo4j.tooling.GlobalGraphOperations;
 
 /**
  *
@@ -57,6 +57,38 @@ public class HIPRAnalyzeFlowSides {
         nodeIDsOnSourceSide.stream().forEach((nodeID) -> {
             nodeNamesSourceSide.add(hiprInput.getNodeName(nodeID));
         });
+
+        /*
+         * Create indexes
+         */
+        Map<Long, String> nodeNames = new HashMap<>();
+        Map<String, Long> nodeIds = new HashMap<>();
+        Map<Long, List<Long>> graphAdjacencyList = new HashMap<>();
+
+        try (Transaction tx = graph.beginTx()) {
+            graph.execute("CREATE INDEX ON :AXIOM(name);");
+            graph.execute("CREATE INDEX ON :THEOREM(name);");
+
+            ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
+            for (Node n : allNodes) {
+                long id = n.getId();
+                String name = n.getProperty("name").toString();
+                nodeNames.put(id, name);
+                nodeIds.put(name, id);
+            }
+
+            Iterable<Relationship> allRelationships = GlobalGraphOperations.at(graph).getAllRelationships();
+            for (Relationship r : allRelationships) {
+                long u = r.getStartNode().getId();
+                long v = r.getEndNode().getId();
+
+                List<Long> uConnections = graphAdjacencyList.getOrDefault(u, new ArrayList<>());
+                uConnections.add(v);
+                graphAdjacencyList.put(u, uConnections);
+            }
+
+        }
+
         /**
          * Output nodes
          */
@@ -78,23 +110,17 @@ public class HIPRAnalyzeFlowSides {
                 List<String> frontierNodesNames = new ArrayList<>();
                 for (String sourceNodeName : nodeNamesSourceSide) {
                     //Search it in the graph to analyse its neighbours
-                    Map<String, Object> param = MapUtil.map("nodeName", sourceNodeName);
-                    Result result = graph.execute("MATCH (n{name: {nodeName}}) RETURN n", param);
+                    Long u = nodeIds.get(sourceNodeName);
 
-                    //If we find it
-                    if (result.hasNext()) {
-                        Node foundNode = (Node) result.next().get("n");
-                        //Look up all its outgoing relationships
-                        Iterable<Relationship> relationships = foundNode.getRelationships(Direction.OUTGOING);
-                        for (Relationship r : relationships) {
-                            Node neighbour = r.getEndNode();
-                            String neighbourName = neighbour.getProperty("name").toString();
+                    //Look up all its outgoing relationships
+                    List<Long> uRels = graphAdjacencyList.getOrDefault(u, new ArrayList<>());
+                    for (Long v : uRels) {
+                        //Node u connects to v ( u -> v )
+                        String iName = nodeNames.get(v);
 
-                            //If the name is on the sink side, the source node is a frontier one
-                            if (nodeNamesSinkSide.contains(neighbourName)) {
-                                frontierNodesNames.add(sourceNodeName);
-                                break;
-                            }
+                        if (nodeNamesSinkSide.contains(iName)) {
+                            frontierNodesNames.add(sourceNodeName);
+                            break;
                         }
                     }
                 }
