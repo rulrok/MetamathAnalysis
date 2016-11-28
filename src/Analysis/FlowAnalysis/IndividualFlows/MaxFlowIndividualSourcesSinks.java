@@ -157,7 +157,8 @@ public class MaxFlowIndividualSourcesSinks {
                     hiprOutput.parse();
 
                     if (hiprOutput.hasFlow()) {
-                        String sidesOutput = "output" + File.separator + sourceName + " " + sinkName + "_sides.txt";
+                        //output folder: output/<source-name>/<source-name> <sink-name>_sides.txt
+                        String sidesOutput = "output" + File.separator + sourceName + File.separator + sourceName + " " + sinkName + "_sides.txt";
                         System.out.println("\tAnalyzing frontier sides for " + sourceName + " & " + sinkName + " " + Date.from(Instant.now()));
                         HIPRAnalyzeFlowSides.AnalyzeSides(graph, hiprInput, hiprOutput, new File(sidesOutput));
                     }
