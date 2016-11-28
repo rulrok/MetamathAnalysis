@@ -5,7 +5,6 @@ import Graph.Algorithms.Decomposition.Evaluators.SourceEvaluator;
 import Graph.Algorithms.Export.EdgeWeigher.InnerOuterEdgeSplittedGraphWeigher;
 import Graph.Algorithms.Export.Formatters.HiprFormatter;
 import Graph.Algorithms.Export.GraphToTxt;
-import Graph.Algorithms.GraphNodeRemover;
 import Graph.Algorithms.HalveNodes;
 import Graph.Algorithms.RemoveIsolatedNodes;
 import Graph.GraphFactory;
@@ -14,13 +13,14 @@ import Utils.HIPR.HIPR;
 import Utils.HIPR.HIPRAnalyzeFlowSides;
 import Utils.HIPR.ParseHIPRFlowOutput;
 import Utils.HIPR.ParseHIPRInputfile;
-import Utils.StopWatch;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,32 +43,23 @@ public class MaxFlowIndividualSourcesSinks {
     public static void main(String[] args) throws FileNotFoundException {
 
 //        GraphDatabaseService graph = GraphFactory.makeGraph("db/".concat(OUTPUT_NAME));
-        StopWatch stopWatch = new StopWatch();
-
-        stopWatch.start("Getting graph...");
         System.out.println("Getting graph...");
         GraphDatabaseService graph = GraphFactory.makeNoUserboxesNoJunkAxiomTheoremMetamathGraph();
-        stopWatch.stop();
 
-        stopWatch.start("Removing isolated remaining nodes...");
         System.out.println("Removing isolated remaining nodes...");
         RemoveIsolatedNodes isolatedNodes = new RemoveIsolatedNodes(graph);
         isolatedNodes.execute();
-        stopWatch.stop();
 
-        stopWatch.start("halving nodes");
         System.out.println("Halving nodes...");
         HalveNodes halveNodes = new HalveNodes(graph);
         halveNodes
                 .addFilterLabel(Label.AXIOM)
                 .addFilterLabel(Label.THEOREM)
                 .execute();
-        stopWatch.stop();
 
         List<Node> sources = new ArrayList<>();
         List<Node> sinks = new ArrayList<>();
 
-        stopWatch.start("Finding all sources...");
         System.out.print("Finding all sources...");
         try (Transaction tx = graph.beginTx()) {
 
@@ -83,10 +74,7 @@ public class MaxFlowIndividualSourcesSinks {
                     .forEach(sources::add);
         }
         System.out.printf("\t %d sources found", sources.size());
-        stopWatch.stop();
-        System.out.println(stopWatch.getLastTaskTimeMillis());
 
-        stopWatch.start("Finding all sinks...");
         System.out.print("Finding all sinks...");
         try (Transaction tx = graph.beginTx()) {
 
@@ -101,10 +89,7 @@ public class MaxFlowIndividualSourcesSinks {
                     .forEach(sinks::add);
         }
         System.out.printf("\t %d sinks found", sinks.size());
-        stopWatch.stop();
-        System.out.println(stopWatch.getLastTaskTimeMillis());
 
-        stopWatch.start("Exporting to txt...");
         System.out.print("Exporting to txt...");
         String graphOutput = OUTPUT_NAME.concat(".txt");
 
@@ -133,8 +118,6 @@ public class MaxFlowIndividualSourcesSinks {
                     .addFilterLabel(Label.UNKNOWN)
                     .export(graphOutput, hiprFormatter);
         }
-        stopWatch.stop();
-        System.out.println(stopWatch.getLastTaskTimeMillis());
 
         File hiprInputFile = new File(graphOutput);
         ParseHIPRInputfile hiprInput = new ParseHIPRInputfile(hiprInputFile);
@@ -147,46 +130,47 @@ public class MaxFlowIndividualSourcesSinks {
         try (Transaction tx = graph.beginTx(); FileWriter fw = new FileWriter(allIndividualFlows)) {
 
             for (Node source : sources) {
-                stopWatch.start("Processing for source: " + source.getProperty("name"));
-                System.out.print("Processing for source: " + source.getProperty("name"));
+                System.out.println("Processing for source: " + source.getProperty("name"));
 
                 String sourceName = source.getProperty("name").toString().concat("'");
                 int sourceId = hiprInput.getNodeId(sourceName);
                 for (Node sink : sinks) {
                     String sinkName = sink.getProperty("name").toString().replace("'", "");
+                    System.out.println("Processing for sink: " + sinkName);
                     int sinkId = hiprInput.getNodeId(sinkName);
 
                     try (RandomAccessFile file = new RandomAccessFile(hiprInputFile, "rw")) {
                         int length = file.readLine().length();
                         file.seek(length);
-                        file.write("\r\n".getBytes());
+                        file.write(System.lineSeparator().getBytes());
                         file.write(String.format("n %06d s" + System.lineSeparator(), sourceId).getBytes());
                         file.write(String.format("n %06d t" + System.lineSeparator(), sinkId).getBytes());
                     } catch (IOException ex) {
                         Logger.getLogger(MaxFlowIndividualSourcesSinks.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
+                    System.out.println("\tExecuting HIPR " + Date.from(Instant.now()));
                     HIPR.execute(graphOutput, graphFlowOutput);
 
                     ParseHIPRFlowOutput hiprOutput = new ParseHIPRFlowOutput(new File(graphFlowOutput));
                     hiprOutput.suppressConsoleOutput();
                     hiprOutput.parse();
 
-                    String sidesOutput = sourceName + "_" + sinkName + "_sides.txt";
-                    HIPRAnalyzeFlowSides.AnalyzeSides(graph, hiprInput, hiprOutput, new File(sidesOutput));
+                    if (hiprOutput.hasFlow()) {
+                        String sidesOutput = "output" + File.separator + sourceName + " " + sinkName + "_sides.txt";
+                        System.out.println("\tAnalyzing frontier sides for " + sourceName + " & " + sinkName + " " + Date.from(Instant.now()));
+                        HIPRAnalyzeFlowSides.AnalyzeSides(graph, hiprInput, hiprOutput, new File(sidesOutput));
+                    }
 
                     fw.write(String.format("%s -> %s flow: %04.2f" + System.lineSeparator(), sourceName, sinkName, hiprOutput.getMaxFlow()));
                     fw.flush();
                 }
-                stopWatch.stop();
-                System.out.println(stopWatch.getLastTaskTimeMillis() + " ms");
             }
             tx.failure();
         } catch (IOException ex) {
             Logger.getLogger(MaxFlowIndividualSourcesSinks.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        System.out.println(stopWatch.prettyPrint());
     }
 
 }
