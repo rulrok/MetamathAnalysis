@@ -58,13 +58,10 @@ public class MaxFlowIndividualSourcesSinksParseResult {
                 String destin = values[2];
                 Double maxFlow = Double.parseDouble(values[values.length - 1]);
 
-                if (sourcesFlows.containsKey(origin)) {
-                    Double currentFlow = sourcesFlows.get(origin);
-                    currentFlow += maxFlow;
-                    sourcesFlows.put(origin, currentFlow);
-                } else {
-                    sourcesFlows.put(origin, maxFlow);
-                }
+                Double currentFlow = sourcesFlows.getOrDefault(origin, 0D);
+
+                currentFlow += maxFlow;
+                sourcesFlows.put(origin, currentFlow);
 
                 /**
                  * Interpret line
