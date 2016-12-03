@@ -25,7 +25,7 @@ public class ReachabilityFromEverybodyToEveryone {
         try (Transaction tx = graph.beginTx()) {
 
             ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
-            Map<String, Integer> calculate = reachabilityFromSource.calculate(allNodes.iterator(), RelType.SUPPORTS);
+            Map<String, Integer> calculate = reachabilityFromSource.calculateFromNodes(allNodes.iterator(), RelType.SUPPORTS);
 
             final String OUTPUT = "reach_distribution_everyone_to_everybody";
 

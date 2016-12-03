@@ -22,7 +22,7 @@ public class ReachabilityFromAxiomsToSinks {
 
         Map<String, Integer> calculate = reachabilityFromSource
                 .addEvaluator(new SinkEvaluator())
-                .calculate(Label.AXIOM, RelType.SUPPORTS);
+                .calculateFromNode(Label.AXIOM, RelType.SUPPORTS);
         final String OUTPUT = "reach_distribution_axioms_to_sinks";
 
         ExportMapToTXT.export(OUTPUT, calculate, new String[]{"id", "axiom name", "count"});

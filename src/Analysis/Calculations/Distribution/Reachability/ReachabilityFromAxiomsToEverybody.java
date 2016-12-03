@@ -19,7 +19,7 @@ public class ReachabilityFromAxiomsToEverybody {
         GraphDatabaseService graph = GraphFactory.makeNoUserboxesNoJunkAxiomTheoremMetamathGraph();
         ReachabilityFromNode reachabilityFromSource = new ReachabilityFromNode(graph);
 
-        Map<String, Integer> calculate = reachabilityFromSource.calculate(Label.AXIOM, RelType.SUPPORTS);
+        Map<String, Integer> calculate = reachabilityFromSource.calculateFromNode(Label.AXIOM, RelType.SUPPORTS);
         final String OUTPUT = "reach_distribution_axioms_to_everybody";
 
         ExportMapToTXT.export(OUTPUT, calculate, new String[]{"id", "axiom name", "count"});

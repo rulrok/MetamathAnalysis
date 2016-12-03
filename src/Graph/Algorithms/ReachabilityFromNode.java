@@ -55,17 +55,17 @@ public class ReachabilityFromNode {
         return this;
     }
 
-    public Map<String, Integer> calculate(Label startNodeType, RelationshipType relationshipType) {
+    public Map<String, Integer> calculateFromNode(Label startNodeType, RelationshipType relationshipType) {
 
         try (Transaction tx = graph.beginTx()) {
 
             ResourceIterator<Node> initialNodes = graph.findNodes(startNodeType);
 
-            return calculate(initialNodes, relationshipType);
+            return calculateFromNodes(initialNodes, relationshipType);
         }
     }
 
-    public Map<String, Integer> calculate(Node startNode, RelationshipType relationshipType) {
+    public Map<String, Integer> calculateFromNode(Node startNode, RelationshipType relationshipType) {
         try (Transaction tx = graph.beginTx()) {
             traverse(startNode, relationshipType);
 
@@ -75,7 +75,7 @@ public class ReachabilityFromNode {
         return calculations;
     }
 
-    public Map<String, Integer> calculate(Node[] nodes, RelationshipType relationshipType) {
+    public Map<String, Integer> calculateFromNodes(Node[] nodes, RelationshipType relationshipType) {
         try (Transaction tx = graph.beginTx()) {
 
             for (Node node : nodes) {
@@ -88,7 +88,7 @@ public class ReachabilityFromNode {
         return calculations;
     }
 
-    public Map<String, Integer> calculate(Iterator<Node> initialNodes, RelationshipType relationshipType) {
+    public Map<String, Integer> calculateFromNodes(Iterator<Node> initialNodes, RelationshipType relationshipType) {
         try (Transaction tx = graph.beginTx()) {
 
             for (; initialNodes.hasNext();) {
