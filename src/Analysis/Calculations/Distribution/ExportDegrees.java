@@ -41,10 +41,13 @@ public class ExportDegrees {
             }
 
         }
+        final double[] indegree_array = inner.stream().mapToDouble(i -> i).toArray();
 
-        DescriptiveStatistics innerDS = new DescriptiveStatistics(inner.stream().mapToDouble(i -> i).toArray());
-        DescriptiveStatistics outerDS = new DescriptiveStatistics(outer.stream().mapToDouble(i -> i).toArray());
-        DescriptiveStatistics allDS = new DescriptiveStatistics(all.stream().mapToDouble(i -> i).toArray());
+        DescriptiveStatistics innerDS = new DescriptiveStatistics(indegree_array);
+        final double[] outdegree_array = outer.stream().mapToDouble(i -> i).toArray();
+        DescriptiveStatistics outerDS = new DescriptiveStatistics(outdegree_array);
+        final double[] degree_array = all.stream().mapToDouble(i -> i).toArray();
+        DescriptiveStatistics allDS = new DescriptiveStatistics(degree_array);
 
         double all_standardDeviation = allDS.getStandardDeviation();
         double all_mean = allDS.getMean();
@@ -61,20 +64,18 @@ public class ExportDegrees {
         System.out.printf("outer : μ = %f; σ = %f\n", outer_mean, outer_standardDeviation);
         System.out.println(outerDS);
 
-        try (FileWriter fw = new FileWriter("node_degrees.dat")) {
+        try (FileWriter fw = new FileWriter("node_degrees.csv")) {
 
             String ls = System.lineSeparator();
-            fw.write("#all" + ls);
-            for (Integer integer : all) {
-                fw.write(Integer.toString(integer) + ls);
-            }
-            fw.write(ls + ls + "#inner" + ls);
-            for (Integer integer : inner) {
-                fw.write(Integer.toString(integer) + ls);
-            }
-            fw.write(ls + ls + "#outer" + ls);
-            for (Integer integer : outer) {
-                fw.write(Integer.toString(integer) + ls);
+
+            fw.write("degree;indegree;outdegree" + ls);
+
+            for (int i = 0; i < degree_array.length; i++) {
+
+                final String string = String.format("%d;%d;%d", (int) degree_array[i], (int) indegree_array[i], (int) outdegree_array[i]);
+
+                fw.write(string);
+                fw.write(ls);
             }
         } catch (IOException ex) {
             Logger.getLogger(ExportDegrees.class.getName()).log(Level.SEVERE, null, ex);
