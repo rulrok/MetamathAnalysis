@@ -55,7 +55,7 @@ public class ReachabilityFromNode {
         return this;
     }
 
-    public Map<String, Integer> calculateFromNode(Label startNodeType, RelationshipType relationshipType) {
+    public Map<String, Integer> calculateFromNodesOfType(Label startNodeType, RelationshipType relationshipType) {
 
         try (Transaction tx = graph.beginTx()) {
 
