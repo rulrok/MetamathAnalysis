@@ -23,6 +23,7 @@ public class ExportDegrees {
 
     public static void main(String[] args) {
         GraphDatabaseService graph = GraphFactory.makeNoUserboxesNoJunkAxiomTheoremMetamathGraph();
+        List<String> nodeNames = new ArrayList<>();
         List<Integer> all = new ArrayList<>();
         List<Integer> inner = new ArrayList<>();
         List<Integer> outer = new ArrayList<>();
@@ -34,7 +35,9 @@ public class ExportDegrees {
                 Node node = iterator.next();
                 int inner_degree = node.getDegree(Direction.INCOMING);
                 int outer_degree = node.getDegree(Direction.OUTGOING);
+                String nodeName = node.getProperty("name").toString();
 
+                nodeNames.add(nodeName);
                 inner.add(inner_degree);
                 outer.add(outer_degree);
                 all.add(inner_degree + outer_degree);
@@ -68,11 +71,11 @@ public class ExportDegrees {
 
             String ls = System.lineSeparator();
 
-            fw.write("degree;indegree;outdegree" + ls);
+            fw.write("node;degree;indegree;outdegree" + ls);
 
             for (int i = 0; i < degree_array.length; i++) {
 
-                final String string = String.format("%d;%d;%d", (int) degree_array[i], (int) indegree_array[i], (int) outdegree_array[i]);
+                final String string = String.format("%s;%d;%d;%d", nodeNames.get(i), (int) degree_array[i], (int) indegree_array[i], (int) outdegree_array[i]);
 
                 fw.write(string);
                 fw.write(ls);
