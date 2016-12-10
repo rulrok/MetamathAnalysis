@@ -2,6 +2,7 @@ package Analysis.ProofSteps;
 
 import Graph.GraphFactory;
 import Graph.Label;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,6 +10,7 @@ import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,6 +18,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.io.fs.FileUtils;
 
 /**
  *
@@ -30,6 +33,9 @@ public class FromWebsite {
 
         System.out.println("Reading individual pages...");
 
+        File crawl_backup = new File("craw_backup");
+        crawl_backup.mkdir();
+
         try (Transaction tx = graph.beginTx(); FileWriter fw = new FileWriter("theorems_steps_crawl.txt")) {
 
             fw.write("node_id;node_name;proof_steps" + System.lineSeparator());
@@ -43,6 +49,9 @@ public class FromWebsite {
                 try {
 
                     Document doc = Jsoup.connect("http://us.metamath.org/mpeuni/" + theoremName + ".html").get();
+
+                    File backup_html = new File(crawl_backup, theoremName + ".html");
+                    FileUtils.writeToFile(backup_html, doc.html(), true);
 
                     String title = doc.title();
                     if (title.toLowerCase().contains("mathbox")) {
@@ -83,6 +92,7 @@ public class FromWebsite {
 
                     System.out.print("  " + id + " " + lastStep);
                     fw.write(String.join(";", id, elementName, lastStep) + System.lineSeparator());
+                    fw.flush();
 
                 } catch (NullPointerException ex) {
                     System.err.println("Falha ao processar teorema " + theoremName);
