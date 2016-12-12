@@ -29,7 +29,7 @@ public class ReverseReachabilityFromEverybodyToAxioms {
             Map<String, Integer> calculate = reachabilityFromSource
                     .addEvaluator(new AxiomEvaluator())
                     .reverseGraph()
-                    .calculate(allNodes.iterator(), RelType.SUPPORTS);
+                    .calculateFromNodes(allNodes.iterator(), RelType.SUPPORTS);
             final String OUTPUT = "reverse_reach_distribution_everyone_to_axioms";
 
             ExportMapToTXT.export(OUTPUT, calculate, new String[]{"id", "name", "count"});

@@ -28,7 +28,7 @@ public class ReachabilityFromEverybodyToSinks {
             ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
             Map<String, Integer> calculate = reachabilityFromSource
                     .addEvaluator(new SinkEvaluator())
-                    .calculate(allNodes.iterator(), RelType.SUPPORTS);
+                    .calculateFromNodes(allNodes.iterator(), RelType.SUPPORTS);
             final String OUTPUT = "reach_distribution_everyone_to_sinks";
 
             ExportMapToTXT.export(OUTPUT, calculate, new String[]{"id", "name", "count"});

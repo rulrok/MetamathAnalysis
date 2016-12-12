@@ -11,6 +11,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
+import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.io.fs.FileUtils;
 
 /*
@@ -46,6 +47,10 @@ public class GraphFactory {
         gnr
                 .addComponentHeadDFS("ax-meredith")
                 .addCustomFilter(n -> n.getProperty("name").toString().startsWith("dummy"))
+                .addCustomFilter(n -> n.getProperty("name").toString().equals("idi"))
+                .addCustomFilter(n -> n.getProperty("name").toString().equals("wel"))
+                .addCustomFilter(n -> n.getProperty("name").toString().equals("weq"))
+                .addCustomFilter(n -> n.getProperty("name").toString().equals("wsb"))
                 .execute();
 
         RemoveIsolatedNodes isolatedNodes = new RemoveIsolatedNodes(graph);

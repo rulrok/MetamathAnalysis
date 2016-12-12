@@ -26,7 +26,7 @@ public class ReverseReachabilityFromSinksToEveryone {
 
         Map<String, Integer> calculate = reachabilityFromSource
                 .reverseGraph()
-                .calculate(originalSinks.iterator(), RelType.SUPPORTS);
+                .calculateFromNodes(originalSinks.iterator(), RelType.SUPPORTS);
         final String OUTPUT = "reverse_reach_distribution_sinks_to_everyone";
 
         ExportMapToTXT.export(OUTPUT, calculate, new String[]{"id", "name", "count"});

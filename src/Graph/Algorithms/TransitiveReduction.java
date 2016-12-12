@@ -18,13 +18,13 @@ import org.ujmp.core.SparseMatrix2D;
  *
  * @author reuel
  */
-class Struct {
+class MatrixNode {
 
-    boolean present;
+    boolean edgeWeight;
     long relId;
 
-    public Struct(boolean present, long id) {
-        this.present = present;
+    public MatrixNode(boolean weight, long id) {
+        this.edgeWeight = weight;
         this.relId = id;
     }
 
@@ -50,30 +50,33 @@ public class TransitiveReduction {
             ResourceIterable<Node> allNodes = GlobalGraphOperations.at(graph).getAllNodes();
 
             int nodeCount = 0;
-            long minId = 17000;
-            long maxId = -1;
+            long minId = Integer.MAX_VALUE;
+            long maxId = Integer.MIN_VALUE;
             //Discover the highest node id to create a matrix to represent the graph
             for (Node n : allNodes) {
                 long id = n.getId();
                 if (id < minId) {
                     minId = id;
-                } else if (id > maxId) {
+                }
+                if (id > maxId) {
                     maxId = id;
                 }
             }
-            nodeCount = (int) maxId;
+            nodeCount = (int) maxId; //Because the IDs are not sequencial
 
             //We use a sparse matrix to run the simplest algorithm, since Neo4j
             //won't perform well for this scenario
-            SparseMatrix graphMatrix = SparseMatrix2D.Factory.zeros(nodeCount, nodeCount);
+            SparseMatrix graphMatrix = SparseMatrix2D.Factory.zeros(maxId, maxId);
 
+            //Represent the Neo4j graph into the sparse matrix
             Iterable<Relationship> allRelationships = GlobalGraphOperations.at(graph).getAllRelationships();
             for (Relationship r : allRelationships) {
                 long u = r.getStartNode().getId();
                 long v = r.getEndNode().getId();
 
                 try {
-                    graphMatrix.setAsObject(new Struct(true, r.getId()), u, v);
+                    // u --> v
+                    graphMatrix.setAsObject(new MatrixNode(true, r.getId()), u, v);
 
                 } catch (Exception e) {
                     System.out.println(e);
@@ -85,25 +88,31 @@ public class TransitiveReduction {
                 for (int i = 0; i < nodeCount; ++i) {
 
                     Object ij_entry = graphMatrix.getAsObject(i, j);
-                    if (!(ij_entry instanceof Struct)) {
+                    if (!(ij_entry instanceof MatrixNode)) {
+                        //There is not an edge i --> j in the graph
                         continue;
                     }
 
-                    if (((Struct) ij_entry).present) {
+                    if (((MatrixNode) ij_entry).edgeWeight) {
                         for (int k = 0; k < nodeCount; ++k) {
 
                             Object jk_entry = graphMatrix.getAsObject(j, k);
-                            if (!(jk_entry instanceof Struct)) {
+                            if (!(jk_entry instanceof MatrixNode)) {
+                                //There is not an edge j --> k in the graph
                                 continue;
                             }
 
-                            if (((Struct) jk_entry).present) {
-                                ((Struct) jk_entry).present = false;
+                            if (((MatrixNode) jk_entry).edgeWeight) {
+                                ((MatrixNode) jk_entry).edgeWeight = false;
 
-                                graph.getRelationshipById(((Struct) jk_entry).relId).delete();
+                                graph.getRelationshipById(((MatrixNode) jk_entry).relId).delete();
                                 graphMatrix.setAsObject(jk_entry, j, k);
+                            } else {
+                                throw new RuntimeException("This line should never be reachead");
                             }
                         }
+                    } else {
+                        throw new RuntimeException("This line should never be reachead");
                     }
                 }
             }

@@ -23,7 +23,7 @@ public class ReacheabilityFromNode {
 
             Node eNode = graph.getNodeById(4);
 
-            Map<String, Integer> calculate = reachabilityFromSource.calculate(eNode, RelType.SUPPORTS);
+            Map<String, Integer> calculate = reachabilityFromSource.calculateFromNode(eNode, RelType.SUPPORTS);
             //Should yeld 10 of reachability
             calculate.forEach((key, value) -> {
                 System.out.println(key + "\t" + value);
