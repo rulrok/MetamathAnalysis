@@ -1,4 +1,4 @@
-package Analysis.Calculations.SmallerInducedSubgraph;
+package Analysis.SmallerInducedSubgraph;
 
 import Graph.Algorithms.SmallerInducedSubgraph;
 import Graph.GraphFactory;

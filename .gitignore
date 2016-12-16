@@ -10,6 +10,7 @@
 /db/*
 /lib/hipr/hi_pr
 /lib/hipr/*.exe
+/crawl_backup
 
 manifest.mf
 *.log

@@ -34,11 +34,11 @@ class MatrixNode {
  *
  * @author reuel
  */
-public class TransitiveReduction {
+public class TransitiveReductionNeo4j {
 
     private final GraphDatabaseService graph;
 
-    public TransitiveReduction(GraphDatabaseService graph) {
+    public TransitiveReductionNeo4j(GraphDatabaseService graph) {
         this.graph = graph;
     }
 
@@ -94,6 +94,7 @@ public class TransitiveReduction {
                     }
 
                     if (((MatrixNode) ij_entry).edgeWeight) {
+                        // i --> j exists
                         for (int k = 0; k < nodeCount; ++k) {
 
                             Object jk_entry = graphMatrix.getAsObject(j, k);
@@ -103,6 +104,7 @@ public class TransitiveReduction {
                             }
 
                             if (((MatrixNode) jk_entry).edgeWeight) {
+                                // j --> k exists
                                 ((MatrixNode) jk_entry).edgeWeight = false;
 
                                 graph.getRelationshipById(((MatrixNode) jk_entry).relId).delete();
@@ -126,7 +128,7 @@ public class TransitiveReduction {
     public static void main(String[] args) {
 
         GraphDatabaseService graph = GraphFactory.makeNoUserboxesNoJunkAxiomTheoremMetamathGraph();
-        TransitiveReduction reduction = new TransitiveReduction(graph);
+        TransitiveReductionNeo4j reduction = new TransitiveReductionNeo4j(graph);
         reduction.execute();
 
         GraphToTxt toTxt = new GraphToTxt(graph);
