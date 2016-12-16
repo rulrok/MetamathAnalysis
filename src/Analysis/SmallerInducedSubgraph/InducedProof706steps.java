@@ -1,4 +1,4 @@
-package Analysis.Calculations.SmallerInducedSubgraph;
+package Analysis.SmallerInducedSubgraph;
 
 import Graph.Algorithms.SmallerInducedSubgraph;
 import Graph.GraphFactory;
@@ -14,19 +14,16 @@ import org.neo4j.graphdb.Transaction;
  *
  * @author reuel
  */
-public class InducedProof2p2e4 {
+public class InducedProof706steps {
 
     public static void main(String[] args) {
         GraphDatabaseService graph = GraphFactory.makeNoUserboxesNoJunkAxiomTheoremMetamathGraph();
-        GraphDatabaseService outputGraph = GraphFactory.makeGraph("db/induced_2p2pe4", true);
+        GraphDatabaseService outputGraph = GraphFactory.makeGraph("db/betweenness_706_proof_steps", true);
 
         List<String> proofElements = new ArrayList<>();
 
         try (Transaction tx = graph.beginTx()) {
-            final String p2e4 = "2p2e4";
-            proofElements.add(p2e4);
-            
-            Node t_2503lem2 = graph.findNode(Label.THEOREM, "name", p2e4);
+            Node t_2503lem2 = graph.findNode(Label.THEOREM, "name", "2503lem2");
 
             t_2503lem2.getRelationships(Direction.INCOMING).forEach(r -> {
                 Node proofElement = r.getStartNode();
