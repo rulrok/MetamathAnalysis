@@ -10,7 +10,8 @@ import Graph.Label;
 import Graph.RelType;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import java.util.logging.Logger;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 
 /**
@@ -63,52 +65,85 @@ public class InducedProof706steps {
             Logger.getLogger(InducedProof706steps.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        //Theorem
-        String nodeName = "2503lem2";
+        try (Transaction tx = graph.beginTx(); FileWriter fw = new FileWriter("theorems_five_information.txt")) {
+            ResourceIterator<Node> theorems = graph.findNodes(Label.THEOREM);
 
-        Node currentTheorem;
+            fw.write("theorem;proof SIS source decomposition;reverse reachability;proof elements;source decomposition;proof steps");
+            fw.write(System.lineSeparator());
+            for (; theorems.hasNext();) {
+                Node currentTheorem = theorems.next();
 
-        //Obtain theorem's proof theorems
-        List<String> proofElements = new ArrayList<>();
-        try (Transaction tx = graph.beginTx()) {
-            currentTheorem = graph.findNode(Label.THEOREM, "name", nodeName);
+                String theoremName = currentTheorem.getProperty("name").toString();
+                fw.write(theoremName);
+                fw.write(";");
 
-            currentTheorem.getRelationships(Direction.INCOMING).forEach(r -> {
-                Node proofElement = r.getStartNode();
-                String proofElementName = proofElement.getProperty("name").toString();
+                //Obtain theorem's proof theorems
+                List<String> proofElements = new ArrayList<>();
+                currentTheorem.getRelationships(Direction.INCOMING).forEach(r -> {
+                    Node proofElement = r.getStartNode();
+                    String proofElementName = proofElement.getProperty("name").toString();
 
-                proofElements.add(proofElementName);
-            });
+                    proofElements.add(proofElementName);
+                });
+
+                //Prepare SIS algorithm
+                GraphDatabaseService outputGraph = GraphFactory.makeGraph("db/SIS/" + theoremName, true);
+                SmallerInducedSubgraph msgi = new SmallerInducedSubgraph(graph, outputGraph);
+
+                String[] names = new String[proofElements.size()];
+                proofElements.toArray(names);
+
+                msgi.execute(names);
+
+                try {
+                    //output graph decomposition
+                    GraphDecomposition decomposition = new SimpleGraphDecomposition(outputGraph);
+                    List<List<Node>> layers = decomposition.decomposeIntoSources();
+                    final int proofLayerDecompositionSize = layers.size();
+                    System.out.println("Proof SIS source decomposition: " + proofLayerDecompositionSize);
+                    fw.write(Integer.toString(proofLayerDecompositionSize));
+                    fw.write(";");
+
+                    //Reverse reachability
+                    ReachabilityFromNode reachabilityFromTheorem = new ReachabilityFromNode(graph);
+                    Map<String, Integer> calculate = reachabilityFromTheorem
+                            .addEvaluator(new AxiomEvaluator())
+                            .reverseGraph()
+                            .calculateFromNode(currentTheorem, RelType.SUPPORTS);
+
+                    Collection<Integer> reverseRecheability = calculate.values();
+                    final Integer reverseReachability = reverseRecheability.stream().findFirst().get();
+                    System.out.println("Reverse recheability: " + reverseReachability);
+                    fw.write(Integer.toString(reverseReachability));
+                    fw.write(";");
+
+                    //Proof elements quantity (same as indegree)
+                    final int proofElementsSize = proofElements.size();
+                    System.out.println("Theorem proof elements: " + proofElementsSize);
+                    fw.write(Integer.toString(proofElementsSize));
+                    fw.write(";");
+
+                    //Layer which theorem lays on source decomposition
+                    final Integer theoremSourceLayerValue = theoremSourceLayer.get(theoremName);
+                    System.out.println("Theorem decomposition layer: " + theoremSourceLayerValue);
+                    fw.write(Integer.toString(theoremSourceLayerValue));
+                    fw.write(";");
+
+                    //Number of steps on the proof
+                    final Integer theoremProofStepsValue = theoremProofSteps.get(theoremName);
+                    System.out.println("Theorem proof steps: " + theoremProofStepsValue);
+                    fw.write(Integer.toString(theoremProofStepsValue));
+                    fw.write(System.lineSeparator());
+
+                    fw.flush();
+                } catch (Exception e) {
+                    System.out.println("Exception for theorem " + theoremName);
+                    System.out.println(e);
+                }
+
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(InducedProof706steps.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        //Prepare SIS algorithm
-        GraphDatabaseService outputGraph = GraphFactory.makeGraph("db/SIS_2503lem2", true);
-        SmallerInducedSubgraph msgi = new SmallerInducedSubgraph(graph, outputGraph);
-
-        String[] names = new String[proofElements.size()];
-        proofElements.toArray(names);
-
-        msgi.execute(names);
-
-        //output graph decomposition
-        GraphDecomposition decomposition = new SimpleGraphDecomposition(outputGraph);
-        List<List<Node>> layers = decomposition.decomposeIntoSources();
-        System.out.println("Proof SIS source decomposition: " + layers.size());
-
-        //Reverse reachability
-        ReachabilityFromNode reachabilityFromTheorem = new ReachabilityFromNode(graph);
-        Map<String, Integer> calculate = reachabilityFromTheorem
-                .addEvaluator(new AxiomEvaluator())
-                .reverseGraph()
-                .calculateFromNode(currentTheorem, RelType.SUPPORTS);
-
-        Collection<Integer> reverseRecheability = calculate.values();
-        System.out.println("Reverse recheability: " + reverseRecheability.stream().findFirst().get());
-
-        System.out.println("Theorem proof elements: " + proofElements.size());
-
-        System.out.println("Theorem decomposition layer: " + theoremSourceLayer.get(nodeName));
-
-        System.out.println("Theorem proof steps: " + theoremProofSteps.get(nodeName));
     }
 }
