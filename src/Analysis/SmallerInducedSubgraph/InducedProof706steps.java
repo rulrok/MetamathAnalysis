@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jodd.json.Path;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -32,7 +34,9 @@ import org.neo4j.graphdb.Transaction;
  */
 public class InducedProof706steps {
 
-    public static void main(String[] args) {
+    private static final String THEOREMS_FIVE_INFORMATIONTXT = "theorems_five_information.txt";
+
+    public static void main(String[] args) throws IOException {
         GraphDatabaseService graph = GraphFactory.makeGraph("db/metamath-nouserboxes-axiom-theorem-nojunk");
 
         //Map the values of theorem name and its source decomposition layer number
@@ -65,15 +69,40 @@ public class InducedProof706steps {
             Logger.getLogger(InducedProof706steps.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        try (Transaction tx = graph.beginTx(); FileWriter fw = new FileWriter("theorems_five_information.txt")) {
+        //See if the previous data exists
+        List<String> alreadyParsedNodes = new ArrayList<>();
+        try (Scanner scanner = new Scanner(new File(THEOREMS_FIVE_INFORMATIONTXT))) {
+            String firstLine = scanner.nextLine();
+            while (scanner.hasNextLine()) {
+                String nextLine = scanner.nextLine();
+                String[] lineValues = nextLine.split(";");
+                alreadyParsedNodes.add(lineValues[0]);
+            }
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(InducedProof706steps.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        File file = new File(THEOREMS_FIVE_INFORMATIONTXT);
+        if (!file.exists()) {
+            try (FileWriter fw = new FileWriter(THEOREMS_FIVE_INFORMATIONTXT)) {
+                fw.write("theorem;proof SIS source decomposition;reverse reachability;proof elements;source decomposition;proof steps");
+                fw.write(System.lineSeparator());
+            }
+        }
+
+        try (Transaction tx = graph.beginTx(); FileWriter fw = new FileWriter(file, true)) {
             ResourceIterator<Node> theorems = graph.findNodes(Label.THEOREM);
 
-            fw.write("theorem;proof SIS source decomposition;reverse reachability;proof elements;source decomposition;proof steps");
-            fw.write(System.lineSeparator());
             for (; theorems.hasNext();) {
                 Node currentTheorem = theorems.next();
 
                 String theoremName = currentTheorem.getProperty("name").toString();
+
+                if (alreadyParsedNodes.contains(theoremName)) {
+                    continue;
+                }
+
                 fw.write(theoremName);
                 fw.write(";");
 
