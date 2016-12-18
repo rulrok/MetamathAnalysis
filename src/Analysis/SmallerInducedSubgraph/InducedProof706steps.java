@@ -153,13 +153,13 @@ public class InducedProof706steps {
                     fw.write(";");
 
                     //Layer which theorem lays on source decomposition
-                    final Integer theoremSourceLayerValue = theoremSourceLayer.get(theoremName);
+                    final Integer theoremSourceLayerValue = theoremSourceLayer.getOrDefault(theoremName, -1);
                     System.out.println("Theorem decomposition layer: " + theoremSourceLayerValue);
                     fw.write(Integer.toString(theoremSourceLayerValue));
                     fw.write(";");
 
                     //Number of steps on the proof
-                    final Integer theoremProofStepsValue = theoremProofSteps.get(theoremName);
+                    final Integer theoremProofStepsValue = theoremProofSteps.getOrDefault(theoremName, -1);
                     System.out.println("Theorem proof steps: " + theoremProofStepsValue);
                     fw.write(Integer.toString(theoremProofStepsValue));
                     fw.write(System.lineSeparator());
